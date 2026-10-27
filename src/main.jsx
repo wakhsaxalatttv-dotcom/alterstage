@@ -235,11 +235,11 @@ function App() {
       {page === "search" && (
         <section className="hero">
           <div className="wrap hero-content">
-            <div className="eyebrow">STAGES ET ALTERNANCES EN FRANCE</div>
+            <div className="eyebrow">LE BON DÉPART, À LA BONNE SOURCE</div>
             <h1>
-              Stages et alternances
+              Votre avenir mérite
               <br />
-              pour les métiers techniques.
+              des offres <span>fraîches.</span>
             </h1>
             <p>
               Informatique, réseaux, industrie et chimie. Trouvez une offre et

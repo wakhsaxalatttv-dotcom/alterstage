@@ -88,4 +88,4 @@ Pour une extension future, Adzuna demande un `app_id` et une `app_key` (https://
 
 ### Présentation des annonces
 
-Les cartes et fiches affichent la date de publication, sans les anciens encarts de fraîcheur ni les lignes de vérification non effectuée. La limite de 45 jours continue de s’appliquer automatiquement ; aucune vérification n’est inventée. La présentation privilégie le bleu marine et le blanc, des cartes sobres, une typographie lisible et des actions de candidature visibles. Aucun visuel généré ni bandeau décoratif n’est utilisé.
+Les cartes et fiches affichent la date de publication, sans les anciens encarts de fraîcheur ni les lignes de vérification non effectuée. La limite de 45 jours continue de s’appliquer automatiquement ; aucune vérification n’est inventée. La présentation reprend les couleurs d’origine vert et crème, des cartes sobres, une typographie lisible et des actions de candidature visibles. Aucun visuel généré ni bandeau décoratif n’est utilisé.
