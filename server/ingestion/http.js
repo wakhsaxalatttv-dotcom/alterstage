@@ -38,7 +38,15 @@ export async function fetchFeed(source) {
   const url = safeUrl(source.url);
   if (!url || !source.allowedHosts?.includes(new URL(url).hostname))
     throw new Error("URL de source non autorisée");
+  const parsedUrl = new URL(url);
+  const managedLba =
+    source.kind === "lba" &&
+    parsedUrl.hostname === "api.apprentissage.beta.gouv.fr" &&
+    parsedUrl.pathname === "/api/job/v1/search";
+  // This fixed government API uses the platform's authenticated egress sidecar.
+  // Its target DNS is resolved by that sidecar; local DNS can intentionally be private.
   if (
+    !managedLba &&
     ["https_proxy", "HTTPS_PROXY", "http_proxy", "HTTP_PROXY"].some(
       (name) => process.env[name],
     )

@@ -13,7 +13,7 @@ export interface PublicContact {
 export interface Company {
   id: string;
   name: string;
-  website: string;
+  website: string | null;
   sector: string | null;
   description: string | null;
   type: string | null;
@@ -43,6 +43,11 @@ export interface Offer {
   source: string;
   origin: "employer" | "editorial" | "feed";
   sourceId?: string;
+  sourcePolicyApproved?: boolean;
+  sourceExpiresAt?: string | null;
+  sourcePartner?: string | null;
+  sourceStatus?: string | null;
+  acceptedContracts?: string[];
   sourceName?: string;
   externalId?: string;
   contentHash?: string;
@@ -78,7 +83,7 @@ export interface Offer {
 export interface SourceDefinition {
   id: string;
   name: string;
-  kind: "json" | "rss";
+  kind: "json" | "rss" | "lba";
   url: string;
   allowedHosts: string[];
   enabled: boolean;

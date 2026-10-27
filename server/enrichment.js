@@ -48,6 +48,10 @@ export function plainText(value, limit = 12000) {
       /[\w.!#$%&'*+/=?^`{|}~-]+@[\w.-]+\.[A-Za-z]{2,}/g,
       "[contact retiré — utiliser le lien officiel]",
     )
+    .replace(
+      /(?:\+33|0033|0)[1-9](?:[ .-]?\d{2}){4}\b/g,
+      "[téléphone retiré — candidature par le lien officiel]",
+    )
     .replace(/\u0000/g, "")
     .replace(/[ \t]+/g, " ")
     .replace(/\n{3,}/g, "\n\n")

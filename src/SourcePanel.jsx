@@ -52,9 +52,10 @@ export function SourcePanel({ token, onChanged }) {
         Sources et collecte autorisée
       </h2>
       <p>
-        Les connecteurs JSON et RSS/Atom alimentent la file de validation,
-        jamais directement le catalogue public. Aucune source réelle n’est
-        activée par défaut.
+        Les connecteurs JSON et RSS/Atom alimentent la file de validation, les
+        annonces LBA sélectionnées restent non revérifiées dans le catalogue
+        public. Une source LBA est activée lorsqu’une clé serveur est
+        configurée.
       </p>
       <p className="muted">
         Configuration serveur : SOURCES_FILE. Consultez le guide{" "}

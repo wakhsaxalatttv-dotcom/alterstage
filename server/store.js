@@ -137,6 +137,12 @@ export class OfferStore {
     });
   }
   saveCompany(company, verifiedAt, contacts = []) {
+    if (!verifiedAt) {
+      const existing = this.db
+        .prepare("SELECT payload FROM companies WHERE id=?")
+        .get(company.id);
+      if (existing && parse(existing).profileVerifiedAt) return;
+    }
     const profile = {
       ...company,
       profileVerifiedAt: verifiedAt || null,
@@ -184,7 +190,10 @@ export class OfferStore {
         groupOf(offer.domain) || "",
         offer.contract,
         offer.sourcePublishedAt || offer.publishedAt,
-        Date.parse(offer.expiresAt) + 86400000,
+        Math.min(
+          Date.parse(offer.expiresAt) + 86400000,
+          offer.sourceExpiresAt ? Date.parse(offer.sourceExpiresAt) : Infinity,
+        ),
         offer.moderationStatus,
         offer.status,
         offer.sourceId || null,
@@ -206,6 +215,13 @@ export class OfferStore {
       this.db
         .prepare("INSERT INTO offer_education VALUES(?,?)")
         .run(offer.id, e);
+    this.db
+      .prepare("DELETE FROM offer_contracts WHERE offer_id=?")
+      .run(offer.id);
+    for (const contract of new Set(offer.acceptedContracts || [offer.contract]))
+      this.db
+        .prepare("INSERT INTO offer_contracts VALUES(?,?)")
+        .run(offer.id, contract);
     this.db.prepare("DELETE FROM offer_search WHERE offer_id=?").run(offer.id);
     this.db
       .prepare("INSERT INTO offer_search(offer_id,document) VALUES(?,?)")
@@ -247,25 +263,37 @@ export class OfferStore {
             "SELECT payload,content_hash FROM offers WHERE source_id=? AND external_id=?",
           )
           .get(offer.sourceId, offer.externalId);
-        if (row?.content_hash === offer.contentHash) return "unchanged";
-        if (row) {
+        if (row?.content_hash === offer.contentHash) {
           const previous = parse(row);
-          offer = {
-            ...offer,
-            id: previous.id,
-            firstRetrievedAt: previous.firstRetrievedAt,
-            moderationStatus:
-              previous.moderationStatus === "withdrawn"
-                ? "withdrawn"
-                : "pending",
-            status:
-              previous.moderationStatus === "withdrawn"
-                ? "withdrawn"
-                : "to_verify",
-            lastVerifiedAt: null,
-          };
+          if (offer.lastFetchedAt > previous.lastFetchedAt) {
+            this.writeOffer({
+              ...previous,
+              lastFetchedAt: offer.lastFetchedAt,
+            });
+          }
+          return "unchanged";
         }
+        const previous = row ? parse(row) : null;
+        const suppressed =
+          previous &&
+          ["withdrawn", "rejected"].includes(previous.moderationStatus);
+        offer = {
+          ...offer,
+          id: previous?.id || offer.id,
+          firstRetrievedAt:
+            previous?.firstRetrievedAt || offer.firstRetrievedAt,
+          moderationStatus: suppressed
+            ? previous.moderationStatus
+            : offer.sourcePolicyApproved
+              ? "approved"
+              : "pending",
+          status: suppressed ? "withdrawn" : "to_verify",
+          lastVerifiedAt: null,
+          technicalReviewAt: null,
+        };
         this.writeOffer(offer);
+        if (offer.moderationStatus === "approved")
+          this.saveCompany(offer.company, null, []);
         return row ? "updated" : "created";
       });
     } catch (e) {
@@ -296,13 +324,18 @@ export class OfferStore {
       ["region", "region"],
       ["domain", "domain"],
       ["group", "family"],
-      ["contract", "contract"],
       ["companyId", "company_id"],
     ])
       if (filters[field]) {
         clauses.push(`${column}=?`);
         args.push(String(filters[field]).slice(0, 200));
       }
+    if (filters.contract) {
+      clauses.push(
+        "id IN (SELECT offer_id FROM offer_contracts WHERE contract=?)",
+      );
+      args.push(String(filters.contract).slice(0, 80));
+    }
     if (filters.city) {
       const value = searchText(String(filters.city).slice(0, 120));
       clauses.push("city_key>=? AND city_key<?");

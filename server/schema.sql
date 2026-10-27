@@ -41,3 +41,9 @@ CREATE TABLE IF NOT EXISTS ingestion_runs (
 );
 CREATE TABLE IF NOT EXISTS metadata (key TEXT PRIMARY KEY,value TEXT NOT NULL);
 PRAGMA user_version=1;
+CREATE TABLE IF NOT EXISTS offer_contracts (
+ offer_id TEXT NOT NULL REFERENCES offers(id) ON DELETE CASCADE, contract TEXT NOT NULL,
+ PRIMARY KEY(offer_id,contract)
+);
+CREATE INDEX IF NOT EXISTS contract_lookup ON offer_contracts(contract,offer_id);
+INSERT OR IGNORE INTO offer_contracts(offer_id,contract) SELECT id,contract FROM offers;

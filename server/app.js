@@ -8,12 +8,13 @@ import { IngestionPipeline } from "./ingestion/pipeline.js";
 export function createApp({
   folder = process.env.DATA_DIR || path.resolve(".local"),
   adminToken = process.env.ADMIN_TOKEN || "",
+  pipelineOptions = {},
 } = {}) {
   const app = express(),
     store = new OfferStore(folder),
     limits = new Map();
   app.locals.store = store;
-  app.locals.pipeline = new IngestionPipeline(store);
+  app.locals.pipeline = new IngestionPipeline(store, pipelineOptions);
   app.disable("x-powered-by");
   app.use(compression({ threshold: 1024 }));
   app.use((_req, res, next) => {
@@ -60,7 +61,7 @@ export function createApp({
       ...result,
       status: "connected",
       message: result.total
-        ? "Annonces contrôlées avant publication. Les technologies extraites sont des mentions du texte, pas une certification."
+        ? "Annonces d’entreprises et offres actives selon une API autorisée. Les offres anciennes sont signalées ; la réception par API ne vérifie pas le recrutement."
         : "Aucune annonce validée ne correspond. Les pistes entreprises ne sont pas des offres confirmées.",
       sources: [
         {
@@ -138,13 +139,11 @@ export function createApp({
           "Collecte interrompue : vérifier la configuration serveur.",
         ),
       );
-    res
-      .status(202)
-      .json({
-        running: true,
-        message:
-          "Collecte lancée en arrière-plan. Les résultats apparaîtront dans le journal ; aucune annonce ne sera publiée sans revue.",
-      });
+    res.status(202).json({
+      running: true,
+      message:
+        "Collecte lancée en arrière-plan. Les résultats apparaîtront dans le journal ; aucune annonce ne sera publiée sans revue.",
+    });
   });
   app.use("/api", (_req, res) =>
     res.status(404).json({ message: "Route API introuvable." }),

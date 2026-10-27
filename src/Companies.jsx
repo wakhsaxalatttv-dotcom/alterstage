@@ -134,7 +134,11 @@ export function Companies({ openCompany }) {
                     )}
                   </div>
                   <span className="directory-label">
-                    {c.researchLead ? "PISTE À VÉRIFIER" : "FICHE CONTRÔLÉE"}
+                    {c.researchLead
+                      ? "PISTE À VÉRIFIER"
+                      : c.profileVerifiedAt
+                        ? "FICHE CONTRÔLÉE"
+                        : "DONNÉES SOURCE"}
                   </span>
                   <h2>{c.name}</h2>
                   {c.type && <span className="company-type">{c.type}</span>}
@@ -158,10 +162,12 @@ export function Companies({ openCompany }) {
                       Voir la fiche
                       <ArrowUpRight size={16} />
                     </button>
-                    <a href={c.website} target="_blank" rel="noreferrer">
-                      Site de l’entreprise
-                      <ExternalLink size={13} />
-                    </a>
+                    {c.website && (
+                      <a href={c.website} target="_blank" rel="noreferrer">
+                        Site de l’entreprise
+                        <ExternalLink size={13} />
+                      </a>
+                    )}
                     {c.researchLead && (
                       <a
                         href={googleSearch({

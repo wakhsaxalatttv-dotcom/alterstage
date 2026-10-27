@@ -124,7 +124,9 @@ export function CompanyProfile({ company: initial, openOffer }) {
       <span className="status-label">
         {c.researchLead
           ? "Piste entreprise — recrutement non confirmé"
-          : "Fiche issue de données contrôlées"}
+          : c.profileVerifiedAt
+            ? "Fiche issue de données contrôlées"
+            : "Données source — entreprise non revérifiée"}
       </span>
       {c.description && <p className="description">{c.description}</p>}
       <dl>
@@ -156,10 +158,12 @@ export function CompanyProfile({ company: initial, openOffer }) {
         annonce ne devient pas la stack déclarée de l’entreprise.
       </p>
       <div className="review-links">
-        <a href={c.website} target="_blank" rel="noreferrer">
-          Site entreprise
-          <ExternalLink size={14} />
-        </a>
+        {c.website && (
+          <a href={c.website} target="_blank" rel="noreferrer">
+            Site entreprise
+            <ExternalLink size={14} />
+          </a>
+        )}
         {c.profileSourceUrl && (
           <a href={c.profileSourceUrl} target="_blank" rel="noreferrer">
             Provenance de la fiche

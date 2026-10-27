@@ -115,7 +115,11 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
         <button onClick={details}>{o.title}</button>
       </h3>
       <div className="tags">
-        <span>{o.contract}</span>
+        <span>
+          {o.acceptedContracts?.length > 1
+            ? o.acceptedContracts.join(" / ")
+            : o.contract}
+        </span>
         {o.domain && <span>{o.domain}</span>}
         {o.education.map((e) => (
           <span key={e}>{e}</span>
@@ -129,6 +133,12 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
             <span key={t}>{t}</span>
           ))}
         </div>
+      )}
+      {o.sourcePolicyApproved && (
+        <p className="source-active-note">
+          Signalée active par {o.sourcePartner || o.sourceName} lors de la
+          collecte du {date(o.lastFetchedAt)}. Disponibilité à confirmer.
+        </p>
       )}
       <div className="offer-meta">
         <span>Publiée le {date(o.publishedAt)}</span>

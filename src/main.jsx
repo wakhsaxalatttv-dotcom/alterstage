@@ -548,7 +548,7 @@ function App() {
                       {data.status === "loading"
                         ? "Connexion à la source…"
                         : data.status === "connected"
-                          ? "Des annonces d’entreprises, contrôlées avant publication"
+                          ? "Offres d’entreprises et annonces reçues de sources autorisées"
                           : data.status === "error"
                             ? "La source est indisponible"
                             : "La transparence commence ici"}
@@ -725,12 +725,13 @@ function App() {
               </div>
               <h3>Les entreprises, sans intermédiaire inutile</h3>
               <p>
-                Le catalogue est alimenté par des dépôts d’entreprises et des
-                annonces reprises de leurs sites officiels avec autorisation.
-                Des flux JSON ou RSS autorisés peuvent être configurés côté
-                serveur ; leurs annonces passent par la modération. France
-                Travail reste désactivé. Seuls les stages et alternances
-                techniques et informatiques sont acceptés.
+                Le catalogue contient des annonces reçues d’API autorisées,
+                explicitement non vérifiées, ainsi que des dépôts d’entreprises
+                et des annonces reprises de leurs sites officiels avec
+                autorisation. Des flux JSON ou RSS autorisés peuvent être
+                configurés côté serveur ; leurs annonces passent par la
+                modération. France Travail reste désactivé. Seuls les stages et
+                alternances techniques et informatiques sont acceptés.
               </p>
               <p>
                 Google aide à trouver une annonce ; un résultat de recherche
@@ -842,7 +843,10 @@ function App() {
           {modal.type === "offer" && !modal.loading && !modal.error && (
             <>
               <div className="tags">
-                <span>{modal.offer.contract}</span>
+                <span>
+                  {modal.offer.acceptedContracts?.join(" / ") ||
+                    modal.offer.contract}
+                </span>
                 <span>{freshness(modal.offer)}</span>
               </div>
               <button
@@ -881,6 +885,15 @@ function App() {
                 <dd>{date(modal.offer.publishedAt)}</dd>
                 <dt>Première récupération</dt>
                 <dd>{date(modal.offer.firstRetrievedAt)}</dd>
+                {modal.offer.lastFetchedAt && (
+                  <>
+                    <dt>Collecte API</dt>
+                    <dd>
+                      {date(modal.offer.lastFetchedAt)} — disponibilité non
+                      revérifiée
+                    </dd>
+                  </>
+                )}
                 <dt>Dernière vérification</dt>
                 <dd>
                   {modal.offer.lastVerifiedAt

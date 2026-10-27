@@ -2306,3 +2306,17 @@ nav {
     transition: none;
   }
 }
+.source-active-note {
+  font-size: 10px;
+  line-height: 1.7;
+  color: #6c5f39;
+  background: #f7f3e7;
+  border: 1px solid #e8dfc6;
+  border-radius: 5px;
+  padding: 8px 10px;
+  margin: 14px 0 0;
+}
+.directory-label {
+  max-width: 160px;
+  text-align: right;
+}

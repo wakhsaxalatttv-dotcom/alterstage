@@ -6,7 +6,11 @@ import { randomBytes } from "node:crypto";
 import assert from "node:assert/strict";
 const folder = await mkdtemp("/tmp/offres-ui-"),
   token = randomBytes(32).toString("hex");
-const server = createApp({ folder, adminToken: token }).listen(0, "127.0.0.1");
+const server = createApp({
+  folder,
+  adminToken: token,
+  pipelineOptions: { sources: async () => [] },
+}).listen(0, "127.0.0.1");
 await new Promise((resolve) => server.once("listening", resolve));
 const base = `http://127.0.0.1:${server.address().port}`;
 const browser = await chromium.launch({
@@ -31,9 +35,12 @@ try {
   });
   await page.goto(process.env.BASE_URL || "http://127.0.0.1:5173");
   await page
-    .getByText("Des annonces d’entreprises, contrôlées avant publication", {
-      exact: true,
-    })
+    .getByText(
+      "Offres d’entreprises et annonces reçues de sources autorisées",
+      {
+        exact: true,
+      },
+    )
     .waitFor();
   await page.screenshot({ path: "/tmp/offres-v2-desktop.png", fullPage: true });
   await page.getByRole("button", { name: "Entreprises", exact: true }).click();

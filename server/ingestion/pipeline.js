@@ -1,3 +1,4 @@
+import { lbaSource } from "./lba.js";
 import { readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { normalizeSubmission, safeUrl } from "../domain.js";
@@ -5,7 +6,10 @@ import { plainText } from "../enrichment.js";
 import { parseFeed } from "./connectors.js";
 import { fetchFeed } from "./http.js";
 export async function readSources(file = process.env.SOURCES_FILE) {
-  if (!file) return [];
+  if (!file)
+    return process.env.LBA_API_KEY && process.env.LBA_ENABLED !== "false"
+      ? [lbaSource]
+      : [];
   const parsed = JSON.parse(await readFile(file, "utf8"));
   if (!Array.isArray(parsed) || parsed.length > 30)
     throw new Error("Configuration des sources invalide");
@@ -15,7 +19,7 @@ export async function readSources(file = process.env.SOURCES_FILE) {
       throw new Error("Identifiants de source invalides ou dupliqués");
     if (
       source.enabled === true &&
-      (!["json", "rss"].includes(source.kind) ||
+      (!["json", "rss", "lba"].includes(source.kind) ||
         !safeUrl(source.url) ||
         !Array.isArray(source.allowedHosts) ||
         !source.allowedHosts.includes(new URL(source.url).hostname))
@@ -69,7 +73,18 @@ export function normalizeRecord(
     origin: "editorial",
     consent: true,
   };
-  const normalized = normalizeSubmission(input, { now });
+  const trustedLba =
+    source.kind === "lba" &&
+    source.id === lbaSource.id &&
+    safeUrl(source.url) &&
+    new URL(source.url).hostname === "api.apprentissage.beta.gouv.fr" &&
+    new URL(source.url).pathname === "/api/job/v1/search";
+  const normalized = normalizeSubmission(input, {
+    now,
+    allowOlderActiveSource: trustedLba && source.includeOlderActive === true,
+    allowMissingWebsite: trustedLba,
+    companyIdentity: trustedLba ? record.companyIdentity : null,
+  });
   const externalId = String(record.externalId || record.sourceUrl || "").slice(
     0,
     500,
@@ -85,6 +100,9 @@ export function normalizeRecord(
         location: normalized.location,
         domain: normalized.domain,
         contract: normalized.contract,
+        acceptedContracts: record.acceptedContracts || [normalized.contract],
+        sourceExpiresAt: record.sourceExpiresAt || null,
+        sourcePartner: record.sourcePartner || null,
         education: normalized.education,
         publishedAt,
         sourceUpdatedAt,
@@ -98,6 +116,13 @@ export function normalizeRecord(
     .digest("hex");
   return {
     ...normalized,
+    acceptedContracts: trustedLba
+      ? record.acceptedContracts || [normalized.contract]
+      : [normalized.contract],
+    sourceExpiresAt: record.sourceExpiresAt || null,
+    sourcePartner: record.sourcePartner || null,
+    sourceStatus: record.sourceStatus || null,
+    sourcePolicyApproved: trustedLba && source.publishUnverified === true,
     origin: "feed",
     sourceId: source.id,
     sourceName: source.name || source.id,
@@ -179,6 +204,7 @@ export class IngestionPipeline {
       ) {
         try {
           const records = parseFeed(source, await this.fetcher(source));
+          if (records.exclusions) report.exclusions = records.exclusions;
           for (const record of records) {
             let offer;
             try {
@@ -206,7 +232,7 @@ export class IngestionPipeline {
     return {
       reports,
       message: sources.length
-        ? "Collecte terminée. Les nouvelles annonces et les annonces modifiées attendent une validation."
+        ? "Collecte terminée. Les dépôts et flux génériques attendent une validation ; les offres LBA éligibles restent explicitement non vérifiées."
         : "Aucune source configurée. Aucun flux ni offre n’a été inventé.",
     };
   }

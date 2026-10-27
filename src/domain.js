@@ -66,7 +66,11 @@ export function selectOffers(offers, filters, now = Date.now()) {
     .filter(
       (o) => !filters.education || o.education.includes(filters.education),
     )
-    .filter((o) => !filters.contract || o.contract === filters.contract)
+    .filter(
+      (o) =>
+        !filters.contract ||
+        (o.acceptedContracts || [o.contract]).includes(filters.contract),
+    )
     .filter(
       (o) =>
         !filters.age ||
@@ -83,7 +87,7 @@ export function freshness(o) {
   if (o.status === "expired") return "Offre expirée";
   if (o.status === "withdrawn") return "Offre retirée";
   if (o.publishedAt && Date.now() - Date.parse(o.publishedAt) > 30 * 86400000)
-    return "Offre ancienne";
+    return "Offre ancienne — disponibilité à confirmer";
   if (
     !o.lastVerifiedAt ||
     Number.isNaN(Date.parse(o.lastVerifiedAt)) ||

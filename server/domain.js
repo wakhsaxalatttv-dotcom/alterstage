@@ -56,7 +56,12 @@ function isoDate(value, label, { future = false, optional = false } = {}) {
 }
 export function normalizeSubmission(
   body,
-  { now = new Date().toISOString() } = {},
+  {
+    now = new Date().toISOString(),
+    allowOlderActiveSource = false,
+    allowMissingWebsite = false,
+    companyIdentity = null,
+  } = {},
 ) {
   if (!body || typeof body !== "object" || Array.isArray(body))
     throw new ValidationError("Formulaire invalide.");
@@ -69,7 +74,9 @@ export function normalizeSubmission(
     );
   if (!Object.hasOwn(regions, body.region))
     throw new ValidationError("Choisissez une région française.");
-  const website = link(body.companyWebsite, "Site entreprise"),
+  const website = allowMissingWebsite
+      ? safeUrl(body.companyWebsite) || null
+      : link(body.companyWebsite, "Site entreprise"),
     sourceUrl = link(body.sourceUrl, "Annonce originale");
   const sourceHost = new URL(sourceUrl).hostname;
   if (
@@ -128,7 +135,11 @@ export function normalizeSubmission(
   const publishedAt = isoDate(body.publishedAt, "Publication", {
     optional: true,
   });
-  if (publishedAt && Date.now() - Date.parse(publishedAt) > 30 * 86400000)
+  if (
+    !allowOlderActiveSource &&
+    publishedAt &&
+    Date.now() - Date.parse(publishedAt) > 30 * 86400000
+  )
     throw new ValidationError(
       "L’annonce source doit dater de moins de 30 jours pour un nouveau dépôt.",
     );
@@ -186,7 +197,9 @@ export function normalizeSubmission(
     id: randomUUID(),
     title: required(body.title, "Intitulé", 180),
     company: {
-      id: new URL(website).hostname.replace(/^www\./, ""),
+      id: website
+        ? new URL(website).hostname.replace(/^www\./, "")
+        : companyIdentity,
       name: companyName,
       website,
       sector: text(body.sector) || null,
@@ -280,6 +293,7 @@ export function publicOffer(offer, now = Date.now()) {
     !domains.includes(offer.domain) ||
     !contracts.includes(offer.contract) ||
     ["expired", "withdrawn"].includes(offer.status) ||
+    (offer.sourceExpiresAt && Date.parse(offer.sourceExpiresAt) <= now) ||
     Date.parse(offer.expiresAt) + 86400000 <= now
   )
     return null;

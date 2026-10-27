@@ -1,0 +1,9 @@
+# Données du catalogue embarqué
+
+`market-offers.json` contient un instantané daté d’offres d’alternance renvoyées par l’API La Bonne Alternance, après filtrage. Ce fichier est une donnée de marché, pas une licence libre accordée par le code du projet.
+
+Source et conditions : https://api.apprentissage.beta.gouv.fr/fr/explorer/recherche-offre et https://api.apprentissage.beta.gouv.fr/fr/cgu . L’usage annoncé par ce fournisseur est gratuit et réservé aux usages non lucratifs ; la revente des données ou la facturation de leur accès n’est pas autorisée. La présence de ce fichier dans le dépôt ne confère aucun droit commercial supplémentaire. Ne pas activer une monétisation de ces données sans accord adapté.
+
+L’instantané conserve la date de publication originale, la date de collecte et le lien de candidature fourni par la source. Les offres anciennes ont été incluses à la demande explicite du responsable, uniquement lorsque leur statut API était actif et leur échéance source future. Elles sont affichées « Offre ancienne — disponibilité à confirmer », sans date de vérification inventée et sans badge humain de vérification. Les données de test/sandbox, les annonces d’écoles détectées, les candidatures spontanées et les données France Travail sont exclues. Cela ne garantit ni l’exhaustivité ni la disponibilité au moment où le candidat lit la fiche : le site source fait foi.
+
+Aucun contact personnel, clé API ou jeton privé n’est exporté. Les e-mails et numéros de téléphone contenus dans le texte sont retirés ; la candidature passe par le lien source. Si une offre est retirée par la source, la retirer aussi du catalogue et de cet instantané. La base déployée masque automatiquement toute offre passée à son échéance source. Avec `LBA_API_KEY` sur le serveur, la collecte se relance au démarrage puis toutes les trois heures par défaut ; sans clé, l’instantané daté sert de catalogue initial sans prétendre être actualisé en direct.
