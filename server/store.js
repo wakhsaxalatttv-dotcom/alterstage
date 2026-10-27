@@ -1,3 +1,4 @@
+import { publicationCutoff } from "../shared/freshness.js";
 import { DatabaseSync } from "node:sqlite";
 import { mkdirSync, readFileSync, existsSync, chmodSync } from "node:fs";
 import path from "node:path";
@@ -32,6 +33,7 @@ export class OfferStore {
     );
     this.cache = new QueryCache();
     this.version = this.db.prepare("PRAGMA data_version").get().data_version;
+    this.publicationDay = publicationCutoff();
     try {
       this.migrateLegacy(folder);
       this.seedDirectory();
@@ -57,9 +59,11 @@ export class OfferStore {
   }
   freshCache() {
     const version = this.db.prepare("PRAGMA data_version").get().data_version;
-    if (version !== this.version) {
+    const publicationDay = publicationCutoff();
+    if (version !== this.version || publicationDay !== this.publicationDay) {
       this.cache.clear();
       this.version = version;
+      this.publicationDay = publicationDay;
     }
   }
   migrateLegacy(folder) {
@@ -303,8 +307,14 @@ export class OfferStore {
   }
   publicConditions() {
     return {
-      sql: `moderation='approved' AND status NOT IN ('expired','withdrawn') AND expires_at>? AND domain IN (${placeholders(domains)}) AND contract IN (${placeholders(contracts)})`,
-      params: [Date.now(), ...domains, ...contracts],
+      sql: `moderation='approved' AND status NOT IN ('expired','withdrawn') AND expires_at>? AND published_at>=? AND published_at<=? AND domain IN (${placeholders(domains)}) AND contract IN (${placeholders(contracts)})`,
+      params: [
+        Date.now(),
+        publicationCutoff(),
+        new Date().toISOString(),
+        ...domains,
+        ...contracts,
+      ],
     };
   }
   async query(filters = {}) {

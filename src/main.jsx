@@ -150,7 +150,7 @@ function App() {
   const scopedFavorites = selectOffers(favorites, defaultFilters);
   const visible = page === "favorites" ? scopedFavorites : results;
   const titles = {
-    spotted: "Offres repérées",
+    spotted: "Offres repérées récentes",
     favorites: "Mes favoris",
     alerts: "Mes alertes",
     employers: "Déposer une annonce",
@@ -256,7 +256,7 @@ function App() {
             <p>
               Stages et alternances techniques & informatiques en France.
               <br className="desktop" /> Des entreprises, des sources et des
-              dates visibles.
+              dates visibles. Offres de 45 jours maximum.
             </p>
             <div className="hero-badges">
               <span>

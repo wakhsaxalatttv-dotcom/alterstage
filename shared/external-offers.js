@@ -1,3 +1,4 @@
+import { chemistryReferences } from "./chemistry-references.js";
 import { employerReferences } from "./employer-references.js";
 // Synthèses éditoriales originales : les annonces complètes restent chez l'employeur.
 const entries = [
@@ -171,4 +172,8 @@ const safranReferences = entries.map(
   }),
 );
 
-export const externalOffers = [...safranReferences, ...employerReferences];
+export const externalOffers = [
+  ...safranReferences,
+  ...employerReferences,
+  ...chemistryReferences,
+];

@@ -97,33 +97,6 @@ export const employerReferences = [
       "Entité qui accompagne les métiers de VINCI Energies dans leurs systèmes d’information, notamment ERP, BI, applications et plateformes numériques.",
   },
   {
-    id: "vinci-44214680064",
-    title: "Stage analyste développeur applications Java",
-    company: "VINCI Energies Systèmes d’Information",
-    city: "Le Mans",
-    region: "Pays de la Loire",
-    publishedAt: "2026-09-07",
-    sourceMetadataDate: "2026-10-25",
-    domain: "Développement logiciel & web",
-    education: [],
-    sourceUrl:
-      "https://jobs.vinci.com/fr/emploi/le-mans/stage-analyste-developpeur-application-java-f-h/1440/44214680064",
-    duration:
-      "4 à 6 mois selon l’en-tête ; la description précise un minimum de 4 mois",
-    summary:
-      "Ce stage rejoint l’équipe chargée des applications web et mobiles utilisées dans le groupe. Le stagiaire participe à la réalisation d’applications Java et aux tests, à partir des besoins exprimés par les utilisateurs. Il est aussi amené à comparer les solutions techniques possibles. Le poste s’adresse à une personne en fin d’études spécialisée dans le développement ; le niveau exact de diplôme n’est pas précisé dans le texte consulté.",
-    missions: [
-      "Analyser les demandes fonctionnelles et proposer les solutions techniques adaptées.",
-      "Développer les applications confiées à l’équipe web et mobile.",
-      "Préparer et exécuter les tests associés aux développements.",
-    ],
-    profile:
-      "Dernière année d’une école spécialisée en développement informatique. Java est demandé, avec Spring Boot et Hibernate cités en exemples. SQL, CSS et Angular font partie des connaissances attendues ; les outils IA d’aide au développement sont un plus. La source mentionne l’anglais technique, l’analyse, l’autonomie et le travail en équipe.",
-    technologies: ["Java", "Spring Boot", "Hibernate", "SQL", "CSS", "Angular"],
-    companySummary:
-      "Entité de systèmes d’information de VINCI Energies ; le poste concerne les applications web et mobiles internes.",
-  },
-  {
     id: "vinci-44726757696",
     title: "Stage PFE — applications et intégration de données",
     company: "ETF",

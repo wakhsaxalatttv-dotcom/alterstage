@@ -27,9 +27,7 @@ export function ExternalOffers() {
       <div className="external-heading">
         <div>
           <p className="eyebrow">DIRECTEMENT CHEZ L’EMPLOYEUR</p>
-          <h2 id="external-title">
-            Stages repérés sur les sites d’entreprises
-          </h2>
+          <h2 id="external-title">Offres repérées récentes</h2>
         </div>
         <span role="status">
           {offers.length} lien{offers.length > 1 ? "s" : ""} avec vos filtres
@@ -41,6 +39,19 @@ export function ExternalOffers() {
         de chaque page. Disponibilité à confirmer sur le site employeur ; pas de
         vérification automatique.
       </p>
+      <div className="external-actions">
+        <button
+          className="secondary"
+          onClick={() =>
+            setFilters({
+              ...defaultFilters,
+              domain: "Chimie, procédés & matériaux",
+            })
+          }
+        >
+          Chimie & matériaux
+        </button>
+      </div>
       <div className="reference-filters">
         <label className="field">
           Métier, entreprise ou domaine
@@ -94,8 +105,8 @@ export function ExternalOffers() {
         Effacer les filtres
       </button>
       <p className="external-date">
-        Tri : publication la plus récente. Les annonces de plus de 30 jours
-        portent un avertissement.
+        Tri : publication la plus récente. Seules les offres de 45 jours maximum
+        sont affichées. Entre 31 et 45 jours, elles portent un avertissement.
       </p>
       {!offers.length && (
         <p className="local-note">

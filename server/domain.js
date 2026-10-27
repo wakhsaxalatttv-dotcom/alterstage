@@ -1,3 +1,4 @@
+import { isRecentPublication } from "../shared/freshness.js";
 import { domains, contracts } from "../shared/catalog.js";
 import { regions } from "../src/domain.js";
 import { randomUUID } from "node:crypto";
@@ -289,6 +290,7 @@ export function deduplicate(offers) {
 }
 export function publicOffer(offer, now = Date.now()) {
   if (
+    !isRecentPublication(offer.sourcePublishedAt || offer.publishedAt, now) ||
     offer.moderationStatus !== "approved" ||
     !domains.includes(offer.domain) ||
     !contracts.includes(offer.contract) ||

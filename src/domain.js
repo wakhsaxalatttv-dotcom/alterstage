@@ -1,3 +1,4 @@
+import { isRecentPublication } from "../shared/freshness.js";
 import { inScope, groupOf } from "../shared/catalog.js";
 export const regions = {
   "Auvergne-Rhône-Alpes": "01 03 07 15 26 38 42 43 63 69 73 74",
@@ -46,6 +47,7 @@ export function selectOffers(offers, filters, now = Date.now()) {
       .toLowerCase();
   return offers
     .filter(inScope)
+    .filter((offer) => isRecentPublication(offer.publishedAt, now))
     .filter((o) => !["expired", "withdrawn"].includes(o.status))
     .filter((o) => !o.expiresAt || Date.parse(o.expiresAt) + 86400000 > now)
     .filter(

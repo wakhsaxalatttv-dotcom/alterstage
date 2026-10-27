@@ -2,6 +2,8 @@ import { createHash } from "node:crypto";
 import { regions } from "../../src/domain.js";
 import { plainText } from "../enrichment.js";
 const romeDomains = {
+  H1503: "Chimie, procédés & matériaux",
+  H2301: "Chimie, procédés & matériaux",
   M1801: "Systèmes, réseaux & cloud",
   M1802: "Systèmes, réseaux & cloud",
   M1803: "Autres métiers informatiques",
@@ -43,7 +45,7 @@ export const lbaSource = {
   licenseUrl:
     "https://api.apprentissage.beta.gouv.fr/fr/explorer/recherche-offre",
   authorizationRef:
-    "Diffusion gratuite non lucrative selon les conditions de l’API ; offres actives anciennes acceptées explicitement par le responsable du projet.",
+    "Diffusion gratuite non lucrative selon les conditions de l’API ; publication limitée à 45 jours sur demande du responsable du projet.",
   includeOlderActive: true,
   publishUnverified: true,
 };
