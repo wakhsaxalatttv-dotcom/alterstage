@@ -1,3 +1,4 @@
+import { employerReferences } from "./employer-references.js";
 // Synthèses éditoriales originales : les annonces complètes restent chez l'employeur.
 const entries = [
   {
@@ -154,7 +155,7 @@ const entries = [
       "Conception, production, commercialisation et support de moteurs aéronautiques civils et militaires.",
   },
 ];
-export const externalOffers = entries.map(
+const safranReferences = entries.map(
   ({ company, city, region, path, ...entry }) => ({
     ...entry,
     id: `external-safran-${entry.id}`,
@@ -165,6 +166,9 @@ export const externalOffers = entries.map(
     lastVerifiedAt: null,
     sourceConsultedAt: "2026-10-27",
     sourceName: "Safran — site employeur",
+    companyWebsite: "https://www.safran-group.com/fr",
     sourceUrl: `https://www.safran-group.com/fr/offres/france/${path}`,
   }),
 );
+
+export const externalOffers = [...safranReferences, ...employerReferences];

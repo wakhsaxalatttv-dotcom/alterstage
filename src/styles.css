@@ -2410,3 +2410,62 @@ nav {
     padding: 18px;
   }
 }
+
+.reference-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 24px 0 18px;
+}
+.reference-filters .field {
+  margin: 0;
+}
+.reference-filters input {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: white;
+  font: inherit;
+}
+@media (max-width: 1000px) {
+  header {
+    height: auto;
+  }
+  .nav {
+    flex-wrap: wrap;
+    padding-top: 15px;
+    gap: 10px;
+  }
+  .nav nav {
+    order: 3;
+    flex-basis: 100%;
+    height: 48px;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .nav nav button:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .nav nav button:first-child span,
+  .nav nav .spotted-label {
+    display: inline;
+  }
+}
+@media (max-width: 700px) {
+  .reference-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .reference-filters > :first-child {
+    grid-column: 1 / -1;
+  }
+  .reference-filters .field,
+  .reference-filters select {
+    min-width: 0;
+    width: 100%;
+  }
+}

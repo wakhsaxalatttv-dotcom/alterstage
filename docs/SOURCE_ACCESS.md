@@ -28,3 +28,13 @@ L’API réserve la diffusion aux usages gratuits et non lucratifs. Respecter `c
 - data.gouv.fr : le jeu trouvé sur le baromètre de l’alternance du Rhône contient des statistiques, pas des annonces à transformer en postes.
 
 La présence d’une API ou d’une page publique ne vaut pas à elle seule autorisation de republication. Les offres d’origine France Travail restent exclues conformément au choix du projet.
+
+## Sélection éditoriale « Repérées »
+
+Dix références supplémentaires ont été consultées le 27 octobre 2026 sur **VINCI Jobs**, portail officiel du groupe. Elles concernent neuf entreprises ou entités (toutes rattachées au groupe VINCI) : Axians CC Lille, Omexom Conversion & Storage, VINCI Energies Systèmes d’Information (deux stages distincts), ETF, Enfrasys, Axians Services Infras Océan Indien, Sysoco UF, Cegelec Réunion Ascenseurs et VINCI Facilities IMD. Elles complètent les six références Safran dans l’onglet Repérées ; elles ne sont pas importées dans le catalogue API.
+
+Les liens exacts, dates, profils et synthèses originales figurent dans `shared/employer-references.js`. Chaque page présentait une description et un bouton de candidature lors de la consultation. Cela ne garantit pas que le recrutement est toujours ouvert : `status=to_verify` et `lastVerifiedAt=null` sont conservés. Aucune reproduction intégrale ni collecte automatique périodique des pages n’est activée ; les candidatures passent par les liens officiels.
+
+Plusieurs pages VINCI présentent une date `datePosted` structurée plus récente que la date affichée sous le titre. Nous conservons **la date visible plus ancienne** comme publication, y compris les dates de septembre 2026. La métadonnée distincte est conservée et expliquée dans la fiche ; elle ne rafraîchit pas l’offre et ne constitue pas une vérification. Les références anciennes portent l’avertissement de disponibilité à confirmer. Une annonce Actemium dont la date visible était le 18 septembre 2019 a été écartée, ainsi qu’une piste Citeos datée du 5 mai 2026.
+
+Les détails techniques, formations, durées et dates de début viennent des fiches consultées. Les informations absentes restent non précisées. Les démarches ISO citées chez Cegelec ne sont pas présentées comme des certifications acquises. Aucun contact personnel, logo ni description complète n’a été collecté pour publication.

@@ -150,6 +150,7 @@ function App() {
   const scopedFavorites = selectOffers(favorites, defaultFilters);
   const visible = page === "favorites" ? scopedFavorites : results;
   const titles = {
+    spotted: "Offres repérées",
     favorites: "Mes favoris",
     alerts: "Mes alertes",
     employers: "Déposer une annonce",
@@ -157,6 +158,8 @@ function App() {
     moderation: "Modération du catalogue",
   };
   const subtitles = {
+    spotted:
+      "Des liens employeurs et des synthèses détaillées pour élargir vos recherches.",
     favorites:
       "Les offres techniques et informatiques que vous gardez de côté, sur cet appareil.",
     alerts: "Vos recherches enregistrées, à retrouver à chaque visite.",
@@ -198,6 +201,15 @@ function App() {
               onClick={() => navigate("search")}
             >
               Les offres
+            </button>
+            <button
+              aria-label="Repérées"
+              className={page === "spotted" ? "selected" : ""}
+              aria-current={page === "spotted" ? "page" : undefined}
+              onClick={() => navigate("spotted")}
+            >
+              <ExternalLink size={17} />{" "}
+              <span className="spotted-label">Repérées</span>
             </button>
             <button
               aria-label="Mes favoris"
@@ -297,7 +309,13 @@ function App() {
               </button>
             </form>
             <p>
-              <a href="#offres-reperees">
+              <a
+                href="#reperees"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("spotted");
+                }}
+              >
                 Voir les stages repérés chez les entreprises et leurs
                 descriptions détaillées ↓
               </a>
@@ -340,6 +358,8 @@ function App() {
           <Suspense fallback={<Skeletons />}>
             <EmployerForm />
           </Suspense>
+        ) : page === "spotted" ? (
+          <ExternalOffers />
         ) : page === "companies" ? (
           <Companies
             offers={offers}
@@ -674,7 +694,6 @@ function App() {
             </section>
           </div>
         )}
-        {page === "search" && <ExternalOffers filters={filters} />}
         {page === "search" && (
           <section className="bottom-banner">
             <div className="bottom-icon">

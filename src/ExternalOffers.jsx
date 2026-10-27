@@ -1,12 +1,23 @@
 import React, { useState } from "react";
 import { ExternalLink, MapPin } from "lucide-react";
-import { Dialog } from "./components";
-import { selectOffers, freshness } from "./domain";
+import { Dialog, Filter } from "./components";
+import { selectOffers, freshness, defaultFilters, regions } from "./domain";
+import { educationLevels } from "../shared/catalog";
 import { externalOffers } from "../shared/external-offers";
-const date = (value) => new Date(value).toLocaleDateString("fr-FR");
-export function ExternalOffers({ filters }) {
+const date = (value) =>
+  value ? new Date(value).toLocaleDateString("fr-FR") : "Non fournie";
+export function ExternalOffers() {
   const [selected, setSelected] = useState(null);
+  const [filters, setFilters] = useState(defaultFilters);
+  const change = (key, value) =>
+    setFilters((previous) => ({ ...previous, [key]: value }));
   const offers = selectOffers(externalOffers, filters);
+  const domains = [
+    ...new Set(externalOffers.map((offer) => offer.domain)),
+  ].sort();
+  const technologies = [
+    ...new Set(externalOffers.flatMap((offer) => offer.technologies)),
+  ].sort();
   return (
     <section
       className="external-offers"
@@ -20,19 +31,76 @@ export function ExternalOffers({ filters }) {
             Stages repérés sur les sites d’entreprises
           </h2>
         </div>
-        <span>
+        <span role="status">
           {offers.length} lien{offers.length > 1 ? "s" : ""} avec vos filtres
         </span>
       </div>
       <p>
         Sélection éditoriale distincte du catalogue synchronisé. Synthèses
-        rédigées d’après les annonces officielles, consultées le 27/10/2026.
-        Disponibilité à confirmer sur le site employeur ; pas de vérification
-        automatique.
+        rédigées d’après les annonces officielles, avec la date de consultation
+        de chaque page. Disponibilité à confirmer sur le site employeur ; pas de
+        vérification automatique.
+      </p>
+      <div className="reference-filters">
+        <label className="field">
+          Métier, entreprise ou domaine
+          <input
+            type="search"
+            value={filters.query}
+            onChange={(event) => change("query", event.target.value)}
+            placeholder="Ex. réseaux, Axians, maintenance…"
+          />
+        </label>
+        <Filter
+          label="Région"
+          value={filters.region}
+          onChange={(value) => change("region", value)}
+          options={Object.keys(regions)}
+          placeholder="Toutes les régions"
+        />
+        <Filter
+          label="Domaine"
+          value={filters.domain}
+          onChange={(value) => change("domain", value)}
+          options={domains}
+          placeholder="Tous les domaines"
+        />
+        <Filter
+          label="Technologie"
+          value={filters.tech}
+          onChange={(value) => change("tech", value)}
+          options={technologies}
+          placeholder="Toutes les technologies"
+        />
+        <Filter
+          label="Niveau d’études"
+          value={filters.education}
+          onChange={(value) => change("education", value)}
+          options={educationLevels}
+          placeholder="Tous les niveaux"
+        />
+        <Filter
+          label="Publication"
+          value={filters.age}
+          onChange={(value) => change("age", value)}
+          options={[
+            { value: "7", label: "7 derniers jours" },
+            { value: "30", label: "30 derniers jours" },
+          ]}
+          placeholder="Toutes les dates"
+        />
+      </div>
+      <button className="secondary" onClick={() => setFilters(defaultFilters)}>
+        Effacer les filtres
+      </button>
+      <p className="external-date">
+        Tri : publication la plus récente. Les annonces de plus de 30 jours
+        portent un avertissement.
       </p>
       {!offers.length && (
         <p className="local-note">
-          Aucun lien repéré ne correspond aux filtres sélectionnés.
+          Aucun lien repéré ne correspond aux filtres sélectionnés. Essayez un
+          autre domaine ou effacez les filtres.
         </p>
       )}
       <div className="external-grid">
@@ -50,7 +118,7 @@ export function ExternalOffers({ filters }) {
               {offer.location.region}
             </p>
             <div className="tags">
-              <span>Stage</span>
+              <span>{offer.contract}</span>
               {offer.education.map((level) => (
                 <span key={level}>{level}</span>
               ))}
@@ -58,6 +126,9 @@ export function ExternalOffers({ filters }) {
             <p>{offer.summary}</p>
             <p className="external-date">
               Publication source : {date(offer.publishedAt)}
+              <br />
+              Page consultée : {date(offer.sourceConsultedAt)} ·{" "}
+              {offer.sourceName}
             </p>
             <div className="external-actions">
               <button className="secondary" onClick={() => setSelected(offer)}>
@@ -102,26 +173,50 @@ export function ExternalOffers({ filters }) {
           </div>
           <h3>L’entreprise</h3>
           <p>{selected.companySummary}</p>
-          <a
-            href="https://www.safran-group.com/fr"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Site officiel du groupe Safran <ExternalLink size={14} />
-          </a>
+          {selected.companyWebsite && (
+            <a
+              href={selected.companyWebsite}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Site officiel du groupe <ExternalLink size={14} />
+            </a>
+          )}
           <h3>Conditions et provenance</h3>
           <dl>
             <dt>Contrat</dt>
-            <dd>Stage</dd>
-            <dt>Publication fournie par la source</dt>
+            <dd>{selected.contract}</dd>
+            <dt>Durée</dt>
+            <dd>{selected.duration || "Non précisée dans cette synthèse"}</dd>
+            <dt>Début</dt>
+            <dd>
+              {selected.startDateLabel || "Non précisé dans cette synthèse"}
+            </dd>
+            <dt>Rémunération</dt>
+            <dd>
+              {selected.compensation || "Non précisée dans cette synthèse"}
+            </dd>
+            <dt>Publication affichée par la source</dt>
             <dd>{date(selected.publishedAt)}</dd>
+            {selected.sourceMetadataDate &&
+              selected.sourceMetadataDate !== selected.publishedAt && (
+                <>
+                  <dt>Date dans les métadonnées de la source</dt>
+                  <dd>
+                    {date(selected.sourceMetadataDate)}. La date de publication
+                    visible, plus ancienne, est conservée pour le tri et les
+                    filtres.
+                  </dd>
+                </>
+              )}
             <dt>Page consultée</dt>
             <dd>{date(selected.sourceConsultedAt)}</dd>
             <dt>Dernière vérification de disponibilité</dt>
             <dd>Non effectuée</dd>
-            <dt>Durée, début, rémunération et contact RH</dt>
+            <dt>Contact RH</dt>
             <dd>
-              Non précisés dans cette synthèse ; consulter l’annonce officielle.
+              Aucun contact publié dans cette synthèse ; candidature sur le site
+              employeur.
             </dd>
             <dt>Source</dt>
             <dd>{selected.sourceName}</dd>
@@ -132,7 +227,8 @@ export function ExternalOffers({ filters }) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Voir l’annonce et candidater chez Safran <ExternalLink size={17} />
+            Voir l’annonce et candidater chez l’employeur{" "}
+            <ExternalLink size={17} />
           </a>
         </Dialog>
       )}
