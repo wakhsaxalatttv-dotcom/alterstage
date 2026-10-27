@@ -36,6 +36,7 @@ const EmployerForm = lazy(() =>
 );
 import { request } from "./api";
 import { Companies } from "./Companies";
+import { ExternalOffers } from "./ExternalOffers";
 const Moderation = lazy(() =>
   import("./Moderation").then((m) => ({ default: m.Moderation })),
 );
@@ -295,6 +296,12 @@ function App() {
                 Rechercher <ArrowRight size={17} />
               </button>
             </form>
+            <p>
+              <a href="#offres-reperees">
+                Voir les stages repérés chez les entreprises et leurs
+                descriptions détaillées ↓
+              </a>
+            </p>
             <div className="mobile-filter">
               <button
                 onClick={() => openFilters(!filtersOpen)}
@@ -667,6 +674,7 @@ function App() {
             </section>
           </div>
         )}
+        {page === "search" && <ExternalOffers filters={filters} />}
         {page === "search" && (
           <section className="bottom-banner">
             <div className="bottom-icon">

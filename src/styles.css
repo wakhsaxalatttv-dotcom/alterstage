@@ -2320,3 +2320,93 @@ nav {
   max-width: 160px;
   text-align: right;
 }
+
+.external-offers {
+  margin: 36px 0;
+  padding-top: 28px;
+  border-top: 1px solid var(--border, #dce5df);
+  scroll-margin-top: 24px;
+}
+.external-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.external-heading h2 {
+  margin: 6px 0 12px;
+}
+.external-heading > span,
+.external-date {
+  color: #54665d;
+  font-size: 0.85rem;
+}
+.external-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+.external-card {
+  background: white;
+  border: 1px solid #dce5df;
+  border-radius: 16px;
+  padding: 24px;
+  min-width: 0;
+}
+.external-card h3 {
+  margin: 8px 0 14px;
+  line-height: 1.4;
+}
+.external-card h3 button {
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+.external-card p {
+  line-height: 1.65;
+}
+.external-card p svg {
+  vertical-align: middle;
+}
+.external-company {
+  font-weight: 650;
+  margin-bottom: 0;
+}
+.external-status {
+  display: inline-block;
+  background: #fff3d7;
+  color: #725018;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 0.78rem;
+}
+.external-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 18px;
+}
+.external-actions a,
+.external-apply {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.external-apply {
+  margin-top: 20px;
+}
+@media (max-width: 700px) {
+  .external-grid {
+    grid-template-columns: 1fr;
+  }
+  .external-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0;
+  }
+  .external-card {
+    padding: 18px;
+  }
+}
