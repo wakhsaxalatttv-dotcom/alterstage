@@ -12,7 +12,6 @@ import {
   X,
 } from "lucide-react";
 import { VerifiedBadge } from "./CatalogueParts";
-import { OfferVisual, offerColors } from "./OfferVisual";
 import { regionOf } from "./domain";
 const date = (value) =>
   value && !Number.isNaN(Date.parse(value))
@@ -72,8 +71,7 @@ export function Empty({ icon: Icon, title, text, action, label, secondary }) {
 }
 export function Offer({ offer: o, favorite, toggle, details, company }) {
   return (
-    <article className="offer-card" style={offerColors(o.domain)}>
-      <OfferVisual domain={o.domain} />
+    <article className="offer-card">
       <div className="offer-top">
         <span className="company-avatar">
           {o.company.logoUrl ? (

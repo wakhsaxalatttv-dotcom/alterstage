@@ -1,4 +1,3 @@
-import { OfferVisual, offerColors } from "./OfferVisual";
 import React, { useState } from "react";
 import { ExternalLink, MapPin } from "lucide-react";
 import { Dialog, Filter } from "./components";
@@ -28,16 +27,16 @@ export function ExternalOffers() {
       <div className="external-heading">
         <div>
           <p className="eyebrow">DIRECTEMENT CHEZ L’EMPLOYEUR</p>
-          <h2 id="external-title">Offres repérées récentes</h2>
+          <h2 id="external-title">Sélection des entreprises</h2>
         </div>
         <span role="status">
           {offers.length} lien{offers.length > 1 ? "s" : ""} avec vos filtres
         </span>
       </div>
       <p>
-        Sélection éditoriale distincte du catalogue synchronisé. Synthèses
-        rédigées d’après les annonces officielles. Disponibilité à confirmer sur
-        le site employeur ; pas de vérification automatique.
+        Annonces issues des sites d’entreprises. Retrouvez les missions dans la
+        fiche détaillée et candidatez sur le site officiel, où la disponibilité
+        reste à confirmer.
       </p>
       <div className="external-actions">
         <button
@@ -116,13 +115,7 @@ export function ExternalOffers() {
       )}
       <div className="external-grid">
         {offers.map((offer) => (
-          <article
-            className="external-card"
-            key={offer.id}
-            style={offerColors(offer.domain)}
-          >
-            <OfferVisual domain={offer.domain} />
-            <span className="external-status">Annonce employeur</span>
+          <article className="external-card" key={offer.id}>
             <p className="external-company">{offer.company.name}</p>
             <h3>
               <button onClick={() => setSelected(offer)}>{offer.title}</button>
@@ -137,7 +130,7 @@ export function ExternalOffers() {
                 <span key={level}>{level}</span>
               ))}
             </div>
-            <p>{offer.summary}</p>
+            <p className="external-summary">{offer.summary}</p>
             <p className="external-date">
               Publication source : {date(offer.publishedAt)}
             </p>

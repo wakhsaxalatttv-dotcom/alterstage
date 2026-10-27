@@ -235,46 +235,16 @@ function App() {
       {page === "search" && (
         <section className="hero">
           <div className="wrap hero-content">
-            <div className="eyebrow">
-              <span /> LE BON DÉPART, À LA BONNE SOURCE
-            </div>
+            <div className="eyebrow">STAGES ET ALTERNANCES EN FRANCE</div>
             <h1>
-              Votre avenir mérite
+              Stages et alternances
               <br />
-              des offres <span>fraîches.</span>
-              <svg viewBox="0 0 170 12" aria-hidden="true">
-                <path d="M3 9 Q85 -3 167 7" />
-              </svg>
+              pour les métiers techniques.
             </h1>
             <p>
-              Stages et alternances techniques & informatiques en France.
-              <br className="desktop" /> Des entreprises, des sources et des
-              dates visibles. Offres de 45 jours maximum.
+              Informatique, réseaux, industrie et chimie. Trouvez une offre et
+              candidatez directement auprès de l’employeur.
             </p>
-            <div className="hero-badges">
-              <span>
-                <Check size={15} /> Technique & informatique
-              </span>
-              <span>
-                <Check size={15} /> Accès gratuit
-              </span>
-              <span>
-                <Check size={15} /> La source, toujours
-              </span>
-            </div>
-            <figure className="career-banner">
-              <img
-                src="/images/careers.webp"
-                alt="Illustration des métiers : laboratoire de chimie, électronique et développement informatique"
-                width="2056"
-                height="765"
-                fetchPriority="high"
-                decoding="async"
-              />
-              <figcaption>
-                Imaginez votre prochain métier · Visuel d’illustration
-              </figcaption>
-            </figure>
           </div>
         </section>
       )}
@@ -688,7 +658,7 @@ function App() {
               <Bell size={26} />
             </div>
             <div>
-              <h2>Votre recherche ne s’arrête pas ici.</h2>
+              <h2>Retrouvez vos critères de recherche.</h2>
               <p>
                 Enregistrez vos critères et retrouvez-les à votre prochaine
                 visite.
@@ -706,7 +676,7 @@ function App() {
       <footer className="wrap">
         <div className="footer-brand">
           <Leaf size={18} /> offres fraîches{" "}
-          <span>Un premier pas vers la suite.</span>
+          <span>Stages et alternances en France.</span>
         </div>
         <div>
           <button onClick={() => setModal({ type: "sources" })}>

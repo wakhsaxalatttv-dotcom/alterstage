@@ -42,16 +42,7 @@ try {
     true,
   );
   assert.equal(await section.locator(".verified-badge").count(), 0);
-  const colors = await section
-    .locator("article")
-    .evaluateAll((cards) => [
-      ...new Set(
-        cards.map((card) =>
-          getComputedStyle(card).getPropertyValue("--offer-accent"),
-        ),
-      ),
-    ]);
-  assert.ok(colors.length >= 3);
+  assert.equal(await section.locator(".sector-visual").count(), 0);
   assert.doesNotMatch(
     await section.innerText(),
     /Offre ancienne|Dernière vérification/,

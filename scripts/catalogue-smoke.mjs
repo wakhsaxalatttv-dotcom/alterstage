@@ -64,10 +64,7 @@ try {
       await page.locator(".offer-card").first().innerText(),
       /Offre ancienne|Dernière vérification/,
     );
-    await page.waitForFunction(() => {
-      const image = document.querySelector(".career-banner img");
-      return image?.complete && image.naturalWidth > 0;
-    });
+    assert.equal(await page.locator(".career-banner").count(), 0);
     assert.ok(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

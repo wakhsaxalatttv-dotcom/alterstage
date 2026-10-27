@@ -88,4 +88,4 @@ Pour une extension future, Adzuna demande un `app_id` et une `app_key` (https://
 
 ### Présentation des annonces
 
-Les cartes et fiches affichent la date de publication, sans les anciens encarts de fraîcheur ni les lignes de vérification non effectuée. La limite de 45 jours continue de s’appliquer automatiquement ; aucune vérification n’est inventée. Les couleurs et pictogrammes distinguent les domaines et ne représentent pas une certification. Le bandeau `public/images/careers.webp` est une illustration générée pour le site, sans lien avec un employeur ou un lieu réel, encodée en WebP pour limiter son poids.
+Les cartes et fiches affichent la date de publication, sans les anciens encarts de fraîcheur ni les lignes de vérification non effectuée. La limite de 45 jours continue de s’appliquer automatiquement ; aucune vérification n’est inventée. La présentation privilégie le bleu marine et le blanc, des cartes sobres, une typographie lisible et des actions de candidature visibles. Aucun visuel généré ni bandeau décoratif n’est utilisé.
