@@ -85,3 +85,7 @@ La règle partagée `shared/freshness.js` exclut de l’affichage toute publicat
 La clé LBA existante suffit pour le connecteur actuel, désormais étendu aux codes ROME H1503 (laboratoire d’analyse industrielle) et H2301 (production chimique/pharmaceutique). La collecte du 27 octobre n’a fourni aucune nouvelle offre chimie éligible ; les quinze nouveaux stages sont des références éditoriales officielles, sans flux automatique. Aucune clé n’est nécessaire pour ces liens publics.
 
 Pour une extension future, Adzuna demande un `app_id` et une `app_key` (https://developer.adzuna.com/), sous réserve des conditions de diffusion et d’un connecteur à développer. Les employeurs et logiciels de recrutement peuvent aussi fournir un flux autorisé ou un accès API : il n’existe pas de clé universelle donnant accès à toutes les annonces des entreprises ou de LinkedIn. Ne jamais transmettre de secrets dans le chat : les configurer côté serveur et dans Render uniquement après choix de la source.
+
+### Présentation des annonces
+
+Les cartes et fiches affichent la date de publication, sans les anciens encarts de fraîcheur ni les lignes de vérification non effectuée. La limite de 45 jours continue de s’appliquer automatiquement ; aucune vérification n’est inventée. Les couleurs et pictogrammes distinguent les domaines et ne représentent pas une certification. Le bandeau `public/images/careers.webp` est une illustration générée pour le site, sans lien avec un employeur ou un lieu réel, encodée en WebP pour limiter son poids.

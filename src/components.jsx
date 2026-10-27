@@ -12,7 +12,8 @@ import {
   X,
 } from "lucide-react";
 import { VerifiedBadge } from "./CatalogueParts";
-import { regionOf, freshness } from "./domain";
+import { OfferVisual, offerColors } from "./OfferVisual";
+import { regionOf } from "./domain";
 const date = (value) =>
   value && !Number.isNaN(Date.parse(value))
     ? new Date(value).toLocaleDateString("fr-FR", {
@@ -71,7 +72,8 @@ export function Empty({ icon: Icon, title, text, action, label, secondary }) {
 }
 export function Offer({ offer: o, favorite, toggle, details, company }) {
   return (
-    <article className="offer-card">
+    <article className="offer-card" style={offerColors(o.domain)}>
+      <OfferVisual domain={o.domain} />
       <div className="offer-top">
         <span className="company-avatar">
           {o.company.logoUrl ? (
@@ -136,12 +138,7 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
       )}
       <div className="offer-meta">
         <span>Publiée le {date(o.publishedAt)}</span>
-        <span>{freshness(o)}</span>
       </div>
-      <p className="muted">
-        Dernière vérification :{" "}
-        {o.lastVerifiedAt ? date(o.lastVerifiedAt) : "non effectuée"}
-      </p>
       <div className="offer-bottom">
         <a href={o.sourceUrl} target="_blank" rel="noreferrer">
           {o.source} <ExternalLink size={13} />

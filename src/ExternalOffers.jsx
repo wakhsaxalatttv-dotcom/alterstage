@@ -1,7 +1,8 @@
+import { OfferVisual, offerColors } from "./OfferVisual";
 import React, { useState } from "react";
 import { ExternalLink, MapPin } from "lucide-react";
 import { Dialog, Filter } from "./components";
-import { selectOffers, freshness, defaultFilters, regions } from "./domain";
+import { selectOffers, defaultFilters, regions } from "./domain";
 import { educationLevels } from "../shared/catalog";
 import { externalOffers } from "../shared/external-offers";
 const date = (value) =>
@@ -35,9 +36,8 @@ export function ExternalOffers() {
       </div>
       <p>
         Sélection éditoriale distincte du catalogue synchronisé. Synthèses
-        rédigées d’après les annonces officielles, avec la date de consultation
-        de chaque page. Disponibilité à confirmer sur le site employeur ; pas de
-        vérification automatique.
+        rédigées d’après les annonces officielles. Disponibilité à confirmer sur
+        le site employeur ; pas de vérification automatique.
       </p>
       <div className="external-actions">
         <button
@@ -106,7 +106,7 @@ export function ExternalOffers() {
       </button>
       <p className="external-date">
         Tri : publication la plus récente. Seules les offres de 45 jours maximum
-        sont affichées. Entre 31 et 45 jours, elles portent un avertissement.
+        sont affichées.
       </p>
       {!offers.length && (
         <p className="local-note">
@@ -116,10 +116,13 @@ export function ExternalOffers() {
       )}
       <div className="external-grid">
         {offers.map((offer) => (
-          <article className="external-card" key={offer.id}>
-            <span className="external-status">
-              Lien externe · {freshness(offer)}
-            </span>
+          <article
+            className="external-card"
+            key={offer.id}
+            style={offerColors(offer.domain)}
+          >
+            <OfferVisual domain={offer.domain} />
+            <span className="external-status">Annonce employeur</span>
             <p className="external-company">{offer.company.name}</p>
             <h3>
               <button onClick={() => setSelected(offer)}>{offer.title}</button>
@@ -137,9 +140,6 @@ export function ExternalOffers() {
             <p>{offer.summary}</p>
             <p className="external-date">
               Publication source : {date(offer.publishedAt)}
-              <br />
-              Page consultée : {date(offer.sourceConsultedAt)} ·{" "}
-              {offer.sourceName}
             </p>
             <div className="external-actions">
               <button className="secondary" onClick={() => setSelected(offer)}>
@@ -163,9 +163,8 @@ export function ExternalOffers() {
             · {selected.location.region}
           </p>
           <p className="local-note">
-            Synthèse éditoriale d’après l’annonce officielle.{" "}
-            {freshness(selected)} : consultez la source pour confirmer la
-            disponibilité et les conditions.
+            Synthèse éditoriale d’après l’annonce officielle. Consultez la
+            source pour les conditions de candidature.
           </p>
           <h3>Le contexte du stage</h3>
           <p>{selected.summary}</p>
@@ -209,21 +208,6 @@ export function ExternalOffers() {
             </dd>
             <dt>Publication affichée par la source</dt>
             <dd>{date(selected.publishedAt)}</dd>
-            {selected.sourceMetadataDate &&
-              selected.sourceMetadataDate !== selected.publishedAt && (
-                <>
-                  <dt>Date dans les métadonnées de la source</dt>
-                  <dd>
-                    {date(selected.sourceMetadataDate)}. La date de publication
-                    visible, plus ancienne, est conservée pour le tri et les
-                    filtres.
-                  </dd>
-                </>
-              )}
-            <dt>Page consultée</dt>
-            <dd>{date(selected.sourceConsultedAt)}</dd>
-            <dt>Dernière vérification de disponibilité</dt>
-            <dd>Non effectuée</dd>
             <dt>Contact RH</dt>
             <dd>
               Aucun contact publié dans cette synthèse ; candidature sur le site

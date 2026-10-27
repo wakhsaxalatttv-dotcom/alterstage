@@ -42,6 +42,20 @@ try {
     true,
   );
   assert.equal(await section.locator(".verified-badge").count(), 0);
+  const colors = await section
+    .locator("article")
+    .evaluateAll((cards) => [
+      ...new Set(
+        cards.map((card) =>
+          getComputedStyle(card).getPropertyValue("--offer-accent"),
+        ),
+      ),
+    ]);
+  assert.ok(colors.length >= 3);
+  assert.doesNotMatch(
+    await section.innerText(),
+    /Offre ancienne|Dernière vérification/,
+  );
   const entries = externalOffers.filter((offer) =>
     offer.id.startsWith("vinci-"),
   );
@@ -74,11 +88,14 @@ try {
         .getAttribute("href"),
       "https://www.vinci.com",
     );
-    if (entry.sourceMetadataDate !== entry.publishedAt)
-      assert.match(
-        await dialog.innerText(),
-        /date de publication visible, plus ancienne/,
-      );
+    assert.match(
+      await dialog.innerText(),
+      /Publication affichée par la source/,
+    );
+    assert.doesNotMatch(
+      await dialog.innerText(),
+      /Dernière vérification|Offre ancienne/,
+    );
     await page.keyboard.press("Escape");
     await dialog.waitFor({ state: "detached" });
   }

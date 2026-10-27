@@ -18,15 +18,8 @@ import {
   RotateCcw,
   ChevronDown,
   CircleHelp,
-  BriefcaseBusiness,
 } from "lucide-react";
-import {
-  defaultFilters,
-  regions,
-  regionOf,
-  selectOffers,
-  freshness,
-} from "./domain";
+import { defaultFilters, regions, regionOf, selectOffers } from "./domain";
 import "@fontsource-variable/inter/wght.css";
 import "./styles.css";
 import { useLocal } from "./storage";
@@ -269,24 +262,19 @@ function App() {
                 <Check size={15} /> La source, toujours
               </span>
             </div>
-            <div className="hero-art" aria-hidden="true">
-              <div className="orbit o1" />
-              <div className="orbit o2" />
-              <div className="art-card">
-                <span className="art-icon">
-                  <BriefcaseBusiness size={27} />
-                </span>
-                <div className="art-line long" />
-                <div className="art-line" />
-                <span className="art-pill">
-                  <span /> Votre prochain chapitre
-                </span>
-              </div>
-              <span className="floating-leaf">
-                <Leaf size={27} />
-              </span>
-              <span className="spark">✦</span>
-            </div>
+            <figure className="career-banner">
+              <img
+                src="/images/careers.webp"
+                alt="Illustration des métiers : laboratoire de chimie, électronique et développement informatique"
+                width="2056"
+                height="765"
+                fetchPriority="high"
+                decoding="async"
+              />
+              <figcaption>
+                Imaginez votre prochain métier · Visuel d’illustration
+              </figcaption>
+            </figure>
           </div>
         </section>
       )}
@@ -802,12 +790,12 @@ function App() {
                   <Check /> Aucune annonce fictive dans le catalogue.
                 </li>
                 <li>
-                  <Check /> Une offre sans vérification datée reste « À vérifier
-                  ».
+                  <Check /> Les dates de publication viennent des sources
+                  officielles.
                 </li>
                 <li>
-                  <Check /> Les offres de plus de 30 jours portent la mention «
-                  Offre ancienne ».
+                  <Check /> Seules les offres de 45 jours maximum sont
+                  affichées.
                 </li>
                 <li>
                   <Check /> Aucun contact personnel collecté sur le web.
@@ -874,7 +862,6 @@ function App() {
                   {modal.offer.acceptedContracts?.join(" / ") ||
                     modal.offer.contract}
                 </span>
-                <span>{freshness(modal.offer)}</span>
               </div>
               <button
                 className="company-link"
@@ -910,33 +897,10 @@ function App() {
                 )}
                 <dt>Publication</dt>
                 <dd>{date(modal.offer.publishedAt)}</dd>
-                <dt>Première récupération</dt>
-                <dd>{date(modal.offer.firstRetrievedAt)}</dd>
-                {modal.offer.lastFetchedAt && (
-                  <>
-                    <dt>Collecte API</dt>
-                    <dd>
-                      {date(modal.offer.lastFetchedAt)} — disponibilité non
-                      revérifiée
-                    </dd>
-                  </>
-                )}
-                <dt>Dernière vérification</dt>
-                <dd>
-                  {modal.offer.lastVerifiedAt
-                    ? date(modal.offer.lastVerifiedAt)
-                    : "Non vérifiée"}
-                </dd>
                 <dt>Source</dt>
                 <dd>{modal.offer.source}</dd>
               </dl>
               <VerifiedBadge offer={modal.offer} />
-              {modal.offer.sourceUpdatedAt && (
-                <p className="muted">
-                  Mise à jour fournie par la source :{" "}
-                  {date(modal.offer.sourceUpdatedAt)}
-                </p>
-              )}
               <h3>Description du poste</h3>
               <p className="description">
                 {modal.offer.description ||

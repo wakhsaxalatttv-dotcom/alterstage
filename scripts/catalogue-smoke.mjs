@@ -60,6 +60,14 @@ try {
     assert.equal(await page.locator(".verified-badge").count(), 0);
     assert.equal(await page.locator(".source-active-note").count(), 0);
     assert.equal(await page.getByText(/Signalée active par/).count(), 0);
+    assert.doesNotMatch(
+      await page.locator(".offer-card").first().innerText(),
+      /Offre ancienne|Dernière vérification/,
+    );
+    await page.waitForFunction(() => {
+      const image = document.querySelector(".career-banner img");
+      return image?.complete && image.naturalWidth > 0;
+    });
     assert.ok(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

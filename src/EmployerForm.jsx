@@ -399,10 +399,7 @@ export function EmployerForm({ token, editorial = false, onSaved }) {
               <span>{preview.domain}</span>
             </div>
             <p className="description">{preview.description}</p>
-            <p>
-              Publication source : {preview.publishedAt || "Non fournie"} ·
-              Vérification : non effectuée
-            </p>
+            <p>Publication source : {preview.publishedAt || "Non fournie"}</p>
           </div>
         )}
       </form>
