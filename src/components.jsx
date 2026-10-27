@@ -134,12 +134,6 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
           ))}
         </div>
       )}
-      {o.sourcePolicyApproved && (
-        <p className="source-active-note">
-          Signalée active par {o.sourcePartner || o.sourceName} lors de la
-          collecte du {date(o.lastFetchedAt)}. Disponibilité à confirmer.
-        </p>
-      )}
       <div className="offer-meta">
         <span>Publiée le {date(o.publishedAt)}</span>
         <span>{freshness(o)}</span>

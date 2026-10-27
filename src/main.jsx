@@ -285,7 +285,7 @@ function App() {
               <span className="floating-leaf">
                 <Leaf size={27} />
               </span>
-              <span className="spark">✳</span>
+              <span className="spark">✦</span>
             </div>
           </div>
         </section>

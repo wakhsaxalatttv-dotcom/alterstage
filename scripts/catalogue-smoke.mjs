@@ -58,10 +58,8 @@ try {
       Math.min(expected, 20),
     );
     assert.equal(await page.locator(".verified-badge").count(), 0);
-    assert.equal(
-      await page.locator(".source-active-note").count(),
-      Math.min(expected, 20),
-    );
+    assert.equal(await page.locator(".source-active-note").count(), 0);
+    assert.equal(await page.getByText(/Signalée active par/).count(), 0);
     assert.ok(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
