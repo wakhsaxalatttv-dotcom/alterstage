@@ -1,30 +1,229 @@
-export const CONTRACTS = { E1: 'Stage', E2: 'Apprentissage', FS: 'Contrat de professionnalisation' };
+import { domains, contracts } from "../shared/catalog.js";
+import { regions } from "../src/domain.js";
+import { randomUUID } from "node:crypto";
+import { isIP } from "node:net";
+export class ValidationError extends Error {}
 export function safeUrl(value) {
-  try { const u = new URL(value); return ['https:', 'http:'].includes(u.protocol) ? u.href : null; } catch { return null; }
+  try {
+    const u = new URL(value);
+    if (
+      u.protocol !== "https:" ||
+      u.username ||
+      u.password ||
+      u.port ||
+      isIP(u.hostname) ||
+      !u.hostname.includes(".") ||
+      /(^|\.)(localhost|local|internal|test|invalid)$/.test(u.hostname)
+    )
+      return null;
+    return u.href;
+  } catch {
+    return null;
+  }
+}
+const text = (value, max = 200) =>
+  typeof value === "string" ? value.trim().slice(0, max) : "";
+function required(value, label, max = 200) {
+  if (
+    typeof value !== "string" ||
+    value.trim().length < 2 ||
+    value.length > max
+  )
+    throw new ValidationError(`${label} : valeur manquante ou trop longue.`);
+  return value.trim();
+}
+function link(value, label) {
+  const u = safeUrl(value);
+  if (!u)
+    throw new ValidationError(
+      `${label} : utilisez une URL HTTPS publique valide.`,
+    );
+  return u;
+}
+function isoDate(value, label, { future = false, optional = false } = {}) {
+  if (!value && optional) return null;
+  if (
+    !/^\d{4}-\d{2}-\d{2}$/.test(value || "") ||
+    Number.isNaN(Date.parse(value)) ||
+    new Date(value).toISOString().slice(0, 10) !== value
+  )
+    throw new ValidationError(`${label} : date invalide.`);
+  if (!future && Date.parse(value) > Date.now())
+    throw new ValidationError(`${label} ne peut pas être dans le futur.`);
+  return value;
+}
+export function normalizeSubmission(
+  body,
+  { now = new Date().toISOString() } = {},
+) {
+  if (!body || typeof body !== "object" || Array.isArray(body))
+    throw new ValidationError("Formulaire invalide.");
+  if (body.websiteTrap) throw new ValidationError("Dépôt refusé.");
+  if (body.consent !== true)
+    throw new ValidationError("Confirmez votre autorisation de publication.");
+  if (!domains.includes(body.domain) || !contracts.includes(body.contract))
+    throw new ValidationError(
+      "Seuls les stages et alternances techniques ou informatiques sont acceptés.",
+    );
+  if (!Object.hasOwn(regions, body.region))
+    throw new ValidationError("Choisissez une région française.");
+  const website = link(body.companyWebsite, "Site entreprise"),
+    sourceUrl = link(body.sourceUrl, "Annonce originale");
+  const sourceHost = new URL(sourceUrl).hostname;
+  if (
+    /(^|\.)(google\.[a-z.]+|bing\.com|francetravail\.(fr|io))$/.test(sourceHost)
+  ) {
+    throw new ValidationError(
+      "Utilisez l’annonce sur le site de l’entreprise ou son outil officiel de recrutement, pas un moteur de recherche ni France Travail.",
+    );
+  }
+  const companyName = required(body.companyName, "Entreprise", 120);
+  if (
+    /(?:^|\s)(?:école|ecole|campus|cfa|centre de formation)(?:\s|$)/i.test(
+      companyName,
+    )
+  )
+    throw new ValidationError(
+      "Les annonces d’écoles et organismes de formation ne sont pas acceptées.",
+    );
+  const contact = text(body.publicEmail, 180),
+    publicContacts = [];
+  if (contact) {
+    const [role, host, extra] = contact.toLowerCase().split("@");
+    const companyHost = new URL(website).hostname.replace(/^www\./, "");
+    if (
+      extra ||
+      !/^(recrutement|recruitment|careers|jobs|rh|talents?|stages?|alternance|recrute|emploi|recruiting|hr|contact)([-+_][a-z0-9]+)?$/.test(
+        role,
+      ) ||
+      !(host === companyHost || host?.endsWith("." + companyHost))
+    )
+      throw new ValidationError(
+        "Utilisez uniquement une adresse générique de recrutement sur le domaine de l’entreprise, jamais une adresse personnelle.",
+      );
+    const provenance = link(body.contactProvenance, "Page publique du contact");
+    const provenanceHost = new URL(provenance).hostname.replace(/^www\./, "");
+    if (
+      provenanceHost !== companyHost &&
+      !provenanceHost.endsWith("." + companyHost)
+    )
+      throw new ValidationError(
+        "La provenance du contact doit être une page de l’entreprise.",
+      );
+    if (body.contactConsent !== true)
+      throw new ValidationError(
+        "Confirmez que ce contact générique est public et autorisé.",
+      );
+    publicContacts.push({
+      type: "email",
+      value: contact.toLowerCase(),
+      provenance,
+    });
+  }
+  const publishedAt = isoDate(body.publishedAt, "Publication", {
+    optional: true,
+  });
+  if (publishedAt && Date.now() - Date.parse(publishedAt) > 30 * 86400000)
+    throw new ValidationError(
+      "L’annonce source doit dater de moins de 30 jours pour un nouveau dépôt.",
+    );
+  const expiresAt = isoDate(body.expiresAt, "Fin de validité", {
+    future: true,
+  });
+  if (
+    Date.parse(expiresAt) + 86400000 <= Date.now() ||
+    Date.parse(expiresAt) > Date.now() + 90 * 86400000
+  )
+    throw new ValidationError(
+      "La fin de validité doit être comprise entre aujourd’hui et 90 jours.",
+    );
+  return {
+    id: randomUUID(),
+    title: required(body.title, "Intitulé", 180),
+    company: {
+      id: new URL(website).hostname.replace(/^www\./, ""),
+      name: companyName,
+      website,
+      sector: text(body.sector) || null,
+      description: text(body.companyDescription, 2000) || null,
+      location: required(body.city, "Ville", 120),
+    },
+    contract: body.contract,
+    location: {
+      label: required(body.city, "Ville", 120),
+      region: body.region,
+      commune: null,
+    },
+    domain: body.domain,
+    education: body.education
+      ? [required(body.education, "Niveau de formation", 100)]
+      : [],
+    description: required(body.description, "Description", 12000),
+    missions: text(body.missions, 4000).split("\n").filter(Boolean),
+    skills: text(body.skills, 2000).split("\n").filter(Boolean),
+    duration: text(body.duration, 120) || null,
+    startsAt: body.startsAt
+      ? isoDate(body.startsAt, "Début", { future: true })
+      : null,
+    sourceUrl,
+    applicationUrl: link(body.applicationUrl || body.sourceUrl, "Candidature"),
+    source:
+      body.origin === "editorial"
+        ? "Site officiel de l’entreprise"
+        : "Dépôt entreprise — identité à valider",
+    origin: body.origin === "editorial" ? "editorial" : "employer",
+    publishedAt,
+    firstRetrievedAt: now,
+    lastVerifiedAt: null,
+    status: "to_verify",
+    moderationStatus: "pending",
+    expiresAt,
+    publicContacts,
+    sponsored: false,
+    submittedAt: now,
+  };
+}
+const clean = (s) =>
+  (s || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+export function duplicateOf(a, b) {
+  const canon = (value) => {
+    const u = new URL(value);
+    u.hash = "";
+    for (const key of [...u.searchParams.keys()])
+      if (key.startsWith("utm_")) u.searchParams.delete(key);
+    return u.href.replace(/\/$/, "");
+  };
+  return (
+    a.id === b.id ||
+    canon(a.sourceUrl) === canon(b.sourceUrl) ||
+    [a.title, a.company.name, a.location.label].map(clean).join("|") ===
+      [b.title, b.company.name, b.location.label].map(clean).join("|")
+  );
 }
 export function deduplicate(offers) {
-  const ids = new Set(), signatures = new Set(), urls = new Set();
-  return offers.filter(o => {
-    const signature = [o.title, o.company.name, o.location.label].map(s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase()).join('|');
-    if (ids.has(o.id) || signatures.has(signature) || urls.has(o.sourceUrl)) return false;
-    ids.add(o.id); signatures.add(signature); urls.add(o.sourceUrl); return true;
-  });
+  return offers.reduce(
+    (all, o) => (all.some((x) => duplicateOf(x, o)) ? all : [...all, o]),
+    [],
+  );
 }
-// Retrieval proves that the API returned an offer; it does not verify that recruitment is still open.
-export function normalizeOffer(raw, retrievedAt) {
-  // Conservatively exclude identifiable education/training advertisers. Ambiguous records stay unverified.
-  const advertiser = raw.entreprise?.nom || '';
-  if (String(raw.secteurActivite || '').startsWith('85') || /\b(école|ecole|campus|cfa|centre de formation|organisme de formation)\b/i.test(advertiser)) return null;
-  const sourceUrl = safeUrl(raw.origineOffre?.urlOrigine) || safeUrl(raw.contact?.urlPostulation);
-  if (!raw.id || !raw.intitule || !raw.entreprise?.nom || !CONTRACTS[raw.typeContrat] || !sourceUrl) return null;
-  return {
-    id: `france-travail:${raw.id}`, title: raw.intitule,
-    company: { id: raw.entreprise.siret || raw.entreprise.nom.toLowerCase(), name: raw.entreprise.nom, sector: raw.secteurActiviteLibelle || null, website: safeUrl(raw.entreprise.url), location: raw.lieuTravail?.libelle || null },
-    contract: CONTRACTS[raw.typeContrat], location: {label: raw.lieuTravail?.libelle || null, commune: raw.lieuTravail?.commune || null, region: null},
-    domain: raw.romeLibelle || null, education: raw.formations?.map(f => f.niveauLibelle).filter(Boolean) || [],
-    sourceUrl, applicationUrl: safeUrl(raw.contact?.urlPostulation) || sourceUrl, source: 'France Travail',
-    publishedAt: raw.dateCreation || null, firstRetrievedAt: retrievedAt, lastVerifiedAt: null, status: 'to_verify',
-    description: raw.description || null, skills: raw.competences?.map(c => c.libelle).filter(Boolean) || [], missions: [],
-    duration: raw.dureeTravailLibelle || null, startsAt: null, publicContacts: [], sponsored: false,
-  };
+export function publicOffer(offer, now = Date.now()) {
+  if (
+    offer.moderationStatus !== "approved" ||
+    !domains.includes(offer.domain) ||
+    !contracts.includes(offer.contract) ||
+    ["expired", "withdrawn"].includes(offer.status) ||
+    Date.parse(offer.expiresAt) + 86400000 <= now
+  )
+    return null;
+  // A dated manual review expires after seven days unless an editor rechecks it.
+  const stillVerified =
+    offer.lastVerifiedAt &&
+    now - Date.parse(offer.lastVerifiedAt) <= 7 * 86400000;
+  const { moderationStatus, reviewNote, ...safe } = offer;
+  return { ...safe, status: stillVerified ? "active" : "to_verify" };
 }

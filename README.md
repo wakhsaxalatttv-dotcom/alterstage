@@ -1,15 +1,57 @@
-# Offres Fraîches
+# Offres Fraîches — technique & informatique
 
-Première version mobile-first d’un catalogue français de stages et alternances. Projet initial vide ; architecture React 19 + Vite, serveur Express, JavaScript ESM. Node.js 24 recommandé (support natif des fichiers `.env`). Aucun compte ni paiement.
+Application responsive de recherche de **stages et alternances en France**, uniquement pour les métiers techniques et informatiques. React 19 + Vite, API Express, Node.js **24 ou supérieur**. Recherche gratuite, aucun paiement. **France Travail a été retiré** ; aucune clé France Travail n’est nécessaire.
 
-## Installation et lancement
+## Voir l’application dans GitHub Codespaces
+
+Ouvrir la branche `offres-fraiches-v1`, puis **Code → Codespaces**. Dans le terminal :
 
 ```sh
-npm ci --cache /tmp/offres-npm-cache
+npm ci
+npm run setup:admin
 npm run dev
 ```
 
-Exécuter dans le dossier du dépôt. Vite utilise le port 5173 et relaie `/api` au serveur Express sur 3001. Ouvrir l’interface du serveur Vite dans votre environnement de développement. Sans `.env`, l’application démarre normalement avec un catalogue vide et « Source non configurée ».
+Ouvrir le port **5173** dans l’onglet **Ports**. `setup:admin` crée un jeton aléatoire dans `.env`, ignoré par Git, sans le montrer dans les logs et sans remplacer une clé existante. Garder ce fichier privé. Dans l’éditeur de Codespaces, ouvrir `.env` pour récupérer la valeur de `ADMIN_TOKEN` et la saisir dans l’écran **Modération** (lien en bas du site). Ne jamais envoyer cette valeur dans un chat, une capture ou GitHub. Cette clé locale ne sera pas copiée dans un autre Codespace : y relancer `setup:admin` si nécessaire.
+
+Vite relaie `/api` au serveur Express sur 3001. La clé est utilisée seulement côté serveur ; aucun préfixe `VITE_`. Les deux serveurs doivent tourner. Sans modération configurée, le catalogue démarre normalement mais les dépôts sont fermés avec un message explicite. Il n’y a pas de compte recruteur ni de validation automatique d’identité.
+
+## Parcours disponibles
+
+- Recherche combinée par mots-clés, région, famille **Technique / Informatique**, spécialité, formation, contrat et publication ; tri par publication décroissante.
+- Spécialités : développement, IA/data, cybersécurité, réseaux/cloud, support, embarqué, tests, maintenance industrielle, électrotechnique, électronique, automatismes, mécanique, énergie, BTP, télécoms, méthodes, aéronautique/naval, procédés/matériaux, métrologie, et autres métiers de ces deux familles.
+- Cartes détaillées, missions et compétences si fournies, fiche entreprise avec présentation autorisée, site et offres du catalogue, contacts publics avec provenance.
+- Favoris, alertes et signalements locaux au navigateur. Pas de notifications lorsque le navigateur est fermé, pas d’e-mail automatique, pas de transmission des signalements.
+- **Déposer une annonce** : formulaire entreprise, consentement, aperçu marqué brouillon, enregistrement serveur et référence de dépôt. L’annonce reste en attente et n’est pas visible aux candidats tant qu’elle n’est pas validée.
+- **Entreprises** : annuaire de pistes vers les sites d’entreprises et recherches Google ciblées. Ni partenariat, ni affirmation de postes disponibles. Les liens ne constituent pas des offres importées.
+- **Modération** : accès par jeton, annonces à valider / publiées / refusées / retirées, import éditorial manuel depuis une source autorisée, validation, revérification, rejet et retrait.
+
+## Ajouter des offres réelles depuis les sites d’entreprises
+
+1. Utiliser les liens de recherche de l’annuaire pour trouver un poste sur le site de l’employeur (ou son outil de recrutement officiel). Pas de copie d’extraits Google et pas de collecte automatisée.
+2. Ouvrir l’annonce originale : vérifier le contrat, le lieu en France, la date réelle, la spécialité technique/informatique, l’entreprise et la disponibilité. Si la date manque, ne pas l’inventer : le dépôt peut être enregistré mais ne pourra pas être publié.
+3. Vérifier l’autorisation de republication du texte et des données (accord de l’entreprise ou conditions de réutilisation applicables). Un accès public ou `robots.txt` ne vaut pas autorisation de réutilisation. Si elle n’est pas établie, conserver seulement une piste de recherche hors catalogue.
+4. Dans **Modération → Ajouter depuis une source**, saisir les informations autorisées et les URLs réelles. Le dépôt rejoint la file d’attente.
+5. Dans **À valider**, ouvrir les liens et contrôler les informations puis cocher les quatre vérifications. **Valider et publier** enregistre la date réelle de ce contrôle humain. Le formulaire ne prouve pas à lui seul l’identité du déposant ; le responsable doit la vérifier avant publication.
+
+Le serveur ne récupère aucune URL fournie par un visiteur : ni scraping, ni requête arbitraire vers des services internes. Les futures API/flux autorisés doivent être ajoutés via `SourceConnector` et passer par la même modération. L’annuaire initial contient des pistes connues (Thales, Schneider Electric, Safran, Capgemini, Airbus, VINCI, EDF), sans reprendre leur logo ou inventer une offre. Les pages n’ont pas pu être contrôlées lors de cette mise à jour : les requêtes Google/sites d’entreprises ont été bloquées par le proxy réseau. Aucun emploi ou contact n’a donc été ajouté artificiellement.
+
+### Contacts
+
+Seules les boîtes **génériques** de l’entreprise (recrutement, jobs, rh, careers…) sont acceptées, sur son domaine, avec une page officielle de provenance sur ce domaine et confirmation d’autorisation de diffusion. Les adresses personnelles et les domaines externes sont refusés. Le modérateur doit contrôler la page avant publication. Aucun e-mail n’est deviné, envoyé ni extrait d’une page web. Sans contact autorisé, seul le lien de candidature est proposé.
+
+## Fiabilité et conservation
+
+- Un dépôt crée `firstRetrievedAt` et `submittedAt` à l’heure du serveur, jamais une date de publication inventée. `publishedAt` reste celle fournie par l’annonce source. `lastVerifiedAt` reste nul jusqu’au contrôle humain.
+- La vérification expire après **7 jours** sans nouveau contrôle : statut « À vérifier ». Une publication de plus de **30 jours** porte « Offre ancienne ». Un nouveau dépôt de plus de 30 jours est refusé.
+- La date d’échéance interne (maximum 90 jours) est choisie par le déposant et n’est jamais présentée comme une fermeture fournie par la source. À cette échéance, l’offre est masquée. Retrait immédiat possible par le modérateur ; aucune détection automatique des fermetures externes.
+- Déduplication par URL canonique (paramètres `utm_` ignorés), identifiant, ou titre/entreprise/ville normalisés.
+- Seuls les domaines et contrats de la liste autorisée sont exposés par l’API, y compris après lecture du stockage. Les anciens favoris hors périmètre ne sont plus affichés.
+- Les favoris sont des copies locales possiblement obsolètes, signalées comme telles.
+
+Le stockage utilise `.local/offers.json` par défaut, écrit atomiquement et séquentiellement dans **un seul processus Node**. `DATA_DIR` permet de choisir un disque persistant. Les dates et dépôts survivent au redémarrage si ce disque est conservé. Le fichier n’est jamais servi par HTTP ni commité. Prévoir sauvegardes et procédure de suppression des dépôts refusés. Cette version ne convient pas à plusieurs instances concurrentes partageant le fichier : migrer vers une base transactionnelle avant mise à l’échelle.
+
+## Tests et production
 
 ```sh
 npm test
@@ -17,46 +59,26 @@ npm run build
 npm start
 ```
 
-En production, Express sert `dist` et `/api` sur `PORT` (3001 par défaut). Ne pas héberger seulement `dist` sans serveur API. Le proxy de développement suppose le port API 3001 ; si vous changez ce port, adapter la configuration du proxy. Pour installer, conserver le lockfile avec `npm ci`.
+Express sert `dist` et `/api` sur `PORT` (3001 par défaut). Ne pas héberger `dist` seul sur GitHub Pages : l’API et les dépôts nécessitent le serveur Node. Garder le lockfile avec `npm ci`. Les tests utilisent uniquement des entreprises fictives clairement identifiées dans des dossiers temporaires et ne remplissent pas le catalogue réel.
 
-## Fonctionnalités
+Pour Render ou un hébergeur Node :
 
-- Recherche texte et filtres combinables : région, domaine réellement reçu, niveau réellement reçu, type de contrat, date ; tri décroissant des dates connues.
-- Cartes, détail et fiche entreprise à partir des données reçues uniquement ; lien de source et candidature officielle.
-- Favoris, recherches/alertes et signalements dans `localStorage`, propres au navigateur et à l’origine du site. Aucun envoi d’e-mail ni notification en arrière-plan. Les signalements ne sont pas transmis ; un lien permet de contacter la source sur son site.
-- Filtres repliables sur mobile, dialogue natif avec gestion clavier, états de chargement/erreur/vide.
-- Aucun exemple fictif exposé dans l’application. Les données fictives de `test/` sont des fixtures isolées.
+- Branche : `offres-fraiches-v1` ; Node : `24` ; Build : `npm ci && npm run build` ; Start : `npm start`.
+- Configurer `ADMIN_TOKEN` dans les **secrets de l’hébergeur**, au moins 32 caractères aléatoires (générer localement avec `openssl rand -hex 32`). Ne pas copier le `.env` local dans le dépôt.
+- Configurer `DATA_DIR` sur un **disque persistant**. Un hébergement éphémère peut perdre tous les dépôts au prochain redémarrage/déploiement ; ne pas ouvrir les dépôts publics dans ce cas. L’offre gratuite de votre hébergeur ne fournit pas nécessairement de disque persistant.
+- Utiliser HTTPS. Le jeton de modération est un secret d’administration unique, saisi uniquement par le responsable ; il n’est pas stocké dans le navigateur. Remplacer par des comptes administrateurs avec rôles avant une utilisation à plusieurs.
+- Dépôts limités à cinq par heure par adresse vue par Express, corps limité à 40 ko, piège antispam, validation côté serveur. Derrière un proxy, l’adresse peut être commune à plusieurs visiteurs : prévoir une limitation adaptée au proxy de confiance et une protection antispam avant ouverture à grande échelle.
 
-## Activer France Travail
+## Modules
 
-1. Consulter [France Travail IO](https://francetravail.io/) et la documentation officielle de l’**API Offres d’emploi v2**. Créer une application et demander l’habilitation correspondante.
-2. Lire et accepter les conditions d’utilisation, la licence de réutilisation, les obligations d’attribution, de protection des données et les limites de requêtes applicables à votre accès. Vérifier l’autorisation de republier les offres partenaires. L’implémentation ne constitue pas une autorisation ni un conseil juridique.
-3. Copier `.env.example` vers `.env` localement, ou injecter les variables dans les paramètres sécurisés de l’hébergement : `FRANCE_TRAVAIL_CLIENT_ID` et `FRANCE_TRAVAIL_CLIENT_SECRET`. Ne jamais utiliser le préfixe `VITE_` pour un secret ni versionner `.env`.
-4. Autoriser les sorties HTTPS vers `entreprise.francetravail.fr` (OAuth) et `api.francetravail.io` (API). Redémarrer le serveur après modification des variables.
-5. Vérifier `GET /api/offers` et l’état de l’interface. Ne considérer la connexion comme validée qu’après une réponse authentifiée réussie. Les erreurs OAuth/réseau renvoient un état d’erreur sans secret au client.
+- `src/main.jsx` : écrans, filtres, favoris et alertes.
+- `src/EmployerForm.jsx` : dépôt entreprise et import éditorial, aperçu et reçu.
+- `src/Moderation.jsx` : accès administrateur et workflow de publication.
+- `src/Companies.jsx` : annuaire de pistes et entreprises du catalogue.
+- `src/components.jsx`, `src/styles.css`, `src/api.js`, `src/storage.js`, `src/domain.js` : UI et logique partagées.
+- `shared/catalog.js` : familles, spécialités, contrats et annuaire.
+- `server/app.js`, `server/store.js`, `server/domain.js` : routes, authentification, validation et persistance.
+- `server/models.d.ts` : modèle et interfaces d’évolution.
+- `test/` : tests unitaires et intégration HTTP.
 
-Le connecteur utilise OAuth client credentials et le scope `api_offresdemploiv2 o2dsoffre`. Il interroge les types E1 (stage), E2 (apprentissage), FS (professionnalisation), avec 150 résultats maximum par type, triés selon l’API. Vérifier ces paramètres avec la documentation et l’habilitation accordée lors de l’activation. Il ne scrape aucun site. Le cache serveur dure cinq minutes, les requêtes simultanées sont regroupées, et chaque requête distante a un timeout de vingt secondes. Le serveur conserve la première date de récupération dans `.local/retrieval-history.json`, à persister lors d’un déploiement ; ne pas supprimer ce fichier si les dates doivent être conservées. Une erreur de lecture bloque le chargement plutôt que réinventer l’historique.
-
-## Fiabilité et limites
-
-Les champs manquants restent nuls ou masqués. La date de publication provient de `dateCreation` de la source ; elle n’est jamais remplacée par la date de récupération. L’API ne prouve pas que le recrutement reste ouvert : le connecteur laisse `lastVerifiedAt: null` et `status: to_verify`. Aucune annonce n’est marquée vérifiée. Une publication de plus de 30 jours est signalée comme ancienne. Les statuts expiré/retiré sont exclus de la recherche. Les favoris sont des copies locales, qui peuvent devenir obsolètes et sont signalées comme telles.
-
-Les annonces sans entreprise, URL autorisée HTTP(S), titre ou contrat pris en charge sont exclues. Les annonceurs identifiables comme écoles/CFA/formation (nom ou secteur d’enseignement 85) sont exclus de façon conservatrice ; la détection n’est pas exhaustive. Les autres offres restent explicitement à vérifier, sans promesse d’authentification de l’entreprise. Prévoir une modération et une validation des annonceurs avant publication à grande échelle. Aucun contact n’est extrait : candidature par lien uniquement. La région est dérivée du code commune INSEE lorsque disponible ; aucune région n’est devinée depuis le texte libre. Les niveaux et domaines affichent les libellés de la source sans créer d’équivalences arbitraires. Déduplication par identifiant, URL, ou titre/entreprise/lieu normalisés.
-
-Le catalogue est une sélection limitée, non une couverture exhaustive de la France. Pas de vérification automatique des pages de candidature, de pagination exhaustive, de synchronisation des suppressions entre sessions, de comptes, d’e-mail ni de notification. Pas de disponibilité certifiée des offres enregistrées. Les polices Google sont facultatives et possèdent des polices de repli locales.
-
-## Organisation et évolutions
-
-- `src/main.jsx` : écrans et navigation.
-- `src/components.jsx` : composants réutilisables (filtres, cartes, état vide, dialogue).
-- `src/storage.js` : adaptateur de stockage local versionné.
-- `src/domain.js` : filtres, fraîcheur, correspondance des régions.
-- `src/styles.css` : identité visuelle et responsive.
-- `server/models.d.ts` : contrat de données et interfaces pour connecteurs/adaptateurs utilisateurs futurs.
-- `server/france-travail.js` : logique spécifique à la source ; ajouter les prochaines API autorisées via ce contrat.
-- `server/domain.js` : normalisation, sécurité des liens et déduplication.
-- `server/history.js` : dates de première récupération persistées localement.
-- `server/index.js` : façade API, cache et serveur de production.
-- `test/` : contrôles des règles de fiabilité, filtres et connecteur simulé.
-
-Le champ `sponsored` prépare l’étiquetage explicite des annonces sponsorisées, sans paiement ni priorité commerciale actuelle. Les interfaces d’adaptateurs permettent de migrer les données locales vers des comptes ; les futures notifications devront être délivrées par un service serveur avec consentement et désinscription. Ne jamais conditionner la recherche à un abonnement.
+La recherche reste gratuite. Le champ `sponsored` permet un futur étiquetage explicite, sans paiement ni promotion actuelle. L’ajout futur de comptes et d’alertes e-mail demandera consentement, désinscription et stockage adapté. La présente version n’envoie aucun e-mail.
