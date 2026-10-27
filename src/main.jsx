@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import {
   ArrowUpRight,
@@ -27,12 +27,25 @@ import {
   selectOffers,
   freshness,
 } from "./domain";
+import "@fontsource-variable/inter/wght.css";
 import "./styles.css";
 import { useLocal } from "./storage";
 import { Filter, Empty, Offer, Dialog } from "./components";
-import { EmployerForm } from "./EmployerForm";
+const EmployerForm = lazy(() =>
+  import("./EmployerForm").then((m) => ({ default: m.EmployerForm })),
+);
+import { request } from "./api";
 import { Companies } from "./Companies";
-import { Moderation } from "./Moderation";
+const Moderation = lazy(() =>
+  import("./Moderation").then((m) => ({ default: m.Moderation })),
+);
+import {
+  Pagination,
+  Skeletons,
+  AlertMatches,
+  CompanyProfile,
+  VerifiedBadge,
+} from "./CatalogueParts";
 import { domains, domainGroups } from "../shared/catalog";
 const date = (value) =>
   value && !Number.isNaN(Date.parse(value))
@@ -56,28 +69,40 @@ function App() {
     ),
     [alerts, setAlerts, alertError] = useLocal("offres-alerts-v1", []),
     [reports, setReports, reportError] = useLocal("offres-reports-v1", []);
+  const [listPage, setListPage] = useState(1);
+  useEffect(() => setListPage(1), [filters]);
   useEffect(() => {
     const controller = new AbortController();
-    setData({ status: "loading", offers: [] });
-    fetch("/api/offers", { signal: controller.signal })
-      .then(async (r) => {
-        const d = await r.json();
-        if (!r.ok) throw new Error(d.message);
-        return d;
-      })
-      .then(setData)
-      .catch((e) => {
-        if (e.name !== "AbortError")
-          setData({
-            status: "error",
-            offers: [],
-            message: e.message || "Chargement impossible.",
-          });
-      });
-    return () => controller.abort();
-  }, [reload]);
+    setData((previous) => ({ ...previous, status: "loading", offers: [] }));
+    const timer = setTimeout(
+      () =>
+        fetch(
+          "/api/offers?" + new URLSearchParams({ ...filters, page: listPage }),
+          { signal: controller.signal },
+        )
+          .then(async (r) => {
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.message);
+            return d;
+          })
+          .then(setData)
+          .catch((e) => {
+            if (e.name !== "AbortError")
+              setData({
+                status: "error",
+                offers: [],
+                message: e.message || "Chargement impossible.",
+              });
+          }),
+      200,
+    );
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [reload, filters, listPage]);
   const offers = data.offers || [],
-    results = selectOffers(offers, filters),
+    results = offers,
     active = Object.values(filters).filter(Boolean).length;
   const change = (key, value) => setFilters((f) => ({ ...f, [key]: value }));
   const toggleFav = (o) =>
@@ -97,6 +122,24 @@ function App() {
     ]);
     setModal(null);
     setNotice("Alerte enregistrée sur cet appareil.");
+  }
+  function openOffer(offer) {
+    setModal({ type: "offer", offer, loading: true });
+    request("/api/offers/" + encodeURIComponent(offer.id))
+      .then((data) =>
+        setModal((current) =>
+          current?.type === "offer" && current.offer.id === offer.id
+            ? { type: "offer", offer: data.offer, loading: false }
+            : current,
+        ),
+      )
+      .catch((error) =>
+        setModal((current) =>
+          current?.type === "offer" && current.offer.id === offer.id
+            ? { ...current, loading: false, error: error.message }
+            : current,
+        ),
+      );
   }
   function navigate(next) {
     setPage(next);
@@ -287,14 +330,18 @@ function App() {
           </div>
         )}
         {page === "employers" ? (
-          <EmployerForm />
+          <Suspense fallback={<Skeletons />}>
+            <EmployerForm />
+          </Suspense>
         ) : page === "companies" ? (
           <Companies
             offers={offers}
             openCompany={(company) => setModal({ type: "company", company })}
           />
         ) : page === "moderation" ? (
-          <Moderation onChanged={() => setReload((n) => n + 1)} />
+          <Suspense fallback={<Skeletons />}>
+            <Moderation onChanged={() => setReload((n) => n + 1)} />
+          </Suspense>
         ) : page === "alerts" ? (
           <>
             <div className="local-note">
@@ -323,11 +370,7 @@ function App() {
                           .join(" · ") || "Tous les filtres"}{" "}
                         · Créée le {date(a.createdAt)}
                       </p>
-                      <span>
-                        {data.status === "connected"
-                          ? `${selectOffers(offers, a.filters).length} correspondance(s) dans la sélection actuelle`
-                          : "Correspondances indisponibles tant que la source n’est pas connectée"}
-                      </span>
+                      <AlertMatches filters={a.filters} />
                     </div>
                     <div className="alert-actions">
                       <button
@@ -376,6 +419,21 @@ function App() {
                     <RotateCcw size={16} />
                   </button>
                 </div>
+                <label className="field">
+                  Ville
+                  <input
+                    value={filters.city || ""}
+                    onChange={(e) => change("city", e.target.value)}
+                    placeholder="Paris, Nantes, Lille…"
+                  />
+                </label>
+                <Filter
+                  label="Technologie mentionnée"
+                  value={filters.tech || ""}
+                  onChange={(v) => change("tech", v)}
+                  options={data.facets?.technologies || []}
+                  placeholder="Toutes les technologies"
+                />
                 <Filter
                   label="Région"
                   value={filters.region}
@@ -405,9 +463,7 @@ function App() {
                   label="Niveau d’études"
                   value={filters.education}
                   onChange={(v) => change("education", v)}
-                  options={[
-                    ...new Set(offers.flatMap((o) => o.education)),
-                  ].sort()}
+                  options={data.facets?.education || []}
                   placeholder="Tous les niveaux"
                 />
                 <fieldset>
@@ -471,7 +527,7 @@ function App() {
                   <p aria-live="polite">
                     {data.status === "loading" && page === "search"
                       ? "Chargement des offres…"
-                      : `${visible.length} offre${visible.length !== 1 ? "s" : ""}${page === "favorites" ? " enregistrée" + (visible.length !== 1 ? "s" : "") : " correspondant" + (visible.length !== 1 ? "es" : "e") + " à votre recherche"}`}
+                      : `${page === "favorites" ? visible.length : data.total || 0} offre${(page === "favorites" ? visible.length : data.total || 0) !== 1 ? "s" : ""}${page === "favorites" ? " enregistrée" + (visible.length !== 1 ? "s" : "") : " correspondant" + (data.total !== 1 ? "es" : "e") + " à votre recherche"}`}
                   </p>
                 </div>
                 <span className="sort">
@@ -532,9 +588,7 @@ function App() {
                 </p>
               )}
               {data.status === "loading" && page === "search" ? (
-                <div className="loading" role="status">
-                  <span className="spinner" /> Chargement du catalogue…
-                </div>
+                <Skeletons />
               ) : visible.length ? (
                 <div className="offer-list">
                   {[...visible]
@@ -549,7 +603,7 @@ function App() {
                         offer={o}
                         favorite={favorites.some((f) => f.id === o.id)}
                         toggle={() => toggleFav(o)}
-                        details={() => setModal({ type: "offer", offer: o })}
+                        details={() => openOffer(o)}
                         company={() =>
                           setModal({ type: "company", company: o.company })
                         }
@@ -590,6 +644,14 @@ function App() {
                   secondary={
                     page === "search" ? () => setModal({ type: "alert" }) : null
                   }
+                />
+              )}
+              {page === "search" && data.status === "connected" && (
+                <Pagination
+                  page={data.page || 1}
+                  pages={data.pages || 1}
+                  total={data.total || 0}
+                  onChange={setListPage}
                 />
               )}
               <div className="trust-strip">
@@ -665,14 +727,17 @@ function App() {
               <p>
                 Le catalogue est alimenté par des dépôts d’entreprises et des
                 annonces reprises de leurs sites officiels avec autorisation.
-                France Travail n’est plus utilisé. Seuls les stages et
-                alternances techniques et informatiques sont acceptés.
+                Des flux JSON ou RSS autorisés peuvent être configurés côté
+                serveur ; leurs annonces passent par la modération. France
+                Travail reste désactivé. Seuls les stages et alternances
+                techniques et informatiques sont acceptés.
               </p>
               <p>
                 Google aide à trouver une annonce ; un résultat de recherche
                 n’est jamais une preuve de sa disponibilité. La page originale,
                 la date, l’entreprise et les droits doivent être contrôlés avant
-                publication. Aucun site n’est parcouru automatiquement.
+                publication. Seuls les flux explicitement autorisés sont
+                récupérés ; aucun site n’est scrappé.
               </p>
               <p>
                 Les boîtes génériques de recrutement sont affichées uniquement
@@ -759,7 +824,22 @@ function App() {
               </button>
             </>
           )}
-          {modal.type === "offer" && (
+          {modal.type === "offer" && modal.loading && <Skeletons count={1} />}
+          {modal.type === "offer" && modal.error && (
+            <>
+              <p role="alert" className="form-error">
+                {modal.error}
+              </p>
+              <p>
+                La disponibilité actuelle de cette offre ne peut pas être
+                confirmée.
+              </p>
+              <a href={modal.offer.sourceUrl} target="_blank" rel="noreferrer">
+                Consulter la source originale
+              </a>
+            </>
+          )}
+          {modal.type === "offer" && !modal.loading && !modal.error && (
             <>
               <div className="tags">
                 <span>{modal.offer.contract}</span>
@@ -810,6 +890,13 @@ function App() {
                 <dt>Source</dt>
                 <dd>{modal.offer.source}</dd>
               </dl>
+              <VerifiedBadge offer={modal.offer} />
+              {modal.offer.sourceUpdatedAt && (
+                <p className="muted">
+                  Mise à jour fournie par la source :{" "}
+                  {date(modal.offer.sourceUpdatedAt)}
+                </p>
+              )}
               <h3>Description du poste</h3>
               <p className="description">
                 {modal.offer.description ||
@@ -833,6 +920,21 @@ function App() {
                       <li key={i}>{s}</li>
                     ))}
                   </ul>
+                </>
+              )}
+              {modal.offer.technologies?.length > 0 && (
+                <>
+                  <h3>Technologies mentionnées</h3>
+                  <div className="tags">
+                    {modal.offer.technologies.map((t) => (
+                      <span key={t}>{t}</span>
+                    ))}
+                  </div>
+                  <p className="muted">
+                    Extraction lexicale du texte. Ces mentions ne constituent
+                    pas des compétences exigées ni une stack d’entreprise
+                    certifiée.
+                  </p>
                 </>
               )}
               <PublicContacts contacts={modal.offer.publicContacts} />
@@ -868,73 +970,7 @@ function App() {
             </>
           )}
           {modal.type === "company" && (
-            <>
-              {modal.company.description && (
-                <p className="description">{modal.company.description}</p>
-              )}
-              <dl>
-                {modal.company.sector && (
-                  <>
-                    <dt>Secteur</dt>
-                    <dd>{modal.company.sector}</dd>
-                  </>
-                )}
-                {modal.company.location && (
-                  <>
-                    <dt>Lieu fourni par la source</dt>
-                    <dd>{modal.company.location}</dd>
-                  </>
-                )}
-                {modal.company.website && (
-                  <>
-                    <dt>Site officiel</dt>
-                    <dd>
-                      <a
-                        href={modal.company.website}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Consulter le site <ExternalLink size={14} />
-                      </a>
-                    </dd>
-                  </>
-                )}
-              </dl>
-              <PublicContacts
-                contacts={[
-                  ...new Map(
-                    offers
-                      .filter((o) => o.company.id === modal.company.id)
-                      .flatMap((o) => o.publicContacts || [])
-                      .map((c) => [c.value, c]),
-                  ).values(),
-                ]}
-              />
-              <h3>Offres liées dans le catalogue actuel</h3>
-              {offers
-                .filter(
-                  (o) =>
-                    o.company.id === modal.company.id &&
-                    !["expired", "withdrawn"].includes(o.status),
-                )
-                .map((o) => (
-                  <button
-                    className="company-offer"
-                    key={o.id}
-                    onClick={() => setModal({ type: "offer", offer: o })}
-                  >
-                    {o.title}
-                    <ArrowRight size={17} />
-                  </button>
-                ))}
-              {!offers.some((o) => o.company.id === modal.company.id) && (
-                <p>Aucune offre disponible dans la sélection actuelle.</p>
-              )}
-              <p className="muted">
-                Aucune présentation ni coordonnée n’a été ajoutée aux
-                informations de la source.
-              </p>
-            </>
+            <CompanyProfile company={modal.company} openOffer={openOffer} />
           )}
           {modal.type === "report" && (
             <form

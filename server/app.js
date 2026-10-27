@@ -1,8 +1,10 @@
 import express from "express";
+import compression from "compression";
 import path from "node:path";
 import { timingSafeEqual } from "node:crypto";
 import { OfferStore } from "./store.js";
 import { normalizeSubmission, ValidationError } from "./domain.js";
+import { IngestionPipeline } from "./ingestion/pipeline.js";
 export function createApp({
   folder = process.env.DATA_DIR || path.resolve(".local"),
   adminToken = process.env.ADMIN_TOKEN || "",
@@ -10,7 +12,10 @@ export function createApp({
   const app = express(),
     store = new OfferStore(folder),
     limits = new Map();
+  app.locals.store = store;
+  app.locals.pipeline = new IngestionPipeline(store);
   app.disable("x-powered-by");
+  app.use(compression({ threshold: 1024 }));
   app.use((_req, res, next) => {
     res.set({
       "X-Content-Type-Options": "nosniff",
@@ -25,12 +30,10 @@ export function createApp({
   app.use(express.json({ limit: "40kb" }));
   const admin = (req, res, next) => {
     if (adminToken.length < 32)
-      return res
-        .status(503)
-        .json({
-          message:
-            "Modération non configurée : définissez ADMIN_TOKEN (32 caractères minimum) sur le serveur.",
-        });
+      return res.status(503).json({
+        message:
+          "Modération non configurée : définissez ADMIN_TOKEN (32 caractères minimum) sur le serveur.",
+      });
     const token = Buffer.from(
       req.get("Authorization")?.replace(/^Bearer /, "") || "",
     );
@@ -41,49 +44,76 @@ export function createApp({
         .json({ message: "Accès réservé à la modération." });
     next();
   };
-  app.get("/api/offers", async (_req, res) => {
-    const offers = await store.publicList();
+  app.get("/api/health", (_req, res) => {
+    store.db.prepare("SELECT 1").get();
+    res.json({ status: "ok", storage: "sqlite" });
+  });
+  const queryParams = (req) =>
+    Object.fromEntries(
+      Object.entries(req.query)
+        .filter(([, v]) => typeof v === "string")
+        .map(([k, v]) => [k, v.slice(0, 200)]),
+    );
+  app.get("/api/offers", async (req, res) => {
+    const result = await store.query(queryParams(req));
     res.json({
+      ...result,
       status: "connected",
-      offers,
-      message: offers.length
-        ? "Annonces publiées après contrôle manuel. Chaque fiche conserve sa source et sa date de vérification."
-        : "Aucune annonce validée pour le moment. Consultez les sites d’entreprises ou proposez une annonce à la modération.",
+      message: result.total
+        ? "Annonces contrôlées avant publication. Les technologies extraites sont des mentions du texte, pas une certification."
+        : "Aucune annonce validée ne correspond. Les pistes entreprises ne sont pas des offres confirmées.",
       sources: [
         {
           id: "direct",
-          name: "Sites et dépôts directs des entreprises",
+          name: "Entreprises et flux autorisés",
           status: "active",
         },
       ],
     });
   });
+  app.get("/api/offers/:id", async (req, res) => {
+    const offer = await store.getPublic(req.params.id);
+    if (!offer)
+      return res.status(404).json({
+        message: "Cette offre n’est plus disponible dans le catalogue public.",
+      });
+    res.json({ offer });
+  });
+  app.get("/api/companies", async (req, res) =>
+    res.json(await store.companies(queryParams(req))),
+  );
+  app.get("/api/companies/:id", async (req, res) => {
+    const company = await store.company(req.params.id);
+    if (!company)
+      return res.status(404).json({ message: "Entreprise introuvable." });
+    const linked = await store.query({
+      ...queryParams(req),
+      companyId: company.id,
+    });
+    res.json({ company, ...linked });
+  });
   app.post("/api/submissions", async (req, res) => {
     if (adminToken.length < 32)
-      return res
-        .status(503)
-        .json({
-          message:
-            "Le dépôt est temporairement fermé : la modération doit être configurée par le responsable du site.",
-        });
+      return res.status(503).json({
+        message:
+          "Le dépôt est temporairement fermé : la modération doit être configurée par le responsable du site.",
+      });
     const now = Date.now();
     for (const [key, val] of limits) if (val.until < now) limits.delete(key);
     const key = req.ip,
       entry = limits.get(key) || { count: 0, until: now + 3600000 };
     if (entry.count >= 5)
-      return res
-        .status(429)
-        .json({
-          message:
-            "Limite de cinq dépôts par heure atteinte. Réessayez plus tard.",
-        });
+      return res.status(429).json({
+        message:
+          "Limite de cinq dépôts par heure atteinte. Réessayez plus tard.",
+      });
     entry.count++;
     limits.set(key, entry);
     const offer = normalizeSubmission({ ...req.body, origin: "employer" });
     res.status(201).json(await store.submit(offer));
   });
-  app.get("/api/admin/submissions", admin, async (_req, res) =>
-    res.json({ offers: await store.read() }),
+  app.get("/api/admin/submissions", admin, async (req, res) =>
+    res.json(await store.adminQuery(queryParams(req))),
   );
   app.post("/api/admin/import", admin, async (req, res) =>
     res
@@ -97,10 +127,36 @@ export function createApp({
   app.post("/api/admin/submissions/:id/review", admin, async (req, res) =>
     res.json(await store.review(req.params.id, req.body || {})),
   );
+  app.get("/api/admin/sources", admin, async (_req, res) =>
+    res.json(await app.locals.pipeline.status()),
+  );
+  app.post("/api/admin/ingest", admin, (_req, res) => {
+    app.locals.pipeline
+      .run()
+      .catch(() =>
+        console.error(
+          "Collecte interrompue : vérifier la configuration serveur.",
+        ),
+      );
+    res
+      .status(202)
+      .json({
+        running: true,
+        message:
+          "Collecte lancée en arrière-plan. Les résultats apparaîtront dans le journal ; aucune annonce ne sera publiée sans revue.",
+      });
+  });
   app.use("/api", (_req, res) =>
     res.status(404).json({ message: "Route API introuvable." }),
   );
-  app.use(express.static(path.resolve("dist")));
+  app.use(
+    "/assets",
+    express.static(path.resolve("dist/assets"), {
+      immutable: true,
+      maxAge: "1y",
+    }),
+  );
+  app.use(express.static(path.resolve("dist"), { maxAge: 0 }));
   app.get("/{*path}", (_req, res) =>
     res.sendFile(path.resolve("dist/index.html")),
   );
@@ -112,12 +168,10 @@ export function createApp({
     if (error.type === "entity.parse.failed")
       return res.status(400).json({ message: "Formulaire invalide." });
     console.error("Erreur application :", error.code || error.name);
-    res
-      .status(500)
-      .json({
-        message:
-          "Le service est indisponible. Votre demande n’a pas été confirmée ; réessayez plus tard.",
-      });
+    res.status(500).json({
+      message:
+        "Le service est indisponible. Votre demande n’a pas été confirmée ; réessayez plus tard.",
+    });
   });
   return app;
 }

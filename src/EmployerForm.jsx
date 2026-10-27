@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ArrowRight, Check, ShieldCheck, Building2, Eye } from "lucide-react";
 import { domainGroups, contracts, educationLevels } from "../shared/catalog";
+import { companyTypes, companySizes, companyTags } from "../shared/company";
 import { regions } from "./domain";
 import { request } from "./api";
 const today = () => new Date().toISOString().slice(0, 10);
@@ -36,6 +37,8 @@ export function EmployerForm({ token, editorial = false, onSaved }) {
     event.preventDefault();
     const form = event.currentTarget,
       body = Object.fromEntries(new FormData(form));
+    body.companyTags = new FormData(form).getAll("companyTags");
+    body.logoConsent = body.logoConsent === "on";
     body.consent = body.consent === "on";
     body.contactConsent = body.contactConsent === "on";
     setState({ status: "loading" });
@@ -103,6 +106,75 @@ export function EmployerForm({ token, editorial = false, onSaved }) {
           <Field label="Secteur d’activité" name="sector" />
           <Field label="Ville du poste" name="city" required maxLength={120} />
         </div>
+        <div className="form-grid">
+          <label className="field">
+            Type d’entreprise (si fourni)
+            <select name="companyType" defaultValue="">
+              <option value="">Non fourni</option>
+              {companyTypes.map((t) => (
+                <option key={t}>{t}</option>
+              ))}
+            </select>
+          </label>
+          <label className="field">
+            Effectif (si documenté)
+            <select name="companySize" defaultValue="">
+              <option value="">Non fourni</option>
+              {companySizes.map((t) => (
+                <option key={t}>{t}</option>
+              ))}
+            </select>
+          </label>
+          <Field
+            label="Agences et implantations"
+            name="companyLocations"
+            help="Villes ou agences séparées par une virgule, uniquement si documentées."
+          />
+          <Field
+            label="Stack technique déclarée"
+            name="companyStack"
+            help="Technologies séparées par une virgule. Ne pas déduire la stack d’une seule annonce."
+          />
+          <Field
+            label="Rythme d’alternance accepté"
+            name="companyRhythm"
+            help="Seulement si l’entreprise l’a précisé."
+          />
+          <Field
+            label="Labels et certifications"
+            name="companyCertifications"
+            help="Libellés exacts séparés par une virgule ; ne rien présumer."
+          />
+        </div>
+        <fieldset className="company-tag-fields">
+          <legend>Expertises déclarées</legend>
+          <div className="tag-checkboxes">
+            {companyTags.map((tag) => (
+              <label className="consent" key={tag}>
+                <input type="checkbox" name="companyTags" value={tag} />
+                <span>{tag}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <Field
+          label="Logo autorisé (URL HTTPS, facultatif)"
+          name="companyLogoUrl"
+          type="url"
+        />
+        <label className="consent">
+          <input type="checkbox" name="logoConsent" />
+          <span>
+            Si j’ajoute un logo, je confirme disposer du droit de le diffuser
+            pour représenter l’entreprise.
+          </span>
+        </label>
+        <Field
+          label="Page source des informations entreprise enrichies"
+          name="profileSourceUrl"
+          type="url"
+          help="Obligatoire pour tout type, taille, implantation, stack, rythme, label ou tag renseigné."
+        />
         <label className="field">
           Présentation de l’entreprise (facultative)
           <textarea
@@ -247,6 +319,15 @@ export function EmployerForm({ token, editorial = false, onSaved }) {
             </p>
           </div>
         </div>
+        <label className="field">
+          Rôle du contact (si précisé par la source)
+          <select name="contactRole" defaultValue="">
+            <option value="">Non fourni</option>
+            {["RH", "Tutorat", "Recrutement"].map((r) => (
+              <option key={r}>{r}</option>
+            ))}
+          </select>
+        </label>
         <Field
           label="E-mail générique de recrutement"
           name="publicEmail"

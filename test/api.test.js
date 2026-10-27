@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, rm, readFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { OfferStore } from "../server/store.js";
 import { createApp } from "../server/app.js";
 const payload = () => ({
   title: "Exemple fictif — démonstration technique",
@@ -21,14 +22,16 @@ const payload = () => ({
 });
 async function withServer(options, run) {
   const folder = await mkdtemp(path.join(os.tmpdir(), "offres-test-"));
-  const server = createApp({ folder, ...options }).listen(0, "127.0.0.1");
+  const app = createApp({ folder, ...options });
+  const server = app.listen(0, "127.0.0.1");
   await new Promise((resolve) => server.once("listening", resolve));
   const url = `http://127.0.0.1:${server.address().port}`;
   try {
-    await run(url, folder);
+    await run(url, folder, app);
   } finally {
     server.closeAllConnections();
     await new Promise((resolve) => server.close(resolve));
+    app.locals.store.close();
     await rm(folder, { recursive: true, force: true });
   }
 }
@@ -48,6 +51,7 @@ test("submission persists, remains private, requires human attestations, publish
     assert.equal(submitted.status, 201);
     const receipt = await submitted.json();
     assert.equal(receipt.status, "pending");
+    assert.equal((await fetch(url + `/api/offers/${receipt.id}`)).status, 404);
     assert.equal(
       (await (await fetch(url + "/api/offers")).json()).offers.length,
       0,
@@ -78,11 +82,20 @@ test("submission persists, remains private, requires human attestations, publish
     const published = await (await fetch(url + "/api/offers")).json();
     assert.equal(published.offers.length, 1);
     assert.ok(published.offers[0].lastVerifiedAt);
+    assert.equal(published.offers[0].detailsComplete, false);
+    const detail = await (
+      await fetch(url + `/api/offers/${receipt.id}`)
+    ).json();
+    assert.ok(detail.offer.description);
+    assert.deepEqual(published.offers[0].missions, []);
+
     assert.equal(published.offers[0].source, "Dépôt direct de l’entreprise");
-    assert.ok(
-      JSON.parse(await readFile(path.join(folder, "offers.json"), "utf8"))[0]
-        .lastVerifiedAt,
-    );
+    const reopened = new OfferStore(folder);
+    try {
+      assert.ok((await reopened.read())[0].lastVerifiedAt);
+    } finally {
+      reopened.close();
+    }
     assert.equal((await post(url + "/api/submissions", payload())).status, 400);
     assert.equal(
       (
@@ -147,4 +160,40 @@ test("body limits and rate limits reject abuse", () =>
     );
     for (let i = 0; i < 5; i++) await post(url + "/api/submissions", {});
     assert.equal((await post(url + "/api/submissions", payload())).status, 429);
+  }));
+
+test("collection endpoint responds asynchronously and is restricted to moderators", () =>
+  withServer({ adminToken: token }, async (url, _folder, app) => {
+    let finish;
+    app.locals.pipeline = {
+      running: null,
+      run() {
+        this.running = new Promise((resolve) => {
+          finish = () => {
+            this.running = null;
+            resolve({ reports: [] });
+          };
+        });
+        return this.running;
+      },
+      async status() {
+        return {
+          running: !!this.running,
+          sources: [],
+          configured: false,
+          runs: [],
+        };
+      },
+    };
+    assert.equal((await post(url + "/api/admin/ingest", {})).status, 401);
+    const started = await post(url + "/api/admin/ingest", {}, token);
+    assert.equal(started.status, 202);
+    assert.equal((await started.json()).running, true);
+    finish();
+    const status = await (
+      await fetch(url + "/api/admin/sources", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+    ).json();
+    assert.equal(status.running, false);
   }));

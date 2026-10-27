@@ -11,6 +11,7 @@ import {
   ExternalLink,
   X,
 } from "lucide-react";
+import { VerifiedBadge } from "./CatalogueParts";
 import { regionOf, freshness } from "./domain";
 const date = (value) =>
   value && !Number.isNaN(Date.parse(value))
@@ -73,7 +74,21 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
     <article className="offer-card">
       <div className="offer-top">
         <span className="company-avatar">
-          <Building2 size={23} />
+          {o.company.logoUrl ? (
+            <img
+              src={o.company.logoUrl}
+              loading="lazy"
+              decoding="async"
+              width="42"
+              height="42"
+              alt=""
+              onError={(e) => {
+                e.currentTarget.hidden = true;
+              }}
+            />
+          ) : (
+            <Building2 size={23} />
+          )}
         </span>
         <div>
           <button className="company-link" onClick={company}>
@@ -107,6 +122,14 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
         ))}
         {o.sponsored && <span>Sponsorisée</span>}
       </div>
+      <VerifiedBadge offer={o} />
+      {o.technologies?.length > 0 && (
+        <div className="tech-tags">
+          {o.technologies.slice(0, 6).map((t) => (
+            <span key={t}>{t}</span>
+          ))}
+        </div>
+      )}
       <div className="offer-meta">
         <span>Publiée le {date(o.publishedAt)}</span>
         <span>{freshness(o)}</span>

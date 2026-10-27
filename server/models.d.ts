@@ -4,13 +4,31 @@ export type ModerationStatus =
   | "approved"
   | "rejected"
   | "withdrawn";
+export interface PublicContact {
+  value: string;
+  type: "email";
+  provenance: string;
+  role: "RH" | "Tutorat" | "Recrutement" | null;
+}
 export interface Company {
   id: string;
   name: string;
-  sector: string | null;
   website: string;
-  location: string;
+  sector: string | null;
   description: string | null;
+  type: string | null;
+  size: string | null;
+  location: string | null;
+  locations: string[];
+  stack: string[];
+  rhythm: string | null;
+  certifications: string[];
+  tags: string[];
+  logoUrl?: string | null;
+  profileSourceUrl: string | null;
+  profileVerifiedAt?: string | null;
+  researchLead?: boolean;
+  publicContacts?: PublicContact[];
 }
 export interface Offer {
   id: string;
@@ -23,27 +41,64 @@ export interface Offer {
   sourceUrl: string;
   applicationUrl: string;
   source: string;
-  origin: "employer" | "editorial";
+  origin: "employer" | "editorial" | "feed";
+  sourceId?: string;
+  sourceName?: string;
+  externalId?: string;
+  contentHash?: string;
   publishedAt: string | null;
+  sourcePublishedAt?: string | null;
+  sourceUpdatedAt?: string | null;
   firstRetrievedAt: string;
+  lastFetchedAt?: string;
+  updatedAt: string;
   lastVerifiedAt: string | null;
+  technicalReviewAt?: string;
   status: OfferStatus;
   moderationStatus: ModerationStatus;
-  /** Internal catalogue deadline, not a closing date inferred from the original source. */
   expiresAt: string;
-  publicContacts: { value: string; type: "email"; provenance: string }[];
+  publicContacts: PublicContact[];
   description: string;
   skills: string[];
   missions: string[];
+  technologies?: string[];
+  extractedKeywords?: {
+    technologies: string[];
+    education: string[];
+    locations: string[];
+    method: string;
+  };
   duration: string | null;
   startsAt: string | null;
   sponsored: boolean;
   submittedAt: string;
+  reuse?: { licenseUrl: string; authorizationRef: string | null };
+  detailsComplete?: boolean;
 }
-/** Future authorized feed adapters must enter the moderation queue, never publish directly. */
+export interface SourceDefinition {
+  id: string;
+  name: string;
+  kind: "json" | "rss";
+  url: string;
+  allowedHosts: string[];
+  enabled: boolean;
+  authorized: boolean;
+  licenseUrl: string;
+  authorizationRef?: string;
+  tokenEnv?: string;
+  defaults?: Record<string, unknown>;
+}
+/** Adapters return untrusted records; normalization and moderation are mandatory downstream. */
 export interface SourceConnector {
   id: string;
-  load(): Promise<Offer[]>;
+  load(): Promise<unknown[]>;
+}
+export interface Paginated<T> {
+  total: number;
+  page: number;
+  pages: number;
+  pageSize: number;
+  offers: T[];
 }
 export interface UserRepository<T> {
   list(userId: string): Promise<T[]>;

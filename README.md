@@ -1,10 +1,10 @@
-# Offres Fraîches — technique & informatique
+# Offres Fraîches
 
-Application responsive de recherche de **stages et alternances en France**, uniquement pour les métiers techniques et informatiques. React 19 + Vite, API Express, Node.js **24 ou supérieur**. Recherche gratuite, aucun paiement. **France Travail a été retiré** ; aucune clé France Travail n’est nécessaire.
+Stages et alternances techniques et informatiques en France. React 19, Vite, Express et **SQLite/FTS5 natif sous Node.js 24+**. Recherche gratuite ; aucun paiement. Le catalogue ne contient aucune offre fictive. Les sources réelles ne sont **pas activées automatiquement**.
 
-## Voir l’application dans GitHub Codespaces
+## Lancer dans Codespaces
 
-Ouvrir la branche `offres-fraiches-v1`, puis **Code → Codespaces**. Dans le terminal :
+Sur la branche `offres-fraiches-v1` :
 
 ```sh
 npm ci
@@ -12,44 +12,24 @@ npm run setup:admin
 npm run dev
 ```
 
-Ouvrir le port **5173** dans l’onglet **Ports**. `setup:admin` crée un jeton aléatoire dans `.env`, ignoré par Git, sans le montrer dans les logs et sans remplacer une clé existante. Garder ce fichier privé. Dans l’éditeur de Codespaces, ouvrir `.env` pour récupérer la valeur de `ADMIN_TOKEN` et la saisir dans l’écran **Modération** (lien en bas du site). Ne jamais envoyer cette valeur dans un chat, une capture ou GitHub. Cette clé locale ne sera pas copiée dans un autre Codespace : y relancer `setup:admin` si nécessaire.
+Ouvrir le port **5173** dans l’onglet Ports. Vite relaie `/api` à Express sur 3001. La clé de modération aléatoire est créée dans `.env`, ignoré par Git et non affiché dans les logs. Ne pas la partager ; la saisir dans l’écran **Modération** (pied de page) depuis l’éditeur local. Une clé existante valide n’est pas remplacée. Sans clé, le catalogue démarre mais les dépôts publics sont fermés.
 
-Vite relaie `/api` au serveur Express sur 3001. La clé est utilisée seulement côté serveur ; aucun préfixe `VITE_`. Les deux serveurs doivent tourner. Sans modération configurée, le catalogue démarre normalement mais les dépôts sont fermés avec un message explicite. Il n’y a pas de compte recruteur ni de validation automatique d’identité.
+## Ce qui est disponible
 
-## Parcours disponibles
+- Catalogue entreprises enrichi, 19 pistes initiales dont ESN et spécialistes réseaux/télécoms, cloud et cybersécurité. Aucune taille, agence, stack, contact ou offre en cours n’est devinée. Les profils sont enrichis lors d’un dépôt validé, avec provenance.
+- Recherche serveur indexée : mots-clés, ville, technologie mentionnée, région, famille/spécialité, formation, contrat et date ; pagination et vrai compteur global.
+- Vue rapide à la demande : description, missions, compétences fournies, dates distinctes, source originale et candidature officielle. Badge de contrôle humain valable sept jours, distinct de l’extraction automatique.
+- Dépôt entreprise avec aperçu, présentation et données enrichies sourcées, logo facultatif autorisé, contact générique RH/tutorat avec provenance. Une soumission reste privée avant revue.
+- Modération paginée, revue, retrait, import éditorial et panneau Sources & collecte.
+- Connecteurs JSON et RSS/Atom autorisés : normalisation, nettoyage, dédoublonnage, extraction de mentions, journal et collecte périodique optionnelle. Les modifications reviennent en attente.
+- Favoris/alertes/signalements locaux. Pas d’e-mail, pas de notifications navigateur fermé, pas de transmission automatique des signalements. Une copie locale ne confirme pas la disponibilité actuelle.
+- UI responsive, skeletons, police auto-hébergée, écrans employeur/modération découpés en chargement différé et logos autorisés en lazy loading.
 
-- Recherche combinée par mots-clés, région, famille **Technique / Informatique**, spécialité, formation, contrat et publication ; tri par publication décroissante.
-- Spécialités : développement, IA/data, cybersécurité, réseaux/cloud, support, embarqué, tests, maintenance industrielle, électrotechnique, électronique, automatismes, mécanique, énergie, BTP, télécoms, méthodes, aéronautique/naval, procédés/matériaux, métrologie, et autres métiers de ces deux familles.
-- Cartes détaillées, missions et compétences si fournies, fiche entreprise avec présentation autorisée, site et offres du catalogue, contacts publics avec provenance.
-- Favoris, alertes et signalements locaux au navigateur. Pas de notifications lorsque le navigateur est fermé, pas d’e-mail automatique, pas de transmission des signalements.
-- **Déposer une annonce** : formulaire entreprise, consentement, aperçu marqué brouillon, enregistrement serveur et référence de dépôt. L’annonce reste en attente et n’est pas visible aux candidats tant qu’elle n’est pas validée.
-- **Entreprises** : annuaire de pistes vers les sites d’entreprises et recherches Google ciblées. Ni partenariat, ni affirmation de postes disponibles. Les liens ne constituent pas des offres importées.
-- **Modération** : accès par jeton, annonces à valider / publiées / refusées / retirées, import éditorial manuel depuis une source autorisée, validation, revérification, rejet et retrait.
+## Architecture et alimentation
 
-## Ajouter des offres réelles depuis les sites d’entreprises
+Le plan par étapes, le schéma et les compromis sont dans **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**. Les champs et interfaces se trouvent dans `server/models.d.ts`.
 
-1. Utiliser les liens de recherche de l’annuaire pour trouver un poste sur le site de l’employeur (ou son outil de recrutement officiel). Pas de copie d’extraits Google et pas de collecte automatisée.
-2. Ouvrir l’annonce originale : vérifier le contrat, le lieu en France, la date réelle, la spécialité technique/informatique, l’entreprise et la disponibilité. Si la date manque, ne pas l’inventer : le dépôt peut être enregistré mais ne pourra pas être publié.
-3. Vérifier l’autorisation de republication du texte et des données (accord de l’entreprise ou conditions de réutilisation applicables). Un accès public ou `robots.txt` ne vaut pas autorisation de réutilisation. Si elle n’est pas établie, conserver seulement une piste de recherche hors catalogue.
-4. Dans **Modération → Ajouter depuis une source**, saisir les informations autorisées et les URLs réelles. Le dépôt rejoint la file d’attente.
-5. Dans **À valider**, ouvrir les liens et contrôler les informations puis cocher les quatre vérifications. **Valider et publier** enregistre la date réelle de ce contrôle humain. Le formulaire ne prouve pas à lui seul l’identité du déposant ; le responsable doit la vérifier avant publication.
-
-Le serveur ne récupère aucune URL fournie par un visiteur : ni scraping, ni requête arbitraire vers des services internes. Les futures API/flux autorisés doivent être ajoutés via `SourceConnector` et passer par la même modération. L’annuaire initial contient des pistes connues (Thales, Schneider Electric, Safran, Capgemini, Airbus, VINCI, EDF), sans reprendre leur logo ou inventer une offre. Les pages n’ont pas pu être contrôlées lors de cette mise à jour : les requêtes Google/sites d’entreprises ont été bloquées par le proxy réseau. Aucun emploi ou contact n’a donc été ajouté artificiellement.
-
-### Contacts
-
-Seules les boîtes **génériques** de l’entreprise (recrutement, jobs, rh, careers…) sont acceptées, sur son domaine, avec une page officielle de provenance sur ce domaine et confirmation d’autorisation de diffusion. Les adresses personnelles et les domaines externes sont refusés. Le modérateur doit contrôler la page avant publication. Aucun e-mail n’est deviné, envoyé ni extrait d’une page web. Sans contact autorisé, seul le lien de candidature est proposé.
-
-## Fiabilité et conservation
-
-- Un dépôt crée `firstRetrievedAt` et `submittedAt` à l’heure du serveur, jamais une date de publication inventée. `publishedAt` reste celle fournie par l’annonce source. `lastVerifiedAt` reste nul jusqu’au contrôle humain.
-- La vérification expire après **7 jours** sans nouveau contrôle : statut « À vérifier ». Une publication de plus de **30 jours** porte « Offre ancienne ». Un nouveau dépôt de plus de 30 jours est refusé.
-- La date d’échéance interne (maximum 90 jours) est choisie par le déposant et n’est jamais présentée comme une fermeture fournie par la source. À cette échéance, l’offre est masquée. Retrait immédiat possible par le modérateur ; aucune détection automatique des fermetures externes.
-- Déduplication par URL canonique (paramètres `utm_` ignorés), identifiant, ou titre/entreprise/ville normalisés.
-- Seuls les domaines et contrats de la liste autorisée sont exposés par l’API, y compris après lecture du stockage. Les anciens favoris hors périmètre ne sont plus affichés.
-- Les favoris sont des copies locales possiblement obsolètes, signalées comme telles.
-
-Le stockage utilise `.local/offers.json` par défaut, écrit atomiquement et séquentiellement dans **un seul processus Node**. `DATA_DIR` permet de choisir un disque persistant. Les dates et dépôts survivent au redémarrage si ce disque est conservé. Le fichier n’est jamais servi par HTTP ni commité. Prévoir sauvegardes et procédure de suppression des dépôts refusés. Cette version ne convient pas à plusieurs instances concurrentes partageant le fichier : migrer vers une base transactionnelle avant mise à l’échelle.
+Le guide **[docs/INGESTION.md](docs/INGESTION.md)** explique les flux, les conditions d’autorisation, les variables et la revue. `config/sources.example.json` est vide volontairement. Le site reste utilisable sans flux ; il n’annonce pas de connexion à des offres réelles non configurées. France Travail reste désactivé, sans clé requise. Les liens Google de l’annuaire sont des pistes de recherche, pas des sources de postes confirmés ou des partenariats.
 
 ## Tests et production
 
@@ -59,26 +39,31 @@ npm run build
 npm start
 ```
 
-Express sert `dist` et `/api` sur `PORT` (3001 par défaut). Ne pas héberger `dist` seul sur GitHub Pages : l’API et les dépôts nécessitent le serveur Node. Garder le lockfile avec `npm ci`. Les tests utilisent uniquement des entreprises fictives clairement identifiées dans des dossiers temporaires et ne remplissent pas le catalogue réel.
+Pour les parcours navigateur, avec le serveur de développement déjà lancé :
 
-Pour Render ou un hébergeur Node :
+```sh
+# Si Chromium n’est pas déjà installé sur la machine :
+npx playwright install chromium
+npm run test:browser
+```
 
-- Branche : `offres-fraiches-v1` ; Node : `24` ; Build : `npm ci && npm run build` ; Start : `npm start`.
-- Configurer `ADMIN_TOKEN` dans les **secrets de l’hébergeur**, au moins 32 caractères aléatoires (générer localement avec `openssl rand -hex 32`). Ne pas copier le `.env` local dans le dépôt.
-- Configurer `DATA_DIR` sur un **disque persistant**. Un hébergement éphémère peut perdre tous les dépôts au prochain redémarrage/déploiement ; ne pas ouvrir les dépôts publics dans ce cas. L’offre gratuite de votre hébergeur ne fournit pas nécessairement de disque persistant.
-- Utiliser HTTPS. Le jeton de modération est un secret d’administration unique, saisi uniquement par le responsable ; il n’est pas stocké dans le navigateur. Remplacer par des comptes administrateurs avec rôles avant une utilisation à plusieurs.
-- Dépôts limités à cinq par heure par adresse vue par Express, corps limité à 40 ko, piège antispam, validation côté serveur. Derrière un proxy, l’adresse peut être commune à plusieurs visiteurs : prévoir une limitation adaptée au proxy de confiance et une protection antispam avant ouverture à grande échelle.
+`BASE_URL` peut remplacer l’adresse de test par défaut et `BROWSER_EXECUTABLE` le chemin de Chromium. Les tests navigateur utilisent une API isolée et un dossier temporaire ; aucun dépôt fictif n’est inséré dans le catalogue réel. Les tests unitaires/intégration couvrent notamment migration, filtres/index, cache, provenance, droits, collectes rejouées et modération.
 
-## Modules
+Express sert l’application compilée et l’API sur `PORT` (3001 par défaut). GitHub Pages seul ne peut pas exécuter les dépôts et le serveur.
 
-- `src/main.jsx` : écrans, filtres, favoris et alertes.
-- `src/EmployerForm.jsx` : dépôt entreprise et import éditorial, aperçu et reçu.
-- `src/Moderation.jsx` : accès administrateur et workflow de publication.
-- `src/Companies.jsx` : annuaire de pistes et entreprises du catalogue.
-- `src/components.jsx`, `src/styles.css`, `src/api.js`, `src/storage.js`, `src/domain.js` : UI et logique partagées.
-- `shared/catalog.js` : familles, spécialités, contrats et annuaire.
-- `server/app.js`, `server/store.js`, `server/domain.js` : routes, authentification, validation et persistance.
-- `server/models.d.ts` : modèle et interfaces d’évolution.
-- `test/` : tests unitaires et intégration HTTP.
+### Render
 
-La recherche reste gratuite. Le champ `sponsored` permet un futur étiquetage explicite, sans paiement ni promotion actuelle. L’ajout futur de comptes et d’alertes e-mail demandera consentement, désinscription et stockage adapté. La présente version n’envoie aucun e-mail.
+- Branche `offres-fraiches-v1`, Node **24** (variable `NODE_VERSION=24`), Build `npm ci && npm run build`, Start `npm start`.
+- `ADMIN_TOKEN` : secret serveur aléatoire d’au moins 32 caractères, à renseigner dans les paramètres sécurisés de l’hébergeur. Génération locale possible avec `openssl rand -hex 32`. Ne pas utiliser de variable `VITE_`, commiter `.env` ni publier cette clé.
+- **Disque persistant indispensable** : monter un disque, par exemple sur `/var/data`, et définir `DATA_DIR=/var/data/offres-fraiches`. Ce chemin est un exemple de point de montage, à adapter à votre service. Vérifier le tarif de l’hébergeur avant d’ajouter un disque. Un disque éphémère perd les dépôts et les profils lors des redéploiements.
+- Utiliser HTTPS, garder les sauvegardes hors du disque principal et tester leur restauration. Les assets hashés sont mis en cache ; les données d’offres ne sont pas conservées dans le cache navigateur.
+
+Au premier démarrage, les dépôts existants de `DATA_DIR/offers.json` migrent automatiquement dans une transaction vers `catalogue.sqlite`, sans effacer le JSON. Sauvegarder l’ancien répertoire avant mise à jour. Ensuite seul SQLite est utilisé. Sauvegarder une base active avec une méthode SQLite cohérente (incluant la gestion du WAL), pas une simple copie isolée du fichier principal pendant les écritures.
+
+## Limites d’exploitation actuelles
+
+Cette version prépare un **pilote de production sur une instance avec disque local persistant**, pas un SaaS distribué complet. L’accès administrateur reste un jeton unique ; comptes, rôles et MFA ne sont pas implémentés. Pas de vérification automatique de l’identité déposant, de notification, de paiement, de suivi automatique des fermetures distantes ni de garantie d’exhaustivité. Les contacts personnels ne sont pas collectés ; seuls les contacts génériques publics autorisés sont admis.
+
+Les collectes exigent des sources accessibles et une autorisation réelle. Aucun flux ni offre réelle n’a été ajouté lors de cette mise à jour. Les reprises autorisées vont toujours dans la modération ; une disponibilité vérifiée est ponctuelle, pas une promesse future.
+
+SQLite WAL convient au disque local d’une machine. Plusieurs instances sur des disques différents demandent une base partagée (par exemple PostgreSQL), un cache et un planificateur distribués. Les requêtes synchrones doivent être mesurées sur la charge réelle. La limitation des dépôts reste à cinq tentatives par heure par adresse vue par Express : derrière un proxy, plusieurs utilisateurs peuvent partager cette adresse. Prévoir une politique de proxy de confiance, protections antispam et supervision adaptées avant une ouverture à grande échelle.

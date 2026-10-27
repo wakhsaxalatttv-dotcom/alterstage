@@ -35,6 +35,8 @@ export const defaultFilters = {
   contract: "",
   age: "",
   group: "",
+  city: "",
+  tech: "",
 };
 export function selectOffers(offers, filters, now = Date.now()) {
   const text = (s) =>
@@ -53,6 +55,11 @@ export function selectOffers(offers, filters, now = Date.now()) {
           [o.title, o.company.name, o.domain, o.location.label].join(" "),
         ).includes(text(filters.query)),
     )
+    .filter(
+      (o) =>
+        !filters.city || text(o.location.label).startsWith(text(filters.city)),
+    )
+    .filter((o) => !filters.tech || o.technologies?.includes(filters.tech))
     .filter((o) => !filters.region || regionOf(o) === filters.region)
     .filter((o) => !filters.group || groupOf(o.domain) === filters.group)
     .filter((o) => !filters.domain || o.domain === filters.domain)

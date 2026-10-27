@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ShieldCheck, ExternalLink, Check, X, RotateCcw } from "lucide-react";
 import { request } from "./api";
+import { Pagination } from "./CatalogueParts";
+import { SourcePanel } from "./SourcePanel";
 import { EmployerForm } from "./EmployerForm";
 export function Moderation({ onChanged }) {
   const [token, setToken] = useState(""),
@@ -9,13 +11,25 @@ export function Moderation({ onChanged }) {
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
     [view, setView] = useState("pending");
+  const [counts, setCounts] = useState({}),
+    [adminPage, setAdminPage] = useState(1),
+    [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
+  useEffect(() => {
+    if (authenticated) load();
+  }, [view, adminPage]);
   async function load(event) {
     event?.preventDefault();
     setBusy(true);
     setError("");
     try {
-      const data = await request("/api/admin/submissions", { token });
+      const data = await request(
+        "/api/admin/submissions?" +
+          new URLSearchParams({ moderation: view, page: adminPage }),
+        { token },
+      );
       setOffers(data.offers);
+      setCounts(data.counts || {});
+      setPagination(data);
       setAuthenticated(true);
     } catch (e) {
       setError(e.message);
@@ -84,19 +98,24 @@ export function Moderation({ onChanged }) {
               ["rejected", "Refusées"],
               ["withdrawn", "Retirées"],
               ["import", "Ajouter depuis une source"],
+              ["sources", "Sources & collecte"],
             ].map(([id, label]) => (
               <button
                 className={view === id ? "active" : ""}
                 key={id}
-                onClick={() => setView(id)}
+                onClick={() => {
+                  setView(id);
+                  setAdminPage(1);
+                }}
               >
                 {label}
-                {id !== "import" &&
-                  ` (${offers.filter((o) => o.moderationStatus === id).length})`}
+                {!["import", "sources"].includes(id) && ` (${counts[id] || 0})`}
               </button>
             ))}
           </div>
-          {view === "import" ? (
+          {view === "sources" ? (
+            <SourcePanel token={token} onChanged={onChanged} />
+          ) : view === "import" ? (
             <>
               <p className="muted">
                 Import éditorial manuel uniquement : recopiez une annonce avec
@@ -113,6 +132,7 @@ export function Moderation({ onChanged }) {
                 .map((o) => (
                   <Review key={o.id} offer={o} review={review} />
                 ))}
+              <Pagination {...pagination} onChange={setAdminPage} />
               {!offers.some((o) => o.moderationStatus === view) && (
                 <p className="empty-admin">
                   Aucune annonce dans cette catégorie.
@@ -150,7 +170,11 @@ function Review({ offer: o, review }) {
     <article className="review-card">
       <div className="tags">
         <span>
-          {o.origin === "editorial" ? "Import éditorial" : "Dépôt entreprise"}
+          {o.origin === "feed"
+            ? "Collecte de flux autorisé"
+            : o.origin === "editorial"
+              ? "Import éditorial"
+              : "Dépôt entreprise"}
         </span>
         <span>{o.domain}</span>
         <span>{o.contract}</span>
@@ -168,6 +192,46 @@ function Review({ offer: o, review }) {
       {o.company.description && (
         <p className="description">
           Présentation entreprise : {o.company.description}
+        </p>
+      )}
+      <dl className="review-company-data">
+        {[
+          ["Type", o.company.type],
+          ["Effectif", o.company.size],
+          ["Agences", o.company.locations?.join(" · ")],
+          ["Stack déclarée", o.company.stack?.join(" · ")],
+          ["Rythme accepté", o.company.rhythm],
+          ["Certifications", o.company.certifications?.join(" · ")],
+          ["Expertises", o.company.tags?.join(" · ")],
+        ]
+          .filter(([, v]) => v)
+          .map(([label, value]) => (
+            <React.Fragment key={label}>
+              <dt>{label}</dt>
+              <dd>{value}</dd>
+            </React.Fragment>
+          ))}
+      </dl>
+      {o.company.profileSourceUrl && (
+        <p>
+          <a href={o.company.profileSourceUrl} target="_blank" rel="noreferrer">
+            Contrôler la provenance des informations entreprise
+          </a>
+        </p>
+      )}
+      {o.technologies?.length > 0 && (
+        <p className="muted">
+          Mentions extraites automatiquement (à relire) :{" "}
+          {o.technologies.join(", ")}
+        </p>
+      )}
+      {(o.extractedKeywords?.education?.length > 0 ||
+        o.extractedKeywords?.locations?.length > 0) && (
+        <p className="muted">
+          Autres mentions à relire : niveaux{" "}
+          {o.extractedKeywords.education.join(", ") || "non détectés"} ; lieux{" "}
+          {o.extractedKeywords.locations?.join(", ") || "non détectés"}. Ces
+          propositions ne remplacent pas les champs source.
         </p>
       )}
       <div className="review-links">

@@ -2,6 +2,8 @@ import { domains, contracts } from "../shared/catalog.js";
 import { regions } from "../src/domain.js";
 import { randomUUID } from "node:crypto";
 import { isIP } from "node:net";
+import { companyTypes, companySizes, companyTags } from "../shared/company.js";
+import { plainText, extractKeywords } from "./enrichment.js";
 export class ValidationError extends Error {}
 export function safeUrl(value) {
   try {
@@ -118,6 +120,9 @@ export function normalizeSubmission(
       type: "email",
       value: contact.toLowerCase(),
       provenance,
+      role: ["RH", "Tutorat", "Recrutement"].includes(body.contactRole)
+        ? body.contactRole
+        : null,
     });
   }
   const publishedAt = isoDate(body.publishedAt, "Publication", {
@@ -137,6 +142,46 @@ export function normalizeSubmission(
     throw new ValidationError(
       "La fin de validité doit être comprise entre aujourd’hui et 90 jours.",
     );
+  const list = (value, max = 20) =>
+    [
+      ...new Set(
+        (Array.isArray(value)
+          ? value
+          : typeof value === "string"
+            ? value.split(/[,;\n]/)
+            : []
+        )
+          .map((v) => plainText(v, 120))
+          .filter(Boolean),
+      ),
+    ].slice(0, max);
+  const tags = list(body.companyTags);
+  if (tags.some((tag) => !companyTags.includes(tag)))
+    throw new ValidationError("Tag entreprise non reconnu.");
+  if (body.companyType && !companyTypes.includes(body.companyType))
+    throw new ValidationError("Type d’entreprise non reconnu.");
+  if (body.companySize && !companySizes.includes(body.companySize))
+    throw new ValidationError("Taille d’entreprise non reconnue.");
+  const hasProfile =
+    [
+      body.companyType,
+      body.companySize,
+      body.companyLocations,
+      body.companyStack,
+      body.companyRhythm,
+      body.companyCertifications,
+    ].some((v) => v && v.length) || tags.length;
+  if (hasProfile && !body.profileSourceUrl)
+    throw new ValidationError(
+      "Indiquez la page source des informations enrichies de l’entreprise.",
+    );
+  if (body.companyLogoUrl && body.logoConsent !== true)
+    throw new ValidationError("Confirmez votre droit d’utiliser le logo.");
+  const description = plainText(
+    required(body.description, "Description", 12000),
+  );
+  if (description.length < 2)
+    throw new ValidationError("La description nettoyée est vide.");
   return {
     id: randomUUID(),
     title: required(body.title, "Intitulé", 180),
@@ -145,7 +190,20 @@ export function normalizeSubmission(
       name: companyName,
       website,
       sector: text(body.sector) || null,
-      description: text(body.companyDescription, 2000) || null,
+      description: plainText(text(body.companyDescription, 2000), 2000) || null,
+      type: body.companyType || null,
+      size: body.companySize || null,
+      locations: list(body.companyLocations),
+      stack: list(body.companyStack),
+      rhythm: text(body.companyRhythm, 200) || null,
+      certifications: list(body.companyCertifications),
+      tags,
+      logoUrl: body.companyLogoUrl
+        ? link(body.companyLogoUrl, "Logo autorisé")
+        : null,
+      profileSourceUrl: body.profileSourceUrl
+        ? link(body.profileSourceUrl, "Provenance entreprise")
+        : null,
       location: required(body.city, "Ville", 120),
     },
     contract: body.contract,
@@ -158,9 +216,14 @@ export function normalizeSubmission(
     education: body.education
       ? [required(body.education, "Niveau de formation", 100)]
       : [],
-    description: required(body.description, "Description", 12000),
-    missions: text(body.missions, 4000).split("\n").filter(Boolean),
-    skills: text(body.skills, 2000).split("\n").filter(Boolean),
+    description,
+    extractedKeywords: extractKeywords(description),
+    missions: plainText(text(body.missions, 4000), 4000)
+      .split("\n")
+      .filter(Boolean),
+    skills: plainText(text(body.skills, 2000), 2000)
+      .split("\n")
+      .filter(Boolean),
     duration: text(body.duration, 120) || null,
     startsAt: body.startsAt
       ? isoDate(body.startsAt, "Début", { future: true })
@@ -223,6 +286,7 @@ export function publicOffer(offer, now = Date.now()) {
   // A dated manual review expires after seven days unless an editor rechecks it.
   const stillVerified =
     offer.lastVerifiedAt &&
+    now - Date.parse(offer.lastVerifiedAt) >= 0 &&
     now - Date.parse(offer.lastVerifiedAt) <= 7 * 86400000;
   const { moderationStatus, reviewNote, ...safe } = offer;
   return { ...safe, status: stillVerified ? "active" : "to_verify" };

@@ -1,6 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Manrope:wght@400;500;600;650;700;750;800&display=swap");
 :root {
-  font-family: "DM Sans", sans-serif;
+  font-family: "Inter Variable", system-ui, sans-serif;
   color: #253c34;
   background: #fcfcf9;
   font-synthesis: none;
@@ -69,7 +68,7 @@ p {
 h1,
 h2,
 h3 {
-  font-family: "Manrope", sans-serif;
+  font-family: "Inter Variable", system-ui, sans-serif;
 }
 h2 {
   font-size: 19px;
@@ -102,7 +101,7 @@ header {
   gap: 30px;
 }
 .brand {
-  font-family: "Manrope", sans-serif;
+  font-family: "Inter Variable", system-ui, sans-serif;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -123,7 +122,7 @@ header {
   transform: rotate(-5deg);
 }
 .beta {
-  font-family: "DM Sans", sans-serif;
+  font-family: "Inter Variable", system-ui, sans-serif;
   font-size: 9px;
   letter-spacing: 1px;
   background: #edf1e6;
@@ -404,7 +403,7 @@ nav small {
   margin-bottom: 27px;
 }
 .filter-heading h2 {
-  font-family: "DM Sans", sans-serif;
+  font-family: "Inter Variable", system-ui, sans-serif;
   font-size: 12px;
   letter-spacing: 0;
   display: flex;
@@ -2048,5 +2047,262 @@ nav {
   }
   .hero p {
     font-size: 12px;
+  }
+}
+/* Catalogue search: bounded pages and skeletons avoid layout jumps during remote requests. */
+.skeleton-list {
+  display: grid;
+  gap: 16px;
+  margin: 20px 0;
+}
+.skeleton-card {
+  border: 1px solid var(--border);
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  min-height: 205px;
+}
+.skeleton-block {
+  height: 17px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #edf1e9 25%, #f8faf6 50%, #edf1e9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  margin: 15px 0;
+  width: 88%;
+}
+.skeleton-block.short {
+  width: 30%;
+  height: 13px;
+}
+.skeleton-block.medium {
+  width: 58%;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+.pagination {
+  display: flex;
+  height: auto;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin: 28px 0 20px;
+  padding: 18px 0;
+  border-top: 1px solid var(--border);
+}
+.pagination > span {
+  font-size: 11px;
+  color: #54654e;
+}
+.pagination button {
+  height: auto;
+  position: static;
+  font-size: 11px;
+  padding: 10px 14px;
+}
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #d7e7d0;
+  background: #edf6e8;
+  color: #2c623c;
+  font-size: 10px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  margin-top: 17px;
+}
+.tech-tags {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.tech-tags span {
+  font:
+    10px ui-monospace,
+    SFMono-Regular,
+    Consolas,
+    monospace;
+  background: #f1f5f8;
+  color: #425c72;
+  border: 1px solid #e3eaf0;
+  padding: 4px 7px;
+  border-radius: 4px;
+}
+.company-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 16px;
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 22px;
+  border-radius: 10px;
+  margin: 25px 0;
+}
+.company-filters .field {
+  margin-bottom: 15px;
+}
+.company-filters .reset {
+  padding: 0;
+  align-self: center;
+  justify-self: start;
+  width: auto;
+}
+.company-type {
+  font-size: 10px;
+  padding: 4px 7px;
+  background: #f1f5eb;
+  color: #4b6841;
+  border-radius: 4px;
+}
+.directory-actions > a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+}
+.company-tag-fields {
+  margin-top: 15px;
+}
+.tag-checkboxes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 15px;
+}
+.tag-checkboxes .consent {
+  font-size: 10px;
+  margin: 5px 0;
+}
+.review-company-data {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  font-size: 12px;
+  gap: 8px;
+}
+.review-company-data dd {
+  margin: 0;
+}
+.source-panel {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 12px;
+  padding: 27px;
+  margin: 25px 0;
+}
+.source-panel h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.source-panel p {
+  font-size: 12px;
+}
+.source-panel > .primary {
+  margin: 23px 0;
+}
+.source-statuses,
+.ingestion-runs {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+.source-statuses article,
+.ingestion-runs article {
+  background: #f5f7f0;
+  border-radius: 6px;
+  padding: 15px;
+  font-size: 12px;
+}
+.source-statuses article {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+.source-statuses span {
+  font-size: 11px;
+  color: #596e52;
+}
+.ingestion-runs p {
+  margin: 7px 0 0;
+}
+.offer-card {
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.offer-card:hover {
+  border-color: #becfb2;
+  box-shadow: 0 4px 18px #1e483208;
+}
+.field input::placeholder {
+  color: #6a7763;
+}
+@media (max-width: 700px) {
+  .company-filters {
+    grid-template-columns: 1fr 1fr;
+    padding: 17px;
+    gap: 0 12px;
+  }
+  .company-filters .field {
+    min-width: 0;
+  }
+  .company-filters select {
+    font-size: 10px;
+  }
+  .pagination {
+    gap: 9px;
+    flex-wrap: wrap;
+  }
+  .pagination button:first-child,
+  .pagination button:nth-child(2) {
+    display: inline-flex;
+  }
+  .pagination > span {
+    font-size: 9px;
+  }
+  .pagination button {
+    font-size: 10px;
+    padding: 9px;
+  }
+  .verified-badge {
+    font-size: 9px;
+    max-width: 100%;
+    white-space: normal;
+  }
+  .tag-checkboxes {
+    grid-template-columns: 1fr;
+  }
+  .source-panel {
+    padding: 19px;
+  }
+  .source-statuses article {
+    flex-direction: column;
+  }
+  .review-company-data {
+    grid-template-columns: 110px 1fr;
+    font-size: 11px;
+  }
+  .hero h1 {
+    font-size: 35px;
+  }
+  .hero-badges {
+    flex-wrap: wrap;
+    row-gap: 9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-block {
+    animation: none;
+  }
+  .offer-card {
+    transition: none;
   }
 }
