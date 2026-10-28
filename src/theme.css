@@ -1,11 +1,12 @@
 :root {
-  --surface: #f3f1eb;
-  --canvas: #e5e6df;
-  --ink: #203e30;
-  --accent: #203e30;
-  --muted: #56665b;
-  --border: #d0d5c9;
-  --green: var(--accent);
+  --surface: #2e3448;
+  --canvas: #252a3d;
+  --ink: #f7f7fa;
+  --accent: #0d1420;
+  --muted: #bac2d4;
+  --border: #454c63;
+  --green: #edf0f7;
+  color-scheme: dark;
   --shadow: 0 1px 3px rgb(32 62 48 / 0.04);
   color: var(--ink);
   background: var(--canvas);
@@ -24,12 +25,12 @@ header {
   letter-spacing: -0.7px;
 }
 .beta {
-  background: #e7e9df;
-  color: #485d50;
+  background: #353c51;
+  color: #d4d9e6;
   border: 1px solid var(--border);
 }
 .nav nav button {
-  color: #485d50;
+  color: #d4d9e6;
   font-weight: 500;
 }
 .nav nav button.selected {
@@ -42,15 +43,15 @@ header {
 }
 .employer-nav {
   background: var(--accent);
-  color: #f3f1eb;
+  color: #2e3448;
   border-color: var(--accent);
 }
 .employer-nav:hover {
-  background: #172f24;
-  color: #f3f1eb;
+  background: #171d2b;
+  color: #2e3448;
 }
 .hero {
-  background: #f3f1eb;
+  background: #2e3448;
   border-bottom: 1px solid var(--border);
 }
 .hero-content {
@@ -65,16 +66,16 @@ header {
   font-weight: 700;
 }
 .hero h1 span {
-  color: #344d3f;
+  color: #e0e3ed;
 }
 .hero p {
   max-width: 700px;
-  color: #485d50;
+  color: #d4d9e6;
   font-size: 15px;
 }
 .hero .eyebrow,
 .eyebrow {
-  color: #56665b;
+  color: #bac2d4;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 1.4px;
@@ -83,13 +84,13 @@ header {
   position: relative;
 }
 .search-box {
-  border-color: #b8c3b3;
+  border-color: #626d89;
   box-shadow: 0 4px 16px rgb(32 62 48 / 0.04);
   border-radius: 8px;
 }
 .search-box:focus-within {
-  border-color: #56665b;
-  box-shadow: 0 0 0 3px #d0d5c9;
+  border-color: #bac2d4;
+  box-shadow: 0 0 0 3px #454c63;
 }
 .search-box input {
   color: var(--ink);
@@ -99,35 +100,35 @@ header {
   border: 1px solid var(--accent);
 }
 .primary:hover {
-  background: #172f24;
-  color: #f3f1eb;
+  background: #171d2b;
+  color: #2e3448;
 }
 .secondary {
-  border-color: #b8c3b3;
-  color: #344d3f;
+  border-color: #626d89;
+  color: #e0e3ed;
 }
 .secondary:hover {
-  background: #e7e9df;
+  background: #353c51;
 }
 a:hover,
 button:hover {
-  color: #344d3f;
+  color: #e0e3ed;
 }
 .primary:hover,
 .employer-nav:hover {
-  color: #f3f1eb;
+  color: #2e3448;
 }
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline-color: #58734a;
+  outline-color: #c5cee4;
 }
 .filters {
   border: 1px solid var(--border);
   padding: 20px;
-  background: #f3f1eb;
+  background: #2e3448;
   border-radius: 8px;
   align-self: start;
 }
@@ -135,16 +136,16 @@ textarea:focus-visible {
   margin-bottom: 24px;
 }
 .field {
-  color: #344d3f;
+  color: #e0e3ed;
   font-size: 12px;
 }
 .field input,
 .field select,
 .field textarea {
-  border-color: #b8c3b3;
+  border-color: #626d89;
   border-radius: 6px;
   color: var(--ink);
-  background: #f3f1eb;
+  background: #2e3448;
 }
 .results-heading h2 {
   font-size: 20px;
@@ -154,7 +155,7 @@ textarea:focus-visible {
 .results-heading p,
 .sort,
 .muted {
-  color: #56665b;
+  color: #bac2d4;
 }
 .offer-card,
 .external-card,
@@ -173,7 +174,7 @@ textarea:focus-visible {
 .offer-card:hover,
 .external-card:hover,
 .directory-card:hover {
-  border-color: #869b84;
+  border-color: #7985a3;
 }
 .offer-card h3,
 .external-card h3 {
@@ -185,37 +186,37 @@ textarea:focus-visible {
 }
 .offer-top strong,
 .external-company {
-  color: #344d3f;
+  color: #e0e3ed;
 }
 .offer-top p,
 .offer-bottom,
 .external-date,
 .external-card .external-summary {
-  color: #56665b;
+  color: #bac2d4;
 }
 .tags span,
 .tech-tags span,
 .company-type {
-  background: #e7e9df;
-  color: #485d50;
-  border: 1px solid #d0d5c9;
+  background: #353c51;
+  color: #d4d9e6;
+  border: 1px solid #454c63;
 }
 .company-logo rect {
-  fill: #e5e6df;
+  fill: #252a3d;
 }
 .company-logo text {
-  fill: #485d50;
+  fill: #d4d9e6;
 }
 .source-banner,
 .sidebar-tip,
 .local-note,
 .employer-help {
-  background: #e7e9df;
-  border-color: #d0d5c9;
+  background: #353c51;
+  border-color: #454c63;
 }
 .source-banner p,
 .source-symbol {
-  color: #56665b;
+  color: #bac2d4;
 }
 .source-banner.error {
   background: #fff7ed;
@@ -227,39 +228,39 @@ textarea:focus-visible {
   color: #047857;
 }
 .empty {
-  background: #f3f1eb;
-  border-color: #b8c3b3;
+  background: #2e3448;
+  border-color: #626d89;
 }
 .bottom-banner {
-  background: #203e30;
-  border-color: #203e30;
-  color: #f3f1eb;
+  background: #f7f7fa;
+  border-color: #f7f7fa;
+  color: #2e3448;
 }
 .bottom-banner p {
-  color: #b8c3b3;
+  color: #626d89;
 }
 .bottom-icon {
-  background: #172f24;
-  color: #d0d5c9;
+  background: #171d2b;
+  color: #454c63;
 }
 .bottom-banner .secondary {
-  background: #f3f1eb;
-  border-color: #f3f1eb;
-  color: #203e30;
+  background: #2e3448;
+  border-color: #2e3448;
+  color: #f7f7fa;
 }
 .domain-shortcuts button {
-  background: #f3f1eb;
+  background: #2e3448;
   border-color: var(--border);
-  color: #485d50;
+  color: #d4d9e6;
 }
 .domain-shortcuts button.active,
 .admin-tabs button.active {
-  background: #203e30;
-  border-color: #203e30;
-  color: #f3f1eb;
+  background: #f7f7fa;
+  border-color: #f7f7fa;
+  color: #2e3448;
 }
 footer {
-  color: #56665b;
+  color: #bac2d4;
   background: transparent;
 }
 dialog {
@@ -289,7 +290,7 @@ dialog {
     font-size: 14px;
   }
   .nav nav button.selected {
-    background: #e7e9df;
+    background: #353c51;
   }
   .filters {
     padding: 18px;
@@ -312,39 +313,128 @@ dialog {
   }
 }
 
-/* Forest identity: mineral surfaces and a contrasting introductory section. */
+/* Palette drawn from the owner's reference: slate, light text, near-black actions. */
+header {
+  background: #222739;
+}
 .hero {
-  background: #203e30;
-  border-bottom-color: #344d3f;
+  background: #252a3d;
+  border-bottom-color: #454c63;
 }
-.hero h1 {
-  color: #f3f1eb;
-}
+.hero h1,
 .hero h1 span {
-  color: #c5d6bc;
+  color: #ffffff;
 }
-.hero p {
-  color: #d2ddd0;
-}
+.hero p,
 .hero .eyebrow {
-  color: #c0d1b9;
+  color: #e0e3ed;
 }
 .primary,
 .employer-nav,
 .domain-shortcuts button.active,
 .admin-tabs button.active {
-  color: #f3f1eb;
+  background: #0d1420;
+  border-color: #0d1420;
+  color: #ffffff;
+}
+.primary:hover,
+.employer-nav:hover {
+  background: #171f30;
+  color: #ffffff;
+}
+.secondary {
+  background: #353c51;
+  color: #f7f7fa;
+}
+.secondary:hover {
+  background: #414a62;
+  color: #ffffff;
+}
+.nav nav button.selected::after {
+  background: #f7f7fa;
 }
 .company-logo {
-  background: #f3f1eb;
+  background: #f3f4f7;
 }
-dialog {
-  background: #f3f1eb;
+.company-logo rect {
+  fill: #f3f4f7;
 }
+.company-logo text {
+  fill: #414a62;
+}
+dialog,
 .search-box {
-  background: #f3f1eb;
+  background: #2e3448;
+}
+.bottom-banner {
+  background: #1d2233;
+  border-color: #454c63;
+  color: #ffffff;
+}
+.bottom-banner .secondary {
+  background: #0d1420;
+  border-color: #0d1420;
+  color: #ffffff;
 }
 .bottom-banner .secondary:hover {
-  background: #e7e9df;
-  color: #203e30;
+  background: #171f30;
+  color: #ffffff;
+}
+.verified-badge {
+  background: #193c34;
+  border-color: #427b68;
+  color: #b1e2cb;
+}
+.source-banner.error,
+.notice.error {
+  background: #432f27;
+  border-color: #94684d;
+  color: #ffdfca;
+}
+.notice,
+.submission-success {
+  background: #283e3a;
+  border-color: #567a6c;
+  color: #d4eedf;
+}
+input::placeholder,
+textarea::placeholder,
+.search-box input::placeholder {
+  color: #b5bfd2;
+  opacity: 1;
+}
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: #b7c5e1;
+}
+.skeleton-block {
+  background-image: linear-gradient(
+    90deg,
+    #353c51 25%,
+    #454d65 50%,
+    #353c51 75%
+  );
+}
+@media (forced-colors: active) {
+  .primary,
+  .employer-nav {
+    border: 1px solid ButtonText;
+  }
+}
+.status-label,
+.external-status {
+  background: #443924;
+  color: #f4da9b;
+}
+.form-error {
+  background: #432f27;
+  border-color: #94684d;
+  color: #ffdfca;
+}
+dialog::backdrop {
+  background: rgb(6 9 16 / 0.7);
+}
+.bottom-banner p,
+.bottom-icon {
+  color: #c6cee0;
 }

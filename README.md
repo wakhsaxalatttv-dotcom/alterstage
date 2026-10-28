@@ -123,4 +123,4 @@ Avec le serveur de développement lancé, `npm run test:responsive` vérifie la 
 
 ### Interface et thème
 
-La palette associe vert forêt (`#203E30`), gris pierre (`#E5E6DF`) et surfaces minérales (`#F3F1EB`). L’accueil utilise un fond forêt avec des textes ivoire ; cartes, formulaires et navigation conservent des fonds pierre clairs. Les tokens sont dans `src/theme.css`, la disposition téléphone/PC dans `src/responsive.css`. La feuille du logo, les logos d’entreprises et les interactions sont conservés.
+La palette reprend la référence visuelle fournie : fond ardoise (`#252A3D`), cartes (`#2E3448`), textes clairs (`#F7F7FA`) et boutons presque noirs (`#0D1420`). Le thème sombre s’applique à toutes les rubriques publiques et à l’espace privé. Les couleurs et finitions sont dans `src/theme.css`, les règles téléphone/PC dans `src/responsive.css`. La feuille du logo, les logos d’entreprises et les interactions sont conservés. Aucun logo ni contenu commercial de la capture de référence n’est repris.
