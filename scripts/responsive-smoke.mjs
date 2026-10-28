@@ -77,7 +77,26 @@ try {
         .evaluate((el) => getComputedStyle(el).backgroundColor),
       "rgb(16, 61, 41)",
     );
+    assert.ok(
+      !(await page.locator(".hero-copy p").innerText()).includes(
+        "Informatique, réseaux",
+      ),
+    );
     if (width <= 700) {
+      assert.ok(
+        await page.locator(".hero-content").evaluate((el) => {
+          const leaf = el.querySelector(".hero-leaf").getBoundingClientRect();
+          const title = el.querySelector("h1").getBoundingClientRect();
+          const label = el.querySelector(".eyebrow").getBoundingClientRect();
+          return (
+            leaf.bottom <= title.top &&
+            label.right <= leaf.left &&
+            el.getBoundingClientRect().height < 300
+          );
+        }),
+        `Feuille et accueil mobile mal disposés à ${width}px`,
+      );
+
       const filters = page.getByRole("button", { name: /^Filtres/ });
       await filters.click();
       assert.equal(await filters.getAttribute("aria-expanded"), "true");

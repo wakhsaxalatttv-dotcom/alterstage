@@ -244,8 +244,8 @@ function App() {
                 des offres <span>fraîches.</span>
               </h1>
               <p>
-                Informatique, réseaux, industrie et chimie. Trouvez une offre et
-                candidatez directement auprès de l’employeur.
+                Trouvez une offre et candidatez directement auprès de
+                l’employeur.
               </p>
             </div>
             <svg

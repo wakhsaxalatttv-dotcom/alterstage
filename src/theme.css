@@ -775,15 +775,40 @@ textarea:focus-visible {
 }
 @media (max-width: 700px) {
   .hero-leaf {
-    position: static;
+    position: absolute;
     display: block;
-    width: 56px;
-    height: 56px;
-    margin: 16px 0 0 auto;
+    width: 34px;
+    height: 34px;
+    right: 16px;
+    top: 20px;
+    margin: 0;
   }
 }
 @media print {
   .hero-leaf {
     display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero-content {
+    padding-top: 24px;
+    padding-bottom: 54px;
+  }
+  .hero .eyebrow {
+    max-width: calc(100% - 48px);
+    font-size: 9px;
+    letter-spacing: 1px;
+    line-height: 1.5;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 7.6vw, 34px);
+    letter-spacing: -0.8px;
+    line-height: 1.2;
+  }
+  .hero p {
+    max-width: 100%;
+    font-size: 14px;
+    line-height: 1.6;
   }
 }
