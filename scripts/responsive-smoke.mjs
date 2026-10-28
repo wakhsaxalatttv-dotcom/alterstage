@@ -63,6 +63,18 @@ try {
       await page
         .locator(".public-site")
         .evaluate((el) => getComputedStyle(el).backgroundColor),
+      "rgb(141, 36, 49)",
+    );
+    assert.equal(
+      await page
+        .locator("header")
+        .evaluate((el) => getComputedStyle(el).backgroundColor),
+      "rgb(18, 59, 44)",
+    );
+    assert.equal(
+      await page
+        .locator(".search-box .primary")
+        .evaluate((el) => getComputedStyle(el).backgroundColor),
       "rgb(18, 59, 44)",
     );
     if (width <= 700) {

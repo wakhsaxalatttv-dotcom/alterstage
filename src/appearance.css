@@ -14,7 +14,7 @@
   height: var(--logo-size, 48px);
   place-items: center;
   vertical-align: middle;
-  background: #1c4938;
+  background: #9f303c;
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
@@ -24,7 +24,7 @@
   height: 100%;
 }
 .company-logo rect {
-  fill: #123b2c;
+  fill: #8d2431;
 }
 .company-logo text {
   fill: #f0f7f2;
