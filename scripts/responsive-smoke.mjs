@@ -63,19 +63,19 @@ try {
       await page
         .locator(".public-site")
         .evaluate((el) => getComputedStyle(el).backgroundColor),
-      "rgb(141, 36, 49)",
+      "rgb(235, 119, 112)",
     );
     assert.equal(
       await page
         .locator("header")
         .evaluate((el) => getComputedStyle(el).backgroundColor),
-      "rgb(18, 59, 44)",
+      "rgb(16, 61, 41)",
     );
     assert.equal(
       await page
         .locator(".search-box .primary")
         .evaluate((el) => getComputedStyle(el).backgroundColor),
-      "rgb(18, 59, 44)",
+      "rgb(16, 61, 41)",
     );
     if (width <= 700) {
       const filters = page.getByRole("button", { name: /^Filtres/ });

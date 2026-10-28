@@ -516,3 +516,234 @@ input[type="checkbox"],
 input[type="radio"] {
   accent-color: #123b2c;
 }
+
+/* Balanced red canvas and forest panels; all text uses green tones. */
+:root {
+  --canvas: #eb7770;
+  --surface: #194b35;
+  --ink: #103322;
+  --accent: #103d29;
+  --muted: #214831;
+  --border: #b34d49;
+  --green: #103322;
+  color-scheme: light;
+  color: var(--ink);
+}
+.public-site {
+  background: var(--canvas);
+  color: var(--ink);
+}
+header {
+  background: #103d29;
+  border-color: #286548;
+}
+header .brand,
+header a,
+.nav nav button,
+.nav nav button.selected {
+  color: #d1edb8;
+}
+.nav nav button.selected {
+  background: #286548;
+}
+.nav nav button.selected::after {
+  background: #a8d38a;
+}
+.nav .beta,
+.nav nav small {
+  background: #286548;
+  color: #d1edb8;
+  border-color: #58894f;
+}
+.hero {
+  background: var(--canvas);
+  border-color: #b34d49;
+}
+.hero h1,
+.hero h1 span,
+.hero p,
+.hero .eyebrow,
+.eyebrow,
+.page-title h1,
+.page-title p,
+.results-heading h2,
+.results-heading p,
+.sort,
+.external-heading h2,
+.external-heading p,
+footer,
+footer a,
+footer button,
+.trust-strip,
+.trust-strip p,
+.trust-strip p strong,
+.trust-strip > button {
+  color: #103322;
+}
+.primary,
+.secondary,
+.employer-nav,
+.bottom-banner .secondary,
+.domain-shortcuts button,
+.domain-shortcuts button.active,
+.admin-tabs button.active {
+  background: #103d29;
+  border-color: #58894f;
+  color: #d1edb8;
+}
+.primary:hover,
+.secondary:hover,
+.employer-nav:hover,
+.bottom-banner .secondary:hover,
+.domain-shortcuts button:hover {
+  background: #286548;
+  color: #e0f3ca;
+}
+.offer-card,
+.external-card,
+.directory-card,
+.alert-card,
+.employer-form,
+.filters,
+.company-filters,
+.reference-filters,
+.source-banner,
+.local-note,
+.employer-help,
+.sidebar-tip,
+.bottom-banner,
+dialog,
+.search-box {
+  background: #194b35;
+  border-color: #58894f;
+  color: #d1edb8;
+}
+.offer-card h3,
+.external-card h3,
+.directory-card h3,
+.offer-top strong,
+.offer-top p,
+.offer-bottom,
+.offer-bottom a,
+.offer-bottom button,
+.external-company,
+.external-date,
+.external-card .external-date,
+.external-card .external-summary,
+.external-card p,
+.external-card a,
+.external-actions button,
+.directory-card p,
+.directory-card a,
+.field,
+.filter-heading h2,
+.filter-heading button,
+.radio,
+.source-banner p,
+.source-symbol,
+.source-banner > button,
+.local-note p,
+.employer-help p,
+.sidebar-tip p,
+.sidebar-tip button,
+.bottom-banner p,
+.bottom-icon,
+.muted,
+.favorite,
+.favorite.saved,
+dialog h2,
+dialog h3,
+dialog p,
+dialog a,
+dialog button,
+dialog dt,
+dialog dd {
+  color: #d1edb8;
+}
+.field input,
+.field select,
+.field textarea,
+.search-box input,
+.reference-filters input,
+.company-filters input {
+  background: #286548;
+  color: #e0f3ca;
+  border-color: #78a565;
+  color-scheme: dark;
+}
+input::placeholder,
+textarea::placeholder,
+.search-box input::placeholder {
+  color: #c5dfa9;
+}
+.search-box input {
+  background: transparent;
+}
+.tags span,
+.tech-tags span,
+.company-type,
+.status-label,
+.external-status {
+  background: #286548;
+  border-color: #58894f;
+  color: #d1edb8;
+}
+.company-logo,
+.company-logo rect {
+  background: #c5dfa9;
+  fill: #c5dfa9;
+}
+.company-logo text {
+  fill: #103d29;
+}
+.company-logo img {
+  background: transparent;
+}
+.source-banner.error,
+.notice,
+.notice.error,
+.form-error,
+.submission-success,
+.empty {
+  background: #194b35;
+  color: #d1edb8;
+  border-color: #58894f;
+}
+.empty h3,
+.empty > p,
+.alert-card h2,
+.alert-card p,
+.alert-card button {
+  color: #d1edb8;
+}
+.verified-badge {
+  background: #286548;
+  color: #d1edb8;
+  border-color: #78a565;
+}
+.pagination button {
+  color: #d1edb8;
+  background: #103d29;
+  border: 1px solid #58894f;
+  border-radius: 6px;
+}
+.pagination > span {
+  color: #103322;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline-color: #a8d38a;
+}
+@media (max-width: 700px) {
+  .mobile-filter button {
+    background: #103d29;
+    color: #d1edb8;
+    border-color: #58894f;
+  }
+  .nav nav button.selected {
+    background: #286548;
+  }
+}

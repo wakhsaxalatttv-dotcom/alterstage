@@ -1,40 +1,32 @@
 # Interface Offres Fraîches
 
-## Direction visuelle
+## Palette actuelle
 
-Le propriétaire a demandé une nouvelle présentation professionnelle : fond rouge, en-tête et boutons vert forêt, textes blancs très clairs, sans photographies ni motifs de fond. Le slogan reste « Votre avenir mérite des offres fraîches. ». Le logo feuille est conservé dans `public/brand-leaf.svg`, sur fond vert forêt, et partagé avec la page privée et le favicon.
+La répartition demandée est un fond rouge et des panneaux verts, avec une écriture exclusivement dans des tons verts. Les palettes précédentes sont remplacées.
 
-## Tokens
+| Usage | Couleur |
+| --- | --- |
+| Fond général rouge clair | `#EB7770` |
+| Texte sur fond rouge | `#103322` |
+| En-tête et boutons vert forêt | `#103D29` |
+| Cartes, filtres et formulaires | `#194B35` |
+| Texte sur surfaces vertes | `#D1EDB8` |
+| Champs et tags | `#286548` |
 
-`src/theme.css` définit la palette commune :
+Le rouge est assez clair pour que le texte vert foncé reste lisible. Le vert occupe les cartes, les filtres, la recherche, l’en-tête et les actions. Les textes ne sont plus blancs ; les logos de tiers restent affichés tels que fournis.
 
-| Token | Valeur | Usage |
-| --- | --- | --- |
-| `--surface` | `#9F303C` | Cartes, formulaires, en-tête |
-| `--canvas` | `#8D2431` | Fond général |
-| `--ink` | `#FFFFFF` | Titres et texte principal |
-| `--accent` | `#123B2C` | Boutons et actions actives |
-| `--muted` | `#FFF0F2` | Métadonnées et texte secondaire |
-| `--border` | `#C56872` | Séparations et contours |
-| `--shadow` | `0 1px 3px rgb(6 9 16 / .04)` | Relief discret des cartes |
+Les couleurs sont centralisées dans `src/theme.css`. Inter Variable reste la typographie principale. La feuille est partagée par l’en-tête public, privé et le favicon. Aucun motif décoratif ni photographie n’est ajouté.
 
-Inter Variable reste la typographie principale. Les technologies gardent une police monospace système. Les badges de vérification utilisent le vert clair `#B1E2CB` sur fond `#193C34` uniquement lorsque les données permettent de les afficher. Les erreurs conservent leurs couleurs distinctes. Le focus clavier clair reste visible.
+## Disposition et comportements
 
-## Disposition
+`src/responsive.css` conserve les cinq menus nommés sur téléphone, les champs de 16 px et les cibles tactiles principales de 44 px. Les filtres sont dépliables sur téléphone et regroupés dans un panneau sur ordinateur. Les cartes et fenêtres conservent leurs informations de source et leur logique métier.
 
-L’accueil rouge et ses textes clairs mènent à une barre de recherche puis à un catalogue rouge. Les filtres ont leur propre panneau sur ordinateur. Les cartes légèrement plus claires que le fond emploient des bordures fines, des titres contrastés et des tags neutres. Les composants Entreprises, Repérées, favoris, alertes et dépôt utilisent la même palette. La page privée reste séparée du site public et son contenu protégé.
+`CompanyLogo` utilise le logo autorisé fourni, puis le favicon d’un domaine officiel déjà renseigné, puis un monogramme SVG. Aucun domaine n’est deviné. Les dimensions sont réservées et les images différées.
 
-La navigation conserve les cinq rubriques nommées sur téléphone. Les champs mobiles restent en 16 px et les contrôles principaux en 44 px minimum. `responsive.css` gère les passages entre mobile, tablette et ordinateur ; `theme.css` applique la palette et les finitions après ces règles.
-
-## Logos et interactions
-
-`CompanyLogo` utilise un logo autorisé fourni, puis le favicon d’un domaine officiel déjà renseigné, puis un monogramme SVG. Aucun domaine n’est deviné. Les images restent différées, avec dimensions réservées. Les monogrammes conservent une surface claire pour distinguer les identités des entreprises.
-
-L’apparition des cartes au défilement, la confirmation des favoris et l’ouverture des fenêtres sont conservées. Le survol des cartes est réduit à 2 px. `prefers-reduced-motion` désactive les animations. Les fenêtres natives conservent Échap, le verrouillage du défilement et la restitution du focus.
+Les apparitions au défilement, la confirmation des favoris et l’ouverture des fiches restent désactivables avec `prefers-reduced-motion`. Les fenêtres natives conservent Échap et la restitution du focus. L’administration reste séparée et authentifiée.
 
 ## Validation
 
-- `npm run test:responsive` : menus, filtres mobiles, dépôt et absence de débordement sur onze largeurs de 320 à 1920 px, avec vérification du nouveau fond.
-- `npm run test:design` : logos, replis, fenêtres, focus, responsive et réduction des animations.
-- `npm run test:browser` : parcours de recherche, favoris, entreprises et modération dans un stockage isolé.
+- `npm run test:responsive` : onze largeurs de 320 à 1920 px, navigation, filtres, formulaire, absence de débordement et couleurs du fond, de l’en-tête et du bouton de recherche.
+- `npm run test:design` : logos, replis, fenêtres, focus et réduction des animations.
 - `npm run build` : compilation publique et administration séparées.

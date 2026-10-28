@@ -123,4 +123,4 @@ Avec le serveur de développement lancé, `npm run test:responsive` vérifie la 
 
 ### Interface et thème
 
-La répartition demandée est : fond rouge (`#8D2431`), cartes rouges (`#9F303C`), en-tête et boutons vert forêt (`#123B2C`), écriture blanche. Les couleurs sont dans `src/theme.css`, les règles téléphone/PC dans `src/responsive.css`. Le test responsive vérifie explicitement la couleur du fond, de l’en-tête et du bouton de recherche. La feuille du logo, les logos d’entreprises et les interactions sont conservés.
+Fond rouge clair (`#EB7770`), en-tête et boutons vert forêt (`#103D29`), cartes vertes (`#194B35`). Les textes sont vert foncé sur le fond rouge et vert clair (`#D1EDB8`) sur les surfaces vertes. Les couleurs sont centralisées dans `src/theme.css`, la disposition dans `src/responsive.css`. Le test responsive contrôle la répartition du fond et des actions sur onze largeurs d’écran.
