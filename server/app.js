@@ -68,7 +68,7 @@ export function createApp({
       ...result,
       status: "connected",
       message: result.total
-        ? "Annonces d’entreprises et offres actives selon une API autorisée. Les offres anciennes sont signalées ; la réception par API ne vérifie pas le recrutement."
+        ? "Les dates de publication et les liens d’origine sont conservés. Consultez la source pour les conditions de candidature."
         : "Aucune annonce validée ne correspond. Les pistes entreprises ne sont pas des offres confirmées.",
       sources: [
         {

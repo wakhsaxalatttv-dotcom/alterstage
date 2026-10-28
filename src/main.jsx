@@ -23,6 +23,7 @@ import {
 import { defaultFilters, regions, regionOf, selectOffers } from "./domain";
 import "@fontsource-variable/inter/wght.css";
 import "./styles.css";
+import "./premium.css";
 import { useLocal } from "./storage";
 import { Filter, Empty, Offer, Dialog } from "./components";
 const EmployerForm = lazy(() =>
@@ -171,7 +172,7 @@ function App() {
             }}
           >
             <span className="brand-icon">
-              <Leaf size={22} />
+              <span aria-hidden="true">OF</span>
             </span>
             offres fraîches<span className="beta">BÊTA</span>
           </a>
@@ -230,7 +231,7 @@ function App() {
       {page === "search" && (
         <section className="hero">
           <div className="wrap hero-content">
-            <div className="eyebrow">LE BON DÉPART, À LA BONNE SOURCE</div>
+            <div className="eyebrow">STAGES & ALTERNANCES / FRANCE</div>
             <h1>
               Votre avenir mérite
               <br />
@@ -522,9 +523,9 @@ function App() {
                   <div>
                     <strong>
                       {data.status === "loading"
-                        ? "Connexion à la source…"
+                        ? "Chargement des offres…"
                         : data.status === "connected"
-                          ? "Offres d’entreprises et annonces reçues de sources autorisées"
+                          ? "Sources des annonces"
                           : data.status === "error"
                             ? "La source est indisponible"
                             : "La transparence commence ici"}
@@ -678,6 +679,9 @@ function App() {
       </footer>
       {modal && (
         <Dialog
+          variant={
+            ["offer", "company"].includes(modal.type) ? "drawer" : undefined
+          }
           close={() => setModal(null)}
           title={
             modal.type === "offer"

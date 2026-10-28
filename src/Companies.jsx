@@ -1,3 +1,4 @@
+import { CompanyLogo } from "./CompanyLogo";
 import React, { useEffect, useState } from "react";
 import { Building2, ArrowUpRight, ExternalLink, Search } from "lucide-react";
 import { companyTypes, companySizes, companyTags } from "../shared/company";
@@ -116,23 +117,7 @@ export function Companies({ openCompany }) {
             <div className="company-grid">
               {data.companies.map((c) => (
                 <article className="directory-card" key={c.id}>
-                  <div className="directory-logo" aria-hidden="true">
-                    {c.logoUrl ? (
-                      <img
-                        src={c.logoUrl}
-                        loading="lazy"
-                        decoding="async"
-                        width="45"
-                        height="45"
-                        alt=""
-                        onError={(e) => {
-                          e.currentTarget.hidden = true;
-                        }}
-                      />
-                    ) : (
-                      c.name.slice(0, 2).toUpperCase()
-                    )}
-                  </div>
+                  <CompanyLogo company={c} />
                   <span className="directory-label">
                     {c.researchLead
                       ? "PISTE À VÉRIFIER"

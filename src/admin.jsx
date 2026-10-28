@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { Moderation } from "./Moderation";
 import "@fontsource-variable/inter/wght.css";
 import "./styles.css";
+import "./premium.css";
 function Administration() {
   return (
     <>

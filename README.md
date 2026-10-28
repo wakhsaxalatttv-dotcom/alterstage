@@ -88,7 +88,7 @@ Pour une extension future, Adzuna demande un `app_id` et une `app_key` (https://
 
 ### Présentation des annonces
 
-Les cartes et fiches affichent la date de publication, sans les anciens encarts de fraîcheur ni les lignes de vérification non effectuée. La limite de 45 jours continue de s’appliquer automatiquement ; aucune vérification n’est inventée. La présentation reprend les couleurs d’origine vert et crème, des cartes sobres, une typographie lisible et des actions de candidature visibles. Aucun visuel généré ni bandeau décoratif n’est utilisé.
+Les cartes et fiches affichent la date de publication, sans les anciens encarts de fraîcheur ni les lignes de vérification non effectuée. La limite de 45 jours continue de s’appliquer automatiquement ; aucune vérification n’est inventée. La présentation utilise un fond neutre, des cartes blanches à bordure fine, un accent ardoise et une typographie Inter avec métadonnées monospace. Aucun visuel généré ni bandeau décoratif n’est utilisé.
 
 ### Gestion des dépôts et signalements
 
@@ -108,3 +108,9 @@ L’administration utilise une entrée HTML et un bundle JavaScript distincts. S
 ### Diagnostic d’accès administrateur sur Render
 
 Dans les **Logs** privés du service, rechercher `[Administration]` après un déploiement. Le démarrage indique uniquement si `ADMIN_TOKEN` est absent, trop court ou reçu et valide en longueur. La valeur, sa longueur exacte et les autres variables ne sont jamais affichées. Ces informations ne sont pas ajoutées à l’API publique ni à la page de connexion. Un message « accès privé activé » confirme le chargement de la configuration, pas la validité d’un code saisi par un visiteur.
+
+### Interface du catalogue
+
+Le système visuel et les tokens complets sont documentés dans [docs/DESIGN.md](docs/DESIGN.md). Les fichiers principaux sont `src/tokens.css`, `src/premium.css`, `src/CompanyLogo.jsx`, `src/components.jsx` et `src/CatalogueParts.jsx`. Les logos renseignés disposent d’un repli vers le favicon du domaine officiel, puis vers un monogramme SVG. Les fiches s’ouvrent en tiroir accessible ; les chargements utilisent des skeletons statiques. Aucun mode télétravail/présentiel ni statut de vérification n’est inventé pour remplir une carte.
+
+`npm run test:design` contrôle la chaîne de logos et les nouveaux comportements visuels dans un environnement isolé, sans nouvelle dépendance de production ni clé de marque à configurer.

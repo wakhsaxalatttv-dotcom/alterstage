@@ -1,3 +1,5 @@
+import { CompanyLogo } from "./CompanyLogo";
+import { workModeLabel } from "./jobMeta";
 import React, { useEffect, useRef } from "react";
 import {
   ChevronDown,
@@ -73,31 +75,21 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
   return (
     <article className="offer-card">
       <div className="offer-top">
-        <span className="company-avatar">
-          {o.company.logoUrl ? (
-            <img
-              src={o.company.logoUrl}
-              loading="lazy"
-              decoding="async"
-              width="42"
-              height="42"
-              alt=""
-              onError={(e) => {
-                e.currentTarget.hidden = true;
-              }}
-            />
-          ) : (
-            <Building2 size={23} />
-          )}
-        </span>
-        <div>
+        <CompanyLogo company={o.company} />
+        <div className="offer-heading">
+          <h3>
+            <button onClick={details}>{o.title}</button>
+          </h3>
           <button className="company-link" onClick={company}>
             {o.company.name}
           </button>
-          <p>
-            <MapPin size={13} />
+          <p className="offer-location">
+            <MapPin size={13} aria-hidden="true" />
             {o.location.label || "Lieu non fourni"}
             {regionOf(o) && ` · ${regionOf(o)}`}
+            {workModeLabel(o) && (
+              <span className="work-mode">{workModeLabel(o)}</span>
+            )}
           </p>
         </div>
         <button
@@ -108,12 +100,9 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
           aria-pressed={favorite}
           onClick={toggle}
         >
-          <Bookmark size={20} fill={favorite ? "currentColor" : "none"} />
+          <Bookmark size={18} fill={favorite ? "currentColor" : "none"} />
         </button>
       </div>
-      <h3>
-        <button onClick={details}>{o.title}</button>
-      </h3>
       <div className="tags">
         <span>
           {o.acceptedContracts?.length > 1
@@ -135,27 +124,37 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
         </div>
       )}
       <div className="offer-meta">
-        <span>Publiée le {date(o.publishedAt)}</span>
+        <time dateTime={o.publishedAt || undefined}>
+          Publiée le {date(o.publishedAt)}
+        </time>
       </div>
       <div className="offer-bottom">
         <a href={o.sourceUrl} target="_blank" rel="noreferrer">
-          {o.source} <ExternalLink size={13} />
+          {o.source || o.sourceName || "Source originale"}{" "}
+          <ExternalLink size={13} />
         </a>
         <button onClick={details}>
           Voir l’offre <ArrowRight size={16} />
         </button>
-        <a href={o.applicationUrl} target="_blank" rel="noreferrer">
+        <a
+          className="apply-link"
+          href={o.applicationUrl || o.sourceUrl}
+          target="_blank"
+          rel="noreferrer"
+        >
           Candidater <ArrowUpRight size={15} />
         </a>
       </div>
     </article>
   );
 }
-export function Dialog({ title, close, children }) {
+export function Dialog({ title, close, children, variant }) {
   const ref = useRef(null);
   useEffect(() => {
     const el = ref.current,
       prev = document.activeElement;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     el.showModal();
     const dismiss = (e) => {
       if (e.target === el) close();
@@ -164,11 +163,17 @@ export function Dialog({ title, close, children }) {
     return () => {
       el.removeEventListener("click", dismiss);
       el.close();
+      document.body.style.overflow = previousOverflow;
       prev?.focus();
     };
   }, []);
   return (
-    <dialog aria-label={title} ref={ref} onCancel={close}>
+    <dialog
+      className={variant === "drawer" ? "detail-drawer" : undefined}
+      aria-label={title}
+      ref={ref}
+      onCancel={close}
+    >
       <div className="dialog-header">
         <h2>{title}</h2>
         <button onClick={close} aria-label="Fermer la fenêtre">
