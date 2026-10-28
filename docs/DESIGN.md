@@ -7,3 +7,5 @@ La palette d’origine est rétablie : vert `#176B50`, fond crème `#FCFCF9`, te
 `src/responsive.css` conserve les cinq rubriques nommées sur téléphone, les champs de 16 px et les principales cibles tactiles de 44 px. Les logos d’entreprises et les animations restent présents, avec respect de la réduction des mouvements. L’administration reste séparée et authentifiée.
 
 Validation : `npm run test:responsive`, `npm run test:design` et `npm run build`.
+
+Le motif local `public/leaf-background.svg` répète la feuille du logo en filigrane vert très léger sur toutes les pages. Il apparaît sur les fonds du site et de l’accueil ; cartes et champs conservent leur fond opaque. Le motif ne capture pas les clics, ne crée pas de débordement et est masqué à l’impression et en mode couleurs forcées.

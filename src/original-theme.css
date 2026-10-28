@@ -78,3 +78,29 @@
     line-height: 1.6;
   }
 }
+
+/* Shared leaf watermark stays behind content and never captures interaction. */
+body,
+.public-site {
+  background-color: #fcfcf9;
+  background-image: url("/leaf-background.svg");
+  background-size: 640px 640px;
+}
+.hero {
+  background-image: url("/leaf-background.svg");
+  background-size: 640px 640px;
+}
+@media (max-width: 700px) {
+  body,
+  .public-site,
+  .hero {
+    background-size: 480px 480px;
+  }
+}
+@media print, (forced-colors: active) {
+  body,
+  .public-site,
+  .hero {
+    background-image: none;
+  }
+}

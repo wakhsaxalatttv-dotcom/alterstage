@@ -39,6 +39,16 @@ try {
       );
       assert.ok(await button.innerText(), `Libellé masqué : ${name}`);
       await button.click();
+      assert.ok(
+        await page
+          .locator(".public-site")
+          .evaluate((el) =>
+            getComputedStyle(el).backgroundImage.includes(
+              "leaf-background.svg",
+            ),
+          ),
+        `Filigrane absent : ${name}`,
+      );
       assert.equal(await button.getAttribute("aria-current"), "page");
       assert.ok(
         await page.evaluate(
