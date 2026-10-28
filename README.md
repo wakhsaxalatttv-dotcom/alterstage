@@ -123,4 +123,4 @@ Avec le serveur de développement lancé, `npm run test:responsive` vérifie la 
 
 ### Interface et thème
 
-La palette reprend la référence visuelle fournie : fond ardoise (`#252A3D`), cartes (`#2E3448`), textes clairs (`#F7F7FA`) et boutons presque noirs (`#0D1420`). Le thème sombre s’applique à toutes les rubriques publiques et à l’espace privé. Les couleurs et finitions sont dans `src/theme.css`, les règles téléphone/PC dans `src/responsive.css`. La feuille du logo, les logos d’entreprises et les interactions sont conservés. Aucun logo ni contenu commercial de la capture de référence n’est repris.
+La palette utilise un fond vert forêt (`#123B2C`), des cartes vert profond (`#1C4938`), des actions rouges (`#BA303B`) et une écriture blanche (`#FFFFFF`). Les textes secondaires restent très clairs (`#E0EEE5`). Le thème s’applique aux rubriques publiques et à l’espace privé. Les couleurs sont dans `src/theme.css`, les règles téléphone/PC dans `src/responsive.css`. La feuille du logo, les logos d’entreprises et les interactions sont conservés.

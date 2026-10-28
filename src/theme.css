@@ -1,11 +1,11 @@
 :root {
-  --surface: #2e3448;
-  --canvas: #252a3d;
-  --ink: #f7f7fa;
-  --accent: #0d1420;
-  --muted: #bac2d4;
-  --border: #454c63;
-  --green: #edf0f7;
+  --surface: #1c4938;
+  --canvas: #123b2c;
+  --ink: #ffffff;
+  --accent: #ba303b;
+  --muted: #e0eee5;
+  --border: #47705b;
+  --green: #ffffff;
   color-scheme: dark;
   --shadow: 0 1px 3px rgb(32 62 48 / 0.04);
   color: var(--ink);
@@ -25,12 +25,12 @@ header {
   letter-spacing: -0.7px;
 }
 .beta {
-  background: #353c51;
-  color: #d4d9e6;
+  background: #285440;
+  color: #f0f7f2;
   border: 1px solid var(--border);
 }
 .nav nav button {
-  color: #d4d9e6;
+  color: #f0f7f2;
   font-weight: 500;
 }
 .nav nav button.selected {
@@ -43,15 +43,15 @@ header {
 }
 .employer-nav {
   background: var(--accent);
-  color: #2e3448;
+  color: #1c4938;
   border-color: var(--accent);
 }
 .employer-nav:hover {
-  background: #171d2b;
-  color: #2e3448;
+  background: #102e23;
+  color: #1c4938;
 }
 .hero {
-  background: #2e3448;
+  background: #1c4938;
   border-bottom: 1px solid var(--border);
 }
 .hero-content {
@@ -66,16 +66,16 @@ header {
   font-weight: 700;
 }
 .hero h1 span {
-  color: #e0e3ed;
+  color: #f5faf6;
 }
 .hero p {
   max-width: 700px;
-  color: #d4d9e6;
+  color: #f0f7f2;
   font-size: 15px;
 }
 .hero .eyebrow,
 .eyebrow {
-  color: #bac2d4;
+  color: #e0eee5;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 1.4px;
@@ -84,13 +84,13 @@ header {
   position: relative;
 }
 .search-box {
-  border-color: #626d89;
+  border-color: #719582;
   box-shadow: 0 4px 16px rgb(32 62 48 / 0.04);
   border-radius: 8px;
 }
 .search-box:focus-within {
-  border-color: #bac2d4;
-  box-shadow: 0 0 0 3px #454c63;
+  border-color: #e0eee5;
+  box-shadow: 0 0 0 3px #47705b;
 }
 .search-box input {
   color: var(--ink);
@@ -100,35 +100,35 @@ header {
   border: 1px solid var(--accent);
 }
 .primary:hover {
-  background: #171d2b;
-  color: #2e3448;
+  background: #102e23;
+  color: #1c4938;
 }
 .secondary {
-  border-color: #626d89;
-  color: #e0e3ed;
+  border-color: #719582;
+  color: #f5faf6;
 }
 .secondary:hover {
-  background: #353c51;
+  background: #285440;
 }
 a:hover,
 button:hover {
-  color: #e0e3ed;
+  color: #f5faf6;
 }
 .primary:hover,
 .employer-nav:hover {
-  color: #2e3448;
+  color: #1c4938;
 }
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline-color: #c5cee4;
+  outline-color: #f1cbd0;
 }
 .filters {
   border: 1px solid var(--border);
   padding: 20px;
-  background: #2e3448;
+  background: #1c4938;
   border-radius: 8px;
   align-self: start;
 }
@@ -136,16 +136,16 @@ textarea:focus-visible {
   margin-bottom: 24px;
 }
 .field {
-  color: #e0e3ed;
+  color: #f5faf6;
   font-size: 12px;
 }
 .field input,
 .field select,
 .field textarea {
-  border-color: #626d89;
+  border-color: #719582;
   border-radius: 6px;
   color: var(--ink);
-  background: #2e3448;
+  background: #1c4938;
 }
 .results-heading h2 {
   font-size: 20px;
@@ -155,7 +155,7 @@ textarea:focus-visible {
 .results-heading p,
 .sort,
 .muted {
-  color: #bac2d4;
+  color: #e0eee5;
 }
 .offer-card,
 .external-card,
@@ -174,7 +174,7 @@ textarea:focus-visible {
 .offer-card:hover,
 .external-card:hover,
 .directory-card:hover {
-  border-color: #7985a3;
+  border-color: #91b49f;
 }
 .offer-card h3,
 .external-card h3 {
@@ -186,37 +186,37 @@ textarea:focus-visible {
 }
 .offer-top strong,
 .external-company {
-  color: #e0e3ed;
+  color: #f5faf6;
 }
 .offer-top p,
 .offer-bottom,
 .external-date,
 .external-card .external-summary {
-  color: #bac2d4;
+  color: #e0eee5;
 }
 .tags span,
 .tech-tags span,
 .company-type {
-  background: #353c51;
-  color: #d4d9e6;
-  border: 1px solid #454c63;
+  background: #285440;
+  color: #f0f7f2;
+  border: 1px solid #47705b;
 }
 .company-logo rect {
-  fill: #252a3d;
+  fill: #123b2c;
 }
 .company-logo text {
-  fill: #d4d9e6;
+  fill: #f0f7f2;
 }
 .source-banner,
 .sidebar-tip,
 .local-note,
 .employer-help {
-  background: #353c51;
-  border-color: #454c63;
+  background: #285440;
+  border-color: #47705b;
 }
 .source-banner p,
 .source-symbol {
-  color: #bac2d4;
+  color: #e0eee5;
 }
 .source-banner.error {
   background: #fff7ed;
@@ -228,39 +228,39 @@ textarea:focus-visible {
   color: #047857;
 }
 .empty {
-  background: #2e3448;
-  border-color: #626d89;
+  background: #1c4938;
+  border-color: #719582;
 }
 .bottom-banner {
-  background: #f7f7fa;
-  border-color: #f7f7fa;
-  color: #2e3448;
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #1c4938;
 }
 .bottom-banner p {
-  color: #626d89;
+  color: #719582;
 }
 .bottom-icon {
-  background: #171d2b;
-  color: #454c63;
+  background: #102e23;
+  color: #47705b;
 }
 .bottom-banner .secondary {
-  background: #2e3448;
-  border-color: #2e3448;
-  color: #f7f7fa;
+  background: #1c4938;
+  border-color: #1c4938;
+  color: #ffffff;
 }
 .domain-shortcuts button {
-  background: #2e3448;
+  background: #1c4938;
   border-color: var(--border);
-  color: #d4d9e6;
+  color: #f0f7f2;
 }
 .domain-shortcuts button.active,
 .admin-tabs button.active {
-  background: #f7f7fa;
-  border-color: #f7f7fa;
-  color: #2e3448;
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #1c4938;
 }
 footer {
-  color: #bac2d4;
+  color: #e0eee5;
   background: transparent;
 }
 dialog {
@@ -290,7 +290,7 @@ dialog {
     font-size: 14px;
   }
   .nav nav button.selected {
-    background: #353c51;
+    background: #285440;
   }
   .filters {
     padding: 18px;
@@ -313,13 +313,13 @@ dialog {
   }
 }
 
-/* Palette drawn from the owner's reference: slate, light text, near-black actions. */
+/* Forest green surfaces, red actions and high-contrast light text. */
 header {
-  background: #222739;
+  background: #0e3024;
 }
 .hero {
-  background: #252a3d;
-  border-bottom-color: #454c63;
+  background: #123b2c;
+  border-bottom-color: #47705b;
 }
 .hero h1,
 .hero h1 span {
@@ -327,31 +327,31 @@ header {
 }
 .hero p,
 .hero .eyebrow {
-  color: #e0e3ed;
+  color: #f5faf6;
 }
 .primary,
 .employer-nav,
 .domain-shortcuts button.active,
 .admin-tabs button.active {
-  background: #0d1420;
-  border-color: #0d1420;
+  background: #ba303b;
+  border-color: #ba303b;
   color: #ffffff;
 }
 .primary:hover,
 .employer-nav:hover {
-  background: #171f30;
+  background: #9f2530;
   color: #ffffff;
 }
 .secondary {
-  background: #353c51;
-  color: #f7f7fa;
+  background: #285440;
+  color: #ffffff;
 }
 .secondary:hover {
-  background: #414a62;
+  background: #35634e;
   color: #ffffff;
 }
 .nav nav button.selected::after {
-  background: #f7f7fa;
+  background: #ffffff;
 }
 .company-logo {
   background: #f3f4f7;
@@ -360,24 +360,24 @@ header {
   fill: #f3f4f7;
 }
 .company-logo text {
-  fill: #414a62;
+  fill: #35634e;
 }
 dialog,
 .search-box {
-  background: #2e3448;
+  background: #1c4938;
 }
 .bottom-banner {
-  background: #1d2233;
-  border-color: #454c63;
+  background: #0e3024;
+  border-color: #47705b;
   color: #ffffff;
 }
 .bottom-banner .secondary {
-  background: #0d1420;
-  border-color: #0d1420;
+  background: #ba303b;
+  border-color: #ba303b;
   color: #ffffff;
 }
 .bottom-banner .secondary:hover {
-  background: #171f30;
+  background: #9f2530;
   color: #ffffff;
 }
 .verified-badge {
@@ -400,19 +400,19 @@ dialog,
 input::placeholder,
 textarea::placeholder,
 .search-box input::placeholder {
-  color: #b5bfd2;
+  color: #d6e9dd;
   opacity: 1;
 }
 input[type="checkbox"],
 input[type="radio"] {
-  accent-color: #b7c5e1;
+  accent-color: #e5b6bb;
 }
 .skeleton-block {
   background-image: linear-gradient(
     90deg,
-    #353c51 25%,
+    #285440 25%,
     #454d65 50%,
-    #353c51 75%
+    #285440 75%
   );
 }
 @media (forced-colors: active) {
@@ -436,5 +436,27 @@ dialog::backdrop {
 }
 .bottom-banner p,
 .bottom-icon {
-  color: #c6cee0;
+  color: #e0eee5;
+}
+
+.nav nav button.selected::after {
+  background: #f1838c;
+}
+.hero h1 span {
+  color: #ffffff;
+}
+.company-logo text {
+  fill: #244936;
+}
+.company-logo rect,
+.company-logo {
+  background: #f1f5f2;
+  fill: #f1f5f2;
+}
+.source-banner.error,
+.notice.error,
+.form-error {
+  background: #56292c;
+  border-color: #be6e75;
+  color: #ffffff;
 }

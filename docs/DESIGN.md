@@ -2,7 +2,7 @@
 
 ## Direction visuelle
 
-Le propriétaire a demandé une nouvelle présentation professionnelle : ardoise foncée, textes clairs et boutons presque noirs, selon sa capture de référence, sans photographies ni motifs de fond. Le slogan reste « Votre avenir mérite des offres fraîches. ». Le logo feuille est conservé dans `public/brand-leaf.svg`, sur fond presque noir, et partagé avec la page privée et le favicon.
+Le propriétaire a demandé une nouvelle présentation professionnelle : vert forêt, accents rouges et textes blancs très clairs, sans photographies ni motifs de fond. Le slogan reste « Votre avenir mérite des offres fraîches. ». Le logo feuille est conservé dans `public/brand-leaf.svg`, sur fond vert forêt, et partagé avec la page privée et le favicon.
 
 ## Tokens
 
@@ -10,19 +10,19 @@ Le propriétaire a demandé une nouvelle présentation professionnelle : ardoise
 
 | Token | Valeur | Usage |
 | --- | --- | --- |
-| `--surface` | `#2E3448` | Cartes, formulaires, en-tête |
-| `--canvas` | `#252A3D` | Fond général |
-| `--ink` | `#F7F7FA` | Titres et texte principal |
-| `--accent` | `#0D1420` | Boutons et actions actives |
-| `--muted` | `#BAC2D4` | Métadonnées et texte secondaire |
-| `--border` | `#454C63` | Séparations et contours |
+| `--surface` | `#1C4938` | Cartes, formulaires, en-tête |
+| `--canvas` | `#123B2C` | Fond général |
+| `--ink` | `#FFFFFF` | Titres et texte principal |
+| `--accent` | `#BA303B` | Boutons et actions actives |
+| `--muted` | `#E0EEE5` | Métadonnées et texte secondaire |
+| `--border` | `#47705B` | Séparations et contours |
 | `--shadow` | `0 1px 3px rgb(6 9 16 / .04)` | Relief discret des cartes |
 
 Inter Variable reste la typographie principale. Les technologies gardent une police monospace système. Les badges de vérification utilisent le vert clair `#B1E2CB` sur fond `#193C34` uniquement lorsque les données permettent de les afficher. Les erreurs conservent leurs couleurs distinctes. Le focus clavier clair reste visible.
 
 ## Disposition
 
-L’accueil ardoise et ses textes clairs mènent à une barre de recherche puis à un catalogue sombre. Les filtres ont leur propre panneau sur ordinateur. Les cartes légèrement plus claires que le fond emploient des bordures fines, des titres contrastés et des tags neutres. Les composants Entreprises, Repérées, favoris, alertes et dépôt utilisent la même palette. La page privée reste séparée du site public et son contenu protégé.
+L’accueil vert forêt et ses textes clairs mènent à une barre de recherche puis à un catalogue vert profond. Les filtres ont leur propre panneau sur ordinateur. Les cartes légèrement plus claires que le fond emploient des bordures fines, des titres contrastés et des tags neutres. Les composants Entreprises, Repérées, favoris, alertes et dépôt utilisent la même palette. La page privée reste séparée du site public et son contenu protégé.
 
 La navigation conserve les cinq rubriques nommées sur téléphone. Les champs mobiles restent en 16 px et les contrôles principaux en 44 px minimum. `responsive.css` gère les passages entre mobile, tablette et ordinateur ; `theme.css` applique la palette et les finitions après ces règles.
 

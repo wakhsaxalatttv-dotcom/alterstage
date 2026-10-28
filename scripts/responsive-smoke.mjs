@@ -63,7 +63,7 @@ try {
       await page
         .locator(".public-site")
         .evaluate((el) => getComputedStyle(el).backgroundColor),
-      "rgb(37, 42, 61)",
+      "rgb(18, 59, 44)",
     );
     if (width <= 700) {
       const filters = page.getByRole("button", { name: /^Filtres/ });

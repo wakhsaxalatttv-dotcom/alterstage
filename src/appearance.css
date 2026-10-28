@@ -14,7 +14,7 @@
   height: var(--logo-size, 48px);
   place-items: center;
   vertical-align: middle;
-  background: #2e3448;
+  background: #1c4938;
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
@@ -24,10 +24,10 @@
   height: 100%;
 }
 .company-logo rect {
-  fill: #252a3d;
+  fill: #123b2c;
 }
 .company-logo text {
-  fill: #d4d9e6;
+  fill: #f0f7f2;
   font:
     600 16px "Inter Variable",
     system-ui,

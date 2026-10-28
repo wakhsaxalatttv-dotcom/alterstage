@@ -89,7 +89,7 @@
     height: 16px;
   }
   .nav nav button.selected {
-    background: #353c51;
+    background: #285440;
     border-radius: 5px;
   }
   .nav nav button.selected::after {
