@@ -59,11 +59,14 @@ try {
       `Formulaire à ${width}px`,
     );
     await menu.getByRole("button", { name: "Les offres", exact: true }).click();
-    await page.waitForFunction(() => {
-      const photos = [...document.querySelectorAll(".technical-photos img")];
-      return photos.length === 2 && photos.every(img => img.complete && img.naturalWidth > 0);
-    });
-    assert.equal(await page.locator(".photo-credit a").getAttribute("href"), "/images/credits.html");
+    assert.equal(
+      await page.locator(".hero-decoration[aria-hidden='true']").count(),
+      1,
+    );
+    assert.equal(
+      await page.locator(".photo-credit, .technical-photos").count(),
+      0,
+    );
     if (width <= 700) {
       const filters = page.getByRole("button", { name: /^Filtres/ });
       await filters.click();

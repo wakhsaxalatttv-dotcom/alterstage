@@ -33,8 +33,6 @@ Pas de bibliothèque d’animation ajoutée. `prefers-reduced-motion: reduce` d�
 
 `npm run test:design`, avec l’interface démarrée et Chromium disponible, vérifie les trois étapes de logo, le logo d’application chargé, la fenêtre et son focus, les largeurs de 320 à 1440 px et la réduction des animations. Les annonces fictives sont confinées à une base temporaire. La fiabilité des données, les badges de contrôle réel et la limite de 45 jours continuent d’être couverts par les tests existants.
 
-## Photographies réelles
+## Décoration de l’accueil
 
-L’accueil comporte deux photographies issues de la documentation officielle Raspberry Pi : carte Raspberry Pi 5 et module Global Shutter Camera. Les fichiers, leur provenance figée par commit et la licence CC BY-SA 4.0 sont documentés dans `public/images/credits.html`, accessible depuis le crédit visible sous les photos. Les adaptations photographiques restent sous cette licence. Elles illustrent le matériel et ne représentent aucun recruteur ni partenariat. Aucun visuel généré n’est ajouté.
-
-`TechnicalPhotos` et `photography.css` conservent le slogan, la palette et les cartes existantes. Les photos sont hébergées localement, compressées en WebP avec deux tailles (`srcSet`), dimensions réservées et textes alternatifs. Elles passent sous le texte sur tablette/téléphone ; aucune dépendance à une photothèque distante au chargement.
+À la demande du propriétaire, les photos de matériel et leurs crédits ont été retirés. `HeroDecoration` reprend la feuille du logo en tracé vectoriel discret dans le fond de l’accueil, sans texte. `decoration.css` réduit sa présence sur téléphone ; aucun espace supplémentaire n’est réservé au décor. Le SVG est masqué aux lecteurs d’écran et ne capte aucun clic. Aucun service externe, photo ou génération d’image n’est nécessaire.

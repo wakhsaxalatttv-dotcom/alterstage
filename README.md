@@ -121,6 +121,6 @@ La navigation publique conserve ses cinq rubriques nommées sur toutes les taill
 
 Avec le serveur de développement lancé, `npm run test:responsive` vérifie la navigation, la sélection active, le dépôt d’annonce, les filtres mobiles et les débordements sur onze largeurs de 320 à 1 920 px dans Chromium. Ce contrôle complète les essais des fiches dans `npm run test:design`. Les règles dédiées sont dans `src/responsive.css`.
 
-### Photographies de l’accueil
+### Décoration de l’accueil
 
-Deux photographies réelles de matériel (carte Raspberry Pi 5 et module caméra) sont livrées dans `public/images/`, en WebP avec variantes adaptées à l’écran. Elles viennent de la documentation officielle Raspberry Pi sous licence CC BY-SA 4.0 ; la provenance, les adaptations et les crédits publics figurent dans `public/images/credits.html`. Elles ne représentent pas les entreprises du catalogue. Aucune clé ni service distant ne sont nécessaires pour les afficher.
+Une feuille vectorielle originale rappelle le logo en arrière-plan, sans légende ni fournisseur externe. `HeroDecoration` est purement décoratif (`aria-hidden`), n’intercepte pas les interactions et s’adapte à la largeur de l’écran. Les photographies précédentes et leurs crédits ont été retirés.
