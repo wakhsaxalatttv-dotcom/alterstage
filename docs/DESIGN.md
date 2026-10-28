@@ -2,7 +2,7 @@
 
 ## Direction visuelle
 
-Le propriétaire a demandé une nouvelle présentation professionnelle : blanc, gris clair et bleu marine, sans photographies ni motifs de fond. Le slogan reste « Votre avenir mérite des offres fraîches. ». Le logo feuille est conservé dans `public/brand-leaf.svg`, désormais sur fond marine, et partagé avec la page privée et le favicon.
+Le propriétaire a demandé une nouvelle présentation professionnelle : vert forêt et gris pierre, sans photographies ni motifs de fond. Le slogan reste « Votre avenir mérite des offres fraîches. ». Le logo feuille est conservé dans `public/brand-leaf.svg`, sur fond vert forêt, et partagé avec la page privée et le favicon.
 
 ## Tokens
 
@@ -10,24 +10,24 @@ Le propriétaire a demandé une nouvelle présentation professionnelle : blanc, 
 
 | Token | Valeur | Usage |
 | --- | --- | --- |
-| `--surface` | `#FFFFFF` | Cartes, formulaires, en-tête |
-| `--canvas` | `#F8FAFC` | Fond général |
-| `--ink` / `--accent` | `#0F172A` | Titres, navigation active, actions |
-| `--muted` | `#64748B` | Métadonnées et texte secondaire |
-| `--border` | `#E2E8F0` | Séparations et contours |
-| `--shadow` | `0 1px 3px rgb(15 23 42 / .04)` | Relief discret des cartes |
+| `--surface` | `#F3F1EB` | Cartes, formulaires, en-tête |
+| `--canvas` | `#E5E6DF` | Fond général |
+| `--ink` / `--accent` | `#203E30` | Titres, navigation active, actions |
+| `--muted` | `#56665B` | Métadonnées et texte secondaire |
+| `--border` | `#D0D5C9` | Séparations et contours |
+| `--shadow` | `0 1px 3px rgb(32 62 48 / .04)` | Relief discret des cartes |
 
-Inter Variable reste la typographie principale. Les technologies gardent une police monospace système. Les badges de vérification utilisent le vert `#047857` sur fond `#ECFDF5` uniquement lorsque les données permettent de les afficher. Les erreurs conservent leurs couleurs distinctes. Le focus clavier bleu reste visible.
+Inter Variable reste la typographie principale. Les technologies gardent une police monospace système. Les badges de vérification utilisent le vert `#047857` sur fond `#ECFDF5` uniquement lorsque les données permettent de les afficher. Les erreurs conservent leurs couleurs distinctes. Le focus clavier vert reste visible.
 
 ## Disposition
 
-L’accueil blanc mène à une barre de recherche puis à un catalogue sur fond gris clair. Les filtres ont leur propre panneau blanc sur ordinateur. Les cartes blanches emploient des bordures fines, des titres contrastés et des tags neutres. Les composants Entreprises, Repérées, favoris, alertes et dépôt utilisent la même palette. La page privée reste séparée du site public et son contenu protégé.
+L’accueil vert forêt et ses textes ivoire mènent à une barre de recherche puis à un catalogue sur fond gris pierre. Les filtres ont leur propre panneau minéral clair sur ordinateur. Les cartes légèrement teintées emploient des bordures fines, des titres contrastés et des tags neutres. Les composants Entreprises, Repérées, favoris, alertes et dépôt utilisent la même palette. La page privée reste séparée du site public et son contenu protégé.
 
 La navigation conserve les cinq rubriques nommées sur téléphone. Les champs mobiles restent en 16 px et les contrôles principaux en 44 px minimum. `responsive.css` gère les passages entre mobile, tablette et ordinateur ; `theme.css` applique la palette et les finitions après ces règles.
 
 ## Logos et interactions
 
-`CompanyLogo` utilise un logo autorisé fourni, puis le favicon d’un domaine officiel déjà renseigné, puis un monogramme SVG. Aucun domaine n’est deviné. Les images restent différées, avec dimensions réservées. Le fond des monogrammes est neutre.
+`CompanyLogo` utilise un logo autorisé fourni, puis le favicon d’un domaine officiel déjà renseigné, puis un monogramme SVG. Aucun domaine n’est deviné. Les images restent différées, avec dimensions réservées. Le fond des monogrammes est gris pierre.
 
 L’apparition des cartes au défilement, la confirmation des favoris et l’ouverture des fenêtres sont conservées. Le survol des cartes est réduit à 2 px. `prefers-reduced-motion` désactive les animations. Les fenêtres natives conservent Échap, le verrouillage du défilement et la restitution du focus.
 

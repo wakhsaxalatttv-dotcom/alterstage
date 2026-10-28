@@ -1,12 +1,12 @@
 :root {
-  --surface: #ffffff;
-  --canvas: #f8fafc;
-  --ink: #0f172a;
-  --accent: #0f172a;
-  --muted: #64748b;
-  --border: #e2e8f0;
+  --surface: #f3f1eb;
+  --canvas: #e5e6df;
+  --ink: #203e30;
+  --accent: #203e30;
+  --muted: #56665b;
+  --border: #d0d5c9;
   --green: var(--accent);
-  --shadow: 0 1px 3px rgb(15 23 42 / 0.04);
+  --shadow: 0 1px 3px rgb(32 62 48 / 0.04);
   color: var(--ink);
   background: var(--canvas);
 }
@@ -24,12 +24,12 @@ header {
   letter-spacing: -0.7px;
 }
 .beta {
-  background: #f1f5f9;
-  color: #475569;
+  background: #e7e9df;
+  color: #485d50;
   border: 1px solid var(--border);
 }
 .nav nav button {
-  color: #475569;
+  color: #485d50;
   font-weight: 500;
 }
 .nav nav button.selected {
@@ -42,15 +42,15 @@ header {
 }
 .employer-nav {
   background: var(--accent);
-  color: #fff;
+  color: #f3f1eb;
   border-color: var(--accent);
 }
 .employer-nav:hover {
-  background: #1e293b;
-  color: #fff;
+  background: #172f24;
+  color: #f3f1eb;
 }
 .hero {
-  background: #fff;
+  background: #f3f1eb;
   border-bottom: 1px solid var(--border);
 }
 .hero-content {
@@ -65,16 +65,16 @@ header {
   font-weight: 700;
 }
 .hero h1 span {
-  color: #334155;
+  color: #344d3f;
 }
 .hero p {
   max-width: 700px;
-  color: #475569;
+  color: #485d50;
   font-size: 15px;
 }
 .hero .eyebrow,
 .eyebrow {
-  color: #64748b;
+  color: #56665b;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 1.4px;
@@ -83,13 +83,13 @@ header {
   position: relative;
 }
 .search-box {
-  border-color: #cbd5e1;
-  box-shadow: 0 4px 16px rgb(15 23 42 / 0.04);
+  border-color: #b8c3b3;
+  box-shadow: 0 4px 16px rgb(32 62 48 / 0.04);
   border-radius: 8px;
 }
 .search-box:focus-within {
-  border-color: #64748b;
-  box-shadow: 0 0 0 3px #e2e8f0;
+  border-color: #56665b;
+  box-shadow: 0 0 0 3px #d0d5c9;
 }
 .search-box input {
   color: var(--ink);
@@ -99,35 +99,35 @@ header {
   border: 1px solid var(--accent);
 }
 .primary:hover {
-  background: #1e293b;
-  color: #fff;
+  background: #172f24;
+  color: #f3f1eb;
 }
 .secondary {
-  border-color: #cbd5e1;
-  color: #334155;
+  border-color: #b8c3b3;
+  color: #344d3f;
 }
 .secondary:hover {
-  background: #f1f5f9;
+  background: #e7e9df;
 }
 a:hover,
 button:hover {
-  color: #334155;
+  color: #344d3f;
 }
 .primary:hover,
 .employer-nav:hover {
-  color: #fff;
+  color: #f3f1eb;
 }
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline-color: #2563eb;
+  outline-color: #58734a;
 }
 .filters {
   border: 1px solid var(--border);
   padding: 20px;
-  background: #fff;
+  background: #f3f1eb;
   border-radius: 8px;
   align-self: start;
 }
@@ -135,16 +135,16 @@ textarea:focus-visible {
   margin-bottom: 24px;
 }
 .field {
-  color: #334155;
+  color: #344d3f;
   font-size: 12px;
 }
 .field input,
 .field select,
 .field textarea {
-  border-color: #cbd5e1;
+  border-color: #b8c3b3;
   border-radius: 6px;
   color: var(--ink);
-  background: #fff;
+  background: #f3f1eb;
 }
 .results-heading h2 {
   font-size: 20px;
@@ -154,7 +154,7 @@ textarea:focus-visible {
 .results-heading p,
 .sort,
 .muted {
-  color: #64748b;
+  color: #56665b;
 }
 .offer-card,
 .external-card,
@@ -173,7 +173,7 @@ textarea:focus-visible {
 .offer-card:hover,
 .external-card:hover,
 .directory-card:hover {
-  border-color: #94a3b8;
+  border-color: #869b84;
 }
 .offer-card h3,
 .external-card h3 {
@@ -185,37 +185,37 @@ textarea:focus-visible {
 }
 .offer-top strong,
 .external-company {
-  color: #334155;
+  color: #344d3f;
 }
 .offer-top p,
 .offer-bottom,
 .external-date,
 .external-card .external-summary {
-  color: #64748b;
+  color: #56665b;
 }
 .tags span,
 .tech-tags span,
 .company-type {
-  background: #f1f5f9;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background: #e7e9df;
+  color: #485d50;
+  border: 1px solid #d0d5c9;
 }
 .company-logo rect {
-  fill: #f8fafc;
+  fill: #e5e6df;
 }
 .company-logo text {
-  fill: #475569;
+  fill: #485d50;
 }
 .source-banner,
 .sidebar-tip,
 .local-note,
 .employer-help {
-  background: #f1f5f9;
-  border-color: #e2e8f0;
+  background: #e7e9df;
+  border-color: #d0d5c9;
 }
 .source-banner p,
 .source-symbol {
-  color: #64748b;
+  color: #56665b;
 }
 .source-banner.error {
   background: #fff7ed;
@@ -227,45 +227,45 @@ textarea:focus-visible {
   color: #047857;
 }
 .empty {
-  background: #fff;
-  border-color: #cbd5e1;
+  background: #f3f1eb;
+  border-color: #b8c3b3;
 }
 .bottom-banner {
-  background: #0f172a;
-  border-color: #0f172a;
-  color: #fff;
+  background: #203e30;
+  border-color: #203e30;
+  color: #f3f1eb;
 }
 .bottom-banner p {
-  color: #cbd5e1;
+  color: #b8c3b3;
 }
 .bottom-icon {
-  background: #1e293b;
-  color: #e2e8f0;
+  background: #172f24;
+  color: #d0d5c9;
 }
 .bottom-banner .secondary {
-  background: #fff;
-  border-color: #fff;
-  color: #0f172a;
+  background: #f3f1eb;
+  border-color: #f3f1eb;
+  color: #203e30;
 }
 .domain-shortcuts button {
-  background: #fff;
+  background: #f3f1eb;
   border-color: var(--border);
-  color: #475569;
+  color: #485d50;
 }
 .domain-shortcuts button.active,
 .admin-tabs button.active {
-  background: #0f172a;
-  border-color: #0f172a;
-  color: #fff;
+  background: #203e30;
+  border-color: #203e30;
+  color: #f3f1eb;
 }
 footer {
-  color: #64748b;
+  color: #56665b;
   background: transparent;
 }
 dialog {
   border-color: var(--border);
   border-radius: 10px;
-  box-shadow: 0 24px 80px rgb(15 23 42 / 0.18);
+  box-shadow: 0 24px 80px rgb(32 62 48 / 0.18);
 }
 .dialog-header {
   border-bottom-color: var(--border);
@@ -289,7 +289,7 @@ dialog {
     font-size: 14px;
   }
   .nav nav button.selected {
-    background: #f1f5f9;
+    background: #e7e9df;
   }
   .filters {
     padding: 18px;
@@ -310,4 +310,41 @@ dialog {
   .field textarea {
     font-size: 16px;
   }
+}
+
+/* Forest identity: mineral surfaces and a contrasting introductory section. */
+.hero {
+  background: #203e30;
+  border-bottom-color: #344d3f;
+}
+.hero h1 {
+  color: #f3f1eb;
+}
+.hero h1 span {
+  color: #c5d6bc;
+}
+.hero p {
+  color: #d2ddd0;
+}
+.hero .eyebrow {
+  color: #c0d1b9;
+}
+.primary,
+.employer-nav,
+.domain-shortcuts button.active,
+.admin-tabs button.active {
+  color: #f3f1eb;
+}
+.company-logo {
+  background: #f3f1eb;
+}
+dialog {
+  background: #f3f1eb;
+}
+.search-box {
+  background: #f3f1eb;
+}
+.bottom-banner .secondary:hover {
+  background: #e7e9df;
+  color: #203e30;
 }

@@ -14,7 +14,7 @@
   height: var(--logo-size, 48px);
   place-items: center;
   vertical-align: middle;
-  background: #fff;
+  background: #f3f1eb;
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
@@ -24,10 +24,10 @@
   height: 100%;
 }
 .company-logo rect {
-  fill: #f8fafc;
+  fill: #e5e6df;
 }
 .company-logo text {
-  fill: #475569;
+  fill: #485d50;
   font:
     600 16px "Inter Variable",
     system-ui,
@@ -105,7 +105,7 @@ dialog[open]::backdrop {
   .external-card:hover,
   .directory-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgb(15 23 42 / 0.06);
+    box-shadow: 0 8px 22px rgb(32 62 48 / 0.06);
   }
   .primary:hover,
   .secondary:hover {

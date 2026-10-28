@@ -123,4 +123,4 @@ Avec le serveur de développement lancé, `npm run test:responsive` vérifie la 
 
 ### Interface et thème
 
-La palette est blanche et bleu marine (`#0F172A`), sur fond gris clair (`#F8FAFC`). Les composants utilisent les tokens centralisés dans `src/theme.css` : surfaces, texte, accent, bordures et ombre. Le vert est réservé au badge de vérification. Les motifs décoratifs et les photographies précédentes ont été retirés. Le logo feuille reste présent, désormais sur fond marine. Les règles de disposition téléphone/PC restent dans `src/responsive.css`.
+La palette associe vert forêt (`#203E30`), gris pierre (`#E5E6DF`) et surfaces minérales (`#F3F1EB`). L’accueil utilise un fond forêt avec des textes ivoire ; cartes, formulaires et navigation conservent des fonds pierre clairs. Les tokens sont dans `src/theme.css`, la disposition téléphone/PC dans `src/responsive.css`. La feuille du logo, les logos d’entreprises et les interactions sont conservés.
