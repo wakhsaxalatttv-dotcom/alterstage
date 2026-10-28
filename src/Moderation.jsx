@@ -52,25 +52,11 @@ export function Moderation({ onChanged }) {
   }
   return (
     <section className="moderation">
-      <div className="local-note">
-        <ShieldCheck size={21} />
-        <p>
-          Accès réservé au responsable du catalogue. Le jeton reste en mémoire
-          et n’est pas enregistré dans le navigateur. Chaque publication demande
-          une vérification humaine ; aucun lien saisi n’est récupéré
-          automatiquement par le serveur.
-        </p>
-      </div>
       {!authenticated ? (
         <form className="admin-login" onSubmit={load}>
-          <h2>Connexion à votre espace de gestion</h2>
-          <p>
-            Utilisez le jeton administrateur défini dans la variable serveur
-            ADMIN_TOKEN. Sur Render, il se configure dans Environment. Ne
-            partagez pas ce jeton.
-          </p>
+          <h2>Espace privé</h2>
           <label className="field">
-            Jeton de modération
+            Code d’accès
             <input
               type="password"
               value={token}
@@ -80,11 +66,20 @@ export function Moderation({ onChanged }) {
             />
           </label>
           <button className="primary" disabled={busy}>
-            {busy ? "Connexion…" : "Accéder à la modération"}
+            {busy ? "Connexion…" : "Se connecter"}
           </button>
         </form>
       ) : (
         <>
+          <div className="local-note">
+            <ShieldCheck size={21} />
+            <p>
+              Accès réservé au responsable du catalogue. Le jeton reste en
+              mémoire et n’est pas enregistré dans le navigateur. Chaque
+              publication demande une vérification humaine ; aucun lien saisi
+              n’est récupéré automatiquement par le serveur.
+            </p>
+          </div>
           <div className="admin-toolbar">
             <button className="secondary" onClick={load} disabled={busy}>
               <RotateCcw size={15} /> Actualiser

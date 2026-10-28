@@ -12,7 +12,7 @@ npm run setup:admin
 npm run dev
 ```
 
-Ouvrir le port **5173** dans l’onglet Ports. Vite relaie `/api` à Express sur 3001. La clé de modération aléatoire est créée dans `.env`, ignoré par Git et non affiché dans les logs. Ne pas la partager ; la saisir dans l’écran **Gestion** (navigation principale, ou Modération en pied de page) depuis l’éditeur local. Une clé existante valide n’est pas remplacée. Sans clé, le catalogue démarre mais les dépôts publics sont fermés.
+Ouvrir le port **5173** dans l’onglet Ports. Vite relaie `/api` à Express sur 3001. La clé de modération aléatoire est créée dans `.env`, ignoré par Git et non affiché dans les logs. Ne pas la partager ; la saisir dans l’espace séparé **`/administration/`**, sans lien sur le site public depuis l’éditeur local. Une clé existante valide n’est pas remplacée. Sans clé, le catalogue démarre mais les dépôts publics sont fermés.
 
 ## Ce qui est disponible
 
@@ -93,7 +93,7 @@ Les cartes et fiches affichent la date de publication, sans les anciens encarts 
 ### Gestion des dépôts et signalements
 
 1. Sur Render, configurer `ADMIN_TOKEN` dans **Environment** avec un secret aléatoire d’au moins 32 caractères, puis redéployer. Le jeton local du cloud n’est pas automatiquement transféré à Render. Ne pas saisir ce secret dans le chat ni dans une variable `VITE_`.
-2. Ouvrir **Gestion** en haut du site et saisir ce jeton. Il reste uniquement en mémoire jusqu’à la déconnexion ou au rechargement.
+2. Ouvrir directement **`https://votre-site/administration/`** et saisir ce jeton dans « Code d’accès ». Aucun lien d’administration n’apparaît dans la navigation ni le pied de page publics. Les consignes sont réservées à la session connectée. Il reste uniquement en mémoire jusqu’à la déconnexion ou au rechargement.
 3. Dans **À valider**, contrôler la source, les droits de diffusion, l’entreprise, les dates et contacts. Cocher les quatre attestations puis choisir **Valider et publier**, ou **Refuser**. Les dépôts d’entreprises sont privés et ne peuvent pas s’auto-publier.
 4. Dans **Signalements**, consulter le motif, les précisions, la date et l’annonce officielle. Ajouter une note privée puis marquer le signalement comme traité, le classer sans suite ou retirer l’annonce du site. Aucun signalement n’entraîne un retrait automatique.
 
@@ -102,3 +102,5 @@ Les nouveaux signalements et décisions sont enregistrés en SQLite dans `DATA_D
 Les formulaires de signalement existent sur les fiches du catalogue et de Repérées. Ils ne demandent aucune coordonnée personnelle et sont limités à dix envois par heure et par adresse cliente. Sur Render, Express fait confiance au dernier proxy pour identifier cette adresse. Les notes sont privées ; aucun e-mail n’est envoyé à l’employeur. `npm run test:reports` vérifie le parcours visiteur → gestion authentifiée → retrait dans une base temporaire.
 
 Les raccourcis **Repérées** présentent tous les domaines actuellement représentés, en plus du menu complet. « Chimie & matériaux » est désormais un raccourci parmi les autres ; tous les filtres combinés restent disponibles.
+
+L’administration utilise une entrée HTML et un bundle JavaScript distincts. Sa page de connexion ne contient aucune consigne Render ni nom de variable secrète. Elle porte une directive `noindex` ; cette directive et l’absence de lien ne remplacent pas l’authentification obligatoire des API privées.

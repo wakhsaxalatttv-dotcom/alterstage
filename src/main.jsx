@@ -31,9 +31,6 @@ const EmployerForm = lazy(() =>
 import { request } from "./api";
 import { Companies } from "./Companies";
 import { ExternalOffers } from "./ExternalOffers";
-const Moderation = lazy(() =>
-  import("./Moderation").then((m) => ({ default: m.Moderation })),
-);
 import {
   Pagination,
   Skeletons,
@@ -149,7 +146,6 @@ function App() {
     alerts: "Mes alertes",
     employers: "Déposer une annonce",
     companies: "Les entreprises, à la source",
-    moderation: "Gestion des annonces et signalements",
   };
   const subtitles = {
     spotted:
@@ -161,8 +157,6 @@ function App() {
       "Proposez un stage ou une alternance technique ou informatique. Publication après validation.",
     companies:
       "Explorez les sites des entreprises et retrouvez les annonces réellement publiées dans le catalogue.",
-    moderation:
-      "Vérifier les sources, les entreprises et les autorisations avant de publier.",
   };
   return (
     <>
@@ -220,14 +214,6 @@ function App() {
             >
               <Bell size={17} />
               <span>Mes alertes</span>
-            </button>
-            <button
-              aria-label="Gestion"
-              className={page === "moderation" ? "selected" : ""}
-              onClick={() => navigate("moderation")}
-            >
-              <ShieldCheck size={17} />
-              <span className="management-label">Gestion</span>
             </button>
           </nav>
           <button
@@ -332,10 +318,6 @@ function App() {
             offers={offers}
             openCompany={(company) => setModal({ type: "company", company })}
           />
-        ) : page === "moderation" ? (
-          <Suspense fallback={<Skeletons />}>
-            <Moderation onChanged={() => setReload((n) => n + 1)} />
-          </Suspense>
         ) : page === "alerts" ? (
           <>
             <div className="local-note">
@@ -691,7 +673,6 @@ function App() {
           <button onClick={() => setModal({ type: "sources" })}>
             Sources & fiabilité
           </button>
-          <button onClick={() => navigate("moderation")}>Modération</button>
           <span>Gratuit, et sans compte candidat.</span>
         </div>
       </footer>

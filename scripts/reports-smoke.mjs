@@ -33,6 +33,19 @@ try {
     });
   });
   await page.goto(process.env.BASE_URL || "http://127.0.0.1:5173");
+  assert.equal(
+    await page.getByRole("button", { name: "Gestion", exact: true }).count(),
+    0,
+  );
+  assert.equal(
+    await page.getByRole("button", { name: "Modération", exact: true }).count(),
+    0,
+  );
+  assert.equal(await page.locator('a[href^="/administration"]').count(), 0);
+  assert.doesNotMatch(
+    await page.locator("body").innerText(),
+    /ADMIN_TOKEN|Sur Render/,
+  );
   const nav = page.getByRole("navigation", { name: "Navigation principale" });
   await nav.getByRole("button", { name: "Repérées", exact: true }).click();
   const first = page.locator(".external-card").first();
@@ -58,9 +71,16 @@ try {
     })
     .waitFor();
   await page.keyboard.press("Escape");
-  await nav.getByRole("button", { name: "Gestion", exact: true }).click();
-  await page.getByLabel("Jeton de modération").fill(token);
-  await page.getByRole("button", { name: "Accéder à la modération" }).click();
+  await page.goto(
+    new URL("/administration/", process.env.BASE_URL || "http://127.0.0.1:5173")
+      .href,
+  );
+  assert.doesNotMatch(
+    await page.locator("body").innerText(),
+    /ADMIN_TOKEN|Render|Quatre|aucun lien saisi/,
+  );
+  await page.getByLabel("Code d’accès").fill(token);
+  await page.getByRole("button", { name: "Se connecter" }).click();
   await page.getByRole("button", { name: "Signalements", exact: true }).click();
   const report = page.locator(".report-card");
   await report.waitFor();
@@ -78,6 +98,7 @@ try {
     path: "/tmp/offres-signalements-admin.png",
     fullPage: true,
   });
+  await page.goto(process.env.BASE_URL || "http://127.0.0.1:5173");
   await nav.getByRole("button", { name: "Repérées", exact: true }).click();
   await page.locator(".external-card").first().waitFor();
   assert.equal(

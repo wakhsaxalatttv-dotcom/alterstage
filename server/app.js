@@ -37,8 +37,7 @@ export function createApp({
   const admin = (req, res, next) => {
     if (adminToken.length < 32)
       return res.status(503).json({
-        message:
-          "Modération non configurée : définissez ADMIN_TOKEN (32 caractères minimum) sur le serveur.",
+        message: "L’espace privé est temporairement indisponible.",
       });
     const token = Buffer.from(
       req.get("Authorization")?.replace(/^Bearer /, "") || "",
@@ -102,7 +101,7 @@ export function createApp({
     if (adminToken.length < 32)
       return res.status(503).json({
         message:
-          "Le dépôt est temporairement fermé : la modération doit être configurée par le responsable du site.",
+          "Les dépôts sont temporairement indisponibles. Réessayez plus tard.",
       });
     const now = Date.now();
     for (const [key, val] of limits) if (val.until < now) limits.delete(key);
@@ -123,24 +122,20 @@ export function createApp({
   );
   app.post("/api/reports", async (req, res) => {
     if (adminToken.length < 32)
-      return res
-        .status(503)
-        .json({
-          message:
-            "Les signalements sont temporairement indisponibles : la modération doit être configurée.",
-        });
+      return res.status(503).json({
+        message:
+          "L’envoi de signalements est temporairement indisponible. Réessayez plus tard.",
+      });
     const now = Date.now();
     for (const [key, entry] of reportLimits)
       if (entry.until < now) reportLimits.delete(key);
     const key = req.ip,
       entry = reportLimits.get(key) || { count: 0, until: now + 3600000 };
     if (entry.count >= 10)
-      return res
-        .status(429)
-        .json({
-          message:
-            "Limite de dix signalements par heure atteinte. Réessayez plus tard.",
-        });
+      return res.status(429).json({
+        message:
+          "Limite de dix signalements par heure atteinte. Réessayez plus tard.",
+      });
     entry.count++;
     reportLimits.set(key, entry);
     res.status(201).json(await reports.create(req.body || {}));
@@ -193,6 +188,13 @@ export function createApp({
       maxAge: "1y",
     }),
   );
+  app.use("/administration", (_req, res, next) => {
+    res.set({
+      "X-Robots-Tag": "noindex, nofollow, noarchive",
+      "Cache-Control": "no-store",
+    });
+    next();
+  });
   app.use(express.static(path.resolve("dist"), { maxAge: 0 }));
   app.get("/{*path}", (_req, res) =>
     res.sendFile(path.resolve("dist/index.html")),

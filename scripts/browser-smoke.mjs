@@ -114,9 +114,12 @@ try {
     (await (await fetch(base + "/api/offers")).json()).offers.length,
     0,
   );
-  await page.getByRole("button", { name: "Modération", exact: true }).click();
-  await page.getByLabel("Jeton de modération").fill(token);
-  await page.getByRole("button", { name: "Accéder à la modération" }).click();
+  await page.goto(
+    new URL("/administration/", process.env.BASE_URL || "http://127.0.0.1:5173")
+      .href,
+  );
+  await page.getByLabel("Code d’accès").fill(token);
+  await page.getByRole("button", { name: "Se connecter" }).click();
   await page.locator(".review-card").waitFor();
   assert.equal(
     await page
@@ -179,9 +182,12 @@ try {
   await page
     .getByRole("button", { name: "Voir la fiche", exact: true })
     .waitFor();
-  await page.getByRole("button", { name: "Modération", exact: true }).click();
-  await page.getByLabel("Jeton de modération").fill(token);
-  await page.getByRole("button", { name: "Accéder à la modération" }).click();
+  await page.goto(
+    new URL("/administration/", process.env.BASE_URL || "http://127.0.0.1:5173")
+      .href,
+  );
+  await page.getByLabel("Code d’accès").fill(token);
+  await page.getByRole("button", { name: "Se connecter" }).click();
   await page
     .getByRole("button", { name: "Sources & collecte", exact: true })
     .click();
@@ -242,7 +248,7 @@ try {
     });
     assert.equal(reviewed.status, 200);
   }
-  await page.reload();
+  await page.goto(process.env.BASE_URL || "http://127.0.0.1:5173");
   await page.locator(".offer-card").first().waitFor();
   assert.equal(await page.locator(".offer-card").count(), 20);
   await page.getByRole("button", { name: "Suivant", exact: true }).click();

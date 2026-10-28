@@ -2650,9 +2650,6 @@ nav {
   white-space: normal;
 }
 
-.nav nav .management-label {
-  display: inline;
-}
 @media (max-width: 380px) {
   .nav nav {
     gap: 5px;
@@ -2660,4 +2657,12 @@ nav {
   .nav nav button {
     font-size: 10px;
   }
+}
+
+.private-admin {
+  padding-top: 30px;
+  padding-bottom: 40px;
+}
+.private-admin .admin-login {
+  margin: 60px auto;
 }
