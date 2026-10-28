@@ -1,3 +1,4 @@
+import { administrationConfiguration } from "./admin-config.js";
 import { Reports } from "./reports.js";
 import express from "express";
 import compression from "compression";
@@ -15,6 +16,8 @@ export function createApp({
     store = new OfferStore(folder),
     limits = new Map();
   app.locals.store = store;
+  const adminConfiguration = administrationConfiguration(adminToken);
+  app.locals.adminConfiguration = adminConfiguration;
   const reports = new Reports(store),
     reportLimits = new Map();
   app.locals.reports = reports;
@@ -35,7 +38,7 @@ export function createApp({
   });
   app.use(express.json({ limit: "40kb" }));
   const admin = (req, res, next) => {
-    if (adminToken.length < 32)
+    if (!adminConfiguration.configured)
       return res.status(503).json({
         message: "L’espace privé est temporairement indisponible.",
       });
@@ -98,7 +101,7 @@ export function createApp({
     res.json({ company, ...linked });
   });
   app.post("/api/submissions", async (req, res) => {
-    if (adminToken.length < 32)
+    if (!adminConfiguration.configured)
       return res.status(503).json({
         message:
           "Les dépôts sont temporairement indisponibles. Réessayez plus tard.",
@@ -121,7 +124,7 @@ export function createApp({
     res.json({ offers: reports.references() }),
   );
   app.post("/api/reports", async (req, res) => {
-    if (adminToken.length < 32)
+    if (!adminConfiguration.configured)
       return res.status(503).json({
         message:
           "L’envoi de signalements est temporairement indisponible. Réessayez plus tard.",

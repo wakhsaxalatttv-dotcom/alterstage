@@ -3,6 +3,7 @@ import { createApp } from "./app.js";
 import { closeFeedConnections } from "./ingestion/http.js";
 const app = createApp(),
   port = Number(process.env.PORT || 3001);
+console.info(app.locals.adminConfiguration.message);
 await seedBundledCatalogue(app.locals.store);
 const server = app.listen(port, "0.0.0.0", () =>
   console.log(`Offres Fraîches : serveur prêt sur le port ${port}`),

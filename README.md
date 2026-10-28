@@ -104,3 +104,7 @@ Les formulaires de signalement existent sur les fiches du catalogue et de Repér
 Les raccourcis **Repérées** présentent tous les domaines actuellement représentés, en plus du menu complet. « Chimie & matériaux » est désormais un raccourci parmi les autres ; tous les filtres combinés restent disponibles.
 
 L’administration utilise une entrée HTML et un bundle JavaScript distincts. Sa page de connexion ne contient aucune consigne Render ni nom de variable secrète. Elle porte une directive `noindex` ; cette directive et l’absence de lien ne remplacent pas l’authentification obligatoire des API privées.
+
+### Diagnostic d’accès administrateur sur Render
+
+Dans les **Logs** privés du service, rechercher `[Administration]` après un déploiement. Le démarrage indique uniquement si `ADMIN_TOKEN` est absent, trop court ou reçu et valide en longueur. La valeur, sa longueur exacte et les autres variables ne sont jamais affichées. Ces informations ne sont pas ajoutées à l’API publique ni à la page de connexion. Un message « accès privé activé » confirme le chargement de la configuration, pas la validité d’un code saisi par un visiteur.
