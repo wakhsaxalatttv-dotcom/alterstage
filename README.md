@@ -114,3 +114,9 @@ Dans les **Logs** privés du service, rechercher `[Administration]` après un d�
 Le design vert et crème et l’accroche d’origine sont conservés. La feuille blanche sur fond vert de l’application est dans `public/brand-leaf.svg`, réutilisé par `AppLogo` et comme favicon. `CompanyLogo` affiche le logo fourni, puis l’icône du domaine officiel renseigné, puis un monogramme SVG si nécessaire. Aucun domaine n’est deviné et aucune clé d’accès n’est requise.
 
 `src/appearance.css` limite les ajouts aux cadres de logo et aux micro-interactions : apparition des cartes à leur entrée dans l’écran (y compris au défilement sur téléphone), survol, confirmation du favori et ouverture de fenêtre. Ces effets sont désactivés avec `prefers-reduced-motion`; les survols sont réservés aux périphériques adaptés. Les filtres, la modération privée, les signalements et la limite de 45 jours restent inchangés. `npm run test:design` contrôle les replis des logos, la fenêtre et le retour de focus, le responsive et la réduction des animations. Voir [docs/DESIGN.md](docs/DESIGN.md).
+
+### Vérification téléphone et ordinateur
+
+La navigation publique conserve ses cinq rubriques nommées sur toutes les tailles d’écran. Sur téléphone, le menu occupe deux lignes, les filtres se déplient et les contrôles principaux offrent une cible tactile de 44 px. Les champs utilisent une taille de 16 px pour éviter le zoom automatique sur iPhone.
+
+Avec le serveur de développement lancé, `npm run test:responsive` vérifie la navigation, la sélection active, le dépôt d’annonce, les filtres mobiles et les débordements sur onze largeurs de 320 à 1 920 px dans Chromium. Ce contrôle complète les essais des fiches dans `npm run test:design`. Les règles dédiées sont dans `src/responsive.css`.

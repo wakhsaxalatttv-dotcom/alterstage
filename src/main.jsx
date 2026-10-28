@@ -25,6 +25,7 @@ import { defaultFilters, regions, regionOf, selectOffers } from "./domain";
 import "@fontsource-variable/inter/wght.css";
 import "./styles.css";
 import "./appearance.css";
+import "./responsive.css";
 import { useLocal } from "./storage";
 import { Filter, Empty, Offer, Dialog } from "./components";
 const EmployerForm = lazy(() =>
@@ -178,6 +179,7 @@ function App() {
           <nav aria-label="Navigation principale">
             <button
               aria-label="Entreprises"
+              aria-current={page === "companies" ? "page" : undefined}
               className={page === "companies" ? "selected" : ""}
               onClick={() => navigate("companies")}
             >
@@ -185,6 +187,7 @@ function App() {
               <span>Entreprises</span>
             </button>
             <button
+              aria-current={page === "search" ? "page" : undefined}
               className={page === "search" ? "selected" : ""}
               onClick={() => navigate("search")}
             >
@@ -201,6 +204,7 @@ function App() {
             </button>
             <button
               aria-label="Mes favoris"
+              aria-current={page === "favorites" ? "page" : undefined}
               className={page === "favorites" ? "selected" : ""}
               onClick={() => navigate("favorites")}
             >
@@ -209,6 +213,7 @@ function App() {
             </button>
             <button
               aria-label="Mes alertes"
+              aria-current={page === "alerts" ? "page" : undefined}
               className={page === "alerts" ? "selected" : ""}
               onClick={() => navigate("alerts")}
             >
@@ -277,6 +282,7 @@ function App() {
               <button
                 onClick={() => openFilters(!filtersOpen)}
                 aria-expanded={filtersOpen}
+                aria-controls="search-filters"
               >
                 <SlidersHorizontal size={17} /> Filtres{" "}
                 {active > 0 && `(${active})`}
@@ -382,7 +388,10 @@ function App() {
         ) : (
           <div className={"layout " + (page === "favorites" ? "full" : "")}>
             {page === "search" && (
-              <aside className={filtersOpen ? "filters open" : "filters"}>
+              <aside
+                id="search-filters"
+                className={filtersOpen ? "filters open" : "filters"}
+              >
                 <div className="filter-heading">
                   <h2>
                     <SlidersHorizontal size={18} /> Affiner la recherche

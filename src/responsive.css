@@ -1,0 +1,171 @@
+/* Keep every public destination labelled at every viewport size. */
+.nav nav button {
+  min-height: 44px;
+}
+.layout > *,
+.offer-top > *,
+.offer-bottom > *,
+.dialog-content dd {
+  min-width: 0;
+}
+.offer-card h3,
+.external-card h3,
+.directory-card h3,
+.dialog-content dd {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1150px) {
+  header {
+    height: auto;
+  }
+  .nav {
+    flex-wrap: wrap;
+    padding-top: 14px;
+    gap: 12px;
+  }
+  .nav nav {
+    order: 3;
+    flex-basis: 100%;
+    height: auto;
+    min-height: 52px;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .nav nav button,
+  .nav nav button:first-child,
+  .nav nav button:nth-child(2) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav nav button span {
+    display: inline;
+  }
+  .employer-nav {
+    font-size: 12px;
+    min-height: 44px;
+    padding: 10px 12px;
+    gap: 7px;
+  }
+  .employer-nav span {
+    display: inline;
+  }
+}
+@media (max-width: 700px) {
+  .wrap {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .nav {
+    gap: 12px;
+    padding-bottom: 8px;
+  }
+  .nav .brand {
+    font-size: 17px;
+  }
+  .nav .employer-nav {
+    margin-left: auto;
+    font-size: 11px;
+    padding: 8px 10px;
+  }
+  .nav nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px 8px;
+    width: 100%;
+  }
+  .nav nav button,
+  .nav nav button:first-child,
+  .nav nav button:nth-child(2) {
+    justify-content: flex-start;
+    min-width: 0;
+    min-height: 44px;
+    padding: 8px 4px;
+    font-size: 11px;
+    gap: 5px;
+  }
+  .nav nav button svg {
+    width: 16px;
+    height: 16px;
+  }
+  .nav nav button.selected {
+    background: #edf3e7;
+    border-radius: 5px;
+  }
+  .nav nav button.selected::after {
+    height: 2px;
+  }
+  .nav nav small {
+    font-size: 9px;
+    padding: 2px 4px;
+  }
+  input,
+  select,
+  textarea,
+  .search-box input,
+  .reference-filters input,
+  .company-filters input {
+    font-size: 16px;
+  }
+  input:not([type="checkbox"]):not([type="radio"]),
+  select {
+    min-height: 44px;
+  }
+  .search-box input {
+    min-width: 0;
+    width: 100%;
+  }
+  .search-box .primary,
+  .mobile-filter button,
+  .favorite,
+  .dialog-header button,
+  .pagination button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .radio {
+    min-height: 44px;
+  }
+  .offer-bottom {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .offer-bottom button,
+  .offer-bottom a,
+  .external-actions button,
+  .external-actions a {
+    min-height: 44px;
+  }
+  .dialog-header {
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .dialog-header button {
+    flex-shrink: 0;
+  }
+  dialog {
+    max-width: calc(100vw - 24px);
+    max-height: 90dvh;
+  }
+  .results-heading {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 380px) {
+  .nav .employer-nav {
+    margin-left: 0;
+  }
+  .hero h1 {
+    font-size: 34px;
+  }
+  .reference-filters,
+  .company-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dialog-content dl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dialog-content dd {
+    margin: 0 0 12px;
+  }
+}
