@@ -153,6 +153,14 @@ try {
   await page.waitForFunction(
     () => document.querySelector(".app-logo")?.naturalWidth > 0,
   );
+  assert.equal(
+    await page.locator(".app-logo").getAttribute("src"),
+    "/brand-leaf.svg",
+  );
+  assert.equal(
+    await source.evaluate((el) => el.classList.contains("reveal-visible")),
+    true,
+  );
   await source.hover();
   await page.waitForFunction(
     (element) => {

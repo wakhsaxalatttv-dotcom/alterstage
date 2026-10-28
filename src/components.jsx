@@ -1,3 +1,4 @@
+import { AnimatedCard } from "./AnimatedCard";
 import { CompanyLogo } from "./CompanyLogo";
 import React, { useEffect, useRef } from "react";
 import {
@@ -72,7 +73,7 @@ export function Empty({ icon: Icon, title, text, action, label, secondary }) {
 }
 export function Offer({ offer: o, favorite, toggle, details, company }) {
   return (
-    <article className="offer-card">
+    <AnimatedCard className="offer-card">
       <div className="offer-top">
         <CompanyLogo company={o.company} />
         <div>
@@ -133,7 +134,7 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
           Candidater <ArrowUpRight size={15} />
         </a>
       </div>
-    </article>
+    </AnimatedCard>
   );
 }
 export function Dialog({ title, close, children }) {

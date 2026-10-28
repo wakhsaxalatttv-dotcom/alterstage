@@ -1,3 +1,4 @@
+import { AnimatedCard } from "./AnimatedCard";
 import { CompanyLogo } from "./CompanyLogo";
 import React, { useEffect, useState } from "react";
 import { Building2, ArrowUpRight, ExternalLink, Search } from "lucide-react";
@@ -116,7 +117,7 @@ export function Companies({ openCompany }) {
             </p>
             <div className="company-grid">
               {data.companies.map((c) => (
-                <article className="directory-card" key={c.id}>
+                <AnimatedCard className="directory-card" key={c.id}>
                   <CompanyLogo company={c} />
                   <span className="directory-label">
                     {c.researchLead
@@ -167,7 +168,7 @@ export function Companies({ openCompany }) {
                       </a>
                     )}
                   </div>
-                </article>
+                </AnimatedCard>
               ))}
             </div>
             {!data.total && (

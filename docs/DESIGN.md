@@ -8,7 +8,7 @@ L’interface reprend le design précédent : vert `#176B50`, fond crème `#FCFC
 
 ## Identités visuelles
 
-Le logo de l’application est un monogramme vectoriel OF sur fond vert (`public/brand-mark.svg`). `AppLogo` le réutilise dans l’en-tête public et privé ; le navigateur utilise le même asset comme favicon. Aucun visuel généré ni logo de tiers n’est employé pour représenter l’application.
+Le logo de l’application est une feuille blanche vectorielle sur fond vert (`public/brand-leaf.svg`). `AppLogo` le réutilise dans l’en-tête public et privé ; le navigateur utilise le même asset comme favicon. Aucun visuel généré ni logo de tiers n’est employé pour représenter l’application.
 
 `CompanyLogo` est partagé entre cartes, annuaire et fiche entreprise :
 
@@ -20,11 +20,12 @@ Le monogramme reste visible pendant le chargement pour éviter un cadre vide. La
 
 ## Animations limitées
 
-- Apparition des cartes en 240 ms, déplacement de 5 px ; léger décalage pour les premières cartes.
-- Survol à la souris : carte soulevée de 2 px et ombre discrète ; boutons de 1 px.
-- Favori : petite confirmation de 200 ms.
-- Fenêtre : ouverture en 180 ms et fondu du fond.
-- Logo : fondu court après chargement.
+- Apparition des cartes au moment où elles entrent dans l’écran, en 560 ms et avec un déplacement de 14 px ; léger décalage pour les premières cartes. Un `IntersectionObserver` est déconnecté après la première apparition.
+- Survol à la souris : carte soulevée de 4 px et ombre discrète ; boutons de 1 px.
+- Favori : confirmation de 320 ms.
+- Fenêtre : ouverture en 300 ms et fondu du fond.
+- Logo : apparition de la feuille en 650 ms et fondu des logos d’entreprises après chargement.
+- Sur téléphone : retour visuel à la pression des boutons ; les apparitions au défilement fonctionnent sans souris.
 
 Pas de bibliothèque d’animation ajoutée. `prefers-reduced-motion: reduce` désactive ces effets. Les survols nécessitent un périphérique précis qui les supporte. Le dialogue natif conserve Échap, le verrouillage du défilement et le retour du focus après fermeture.
 

@@ -1,9 +1,10 @@
 /* Ajouts limités aux identités visuelles et aux micro-interactions. */
 .app-logo {
   display: block;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
+  animation: leaf-arrive 650ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .company-logo {
   display: inline-grid;
@@ -39,7 +40,7 @@
   height: 72%;
   inset: 14%;
   object-fit: contain;
-  transition: opacity 160ms ease;
+  transition: opacity 240ms ease;
 }
 .external-company-heading {
   display: flex;
@@ -53,22 +54,24 @@
 .profile-logo {
   margin-bottom: 16px;
 }
-.offer-card,
-.external-card,
-.directory-card {
-  animation: offer-appear 240ms ease-out backwards;
+.reveal-pending {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.reveal-visible {
+  animation: offer-appear 560ms cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
 }
 .offer-list > .offer-card:nth-child(2),
 .external-grid > .external-card:nth-child(2) {
-  animation-delay: 30ms;
+  animation-delay: 60ms;
 }
 .offer-list > .offer-card:nth-child(3),
 .external-grid > .external-card:nth-child(3) {
-  animation-delay: 60ms;
+  animation-delay: 120ms;
 }
 .offer-list > .offer-card:nth-child(4),
 .external-grid > .external-card:nth-child(4) {
-  animation-delay: 90ms;
+  animation-delay: 180ms;
 }
 .offer-card,
 .external-card,
@@ -77,32 +80,32 @@
 .secondary,
 .favorite {
   transition:
-    transform 160ms ease,
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    background-color 160ms ease;
+    transform 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    background-color 220ms ease;
 }
 .primary svg,
 .secondary svg,
 .offer-bottom svg,
 .external-actions a svg {
-  transition: transform 160ms ease;
+  transition: transform 220ms ease;
 }
 .favorite.saved svg {
-  animation: bookmark-confirm 200ms ease-out;
+  animation: bookmark-confirm 320ms ease-out;
 }
 dialog[open] {
-  animation: dialog-appear 180ms ease-out;
+  animation: dialog-appear 300ms ease-out;
 }
 dialog[open]::backdrop {
-  animation: backdrop-appear 180ms ease-out;
+  animation: backdrop-appear 260ms ease-out;
 }
 @media (hover: hover) and (pointer: fine) {
   .offer-card:hover,
   .external-card:hover,
   .directory-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgb(23 54 39 / 0.06);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 22px rgb(23 54 39 / 0.1);
   }
   .primary:hover,
   .secondary:hover {
@@ -111,13 +114,13 @@ dialog[open]::backdrop {
   .primary:hover svg,
   .offer-bottom button:hover svg,
   .external-actions a:hover svg {
-    transform: translateX(2px);
+    transform: translateX(4px);
   }
 }
 @keyframes offer-appear {
   from {
     opacity: 0;
-    transform: translateY(5px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -127,7 +130,7 @@ dialog[open]::backdrop {
 @keyframes dialog-appear {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(0.99);
+    transform: translateY(14px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -148,19 +151,47 @@ dialog[open]::backdrop {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.12);
+    transform: scale(1.18);
   }
 }
 @media (max-width: 700px) {
   .app-logo {
-    width: 30px;
-    height: 30px;
+    width: 34px;
+    height: 34px;
   }
   .offer-top .company-logo {
     --logo-size: 40px !important;
   }
 }
+@keyframes leaf-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(6px) rotate(-10deg) scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.primary:active,
+.secondary:active,
+.favorite:active {
+  transform: scale(0.97);
+}
 @media (prefers-reduced-motion: reduce) {
+  .app-logo,
+  .reveal-pending,
+  .reveal-visible {
+    animation: none;
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+  .primary:active,
+  .secondary:active,
+  .favorite:active {
+    transform: none;
+  }
   .offer-card,
   .external-card,
   .directory-card,

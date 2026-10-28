@@ -1,3 +1,4 @@
+import { AnimatedCard } from "./AnimatedCard";
 import { CompanyLogo } from "./CompanyLogo";
 import React, { useState, useEffect } from "react";
 import { ExternalLink, MapPin } from "lucide-react";
@@ -164,7 +165,7 @@ export function ExternalOffers() {
       )}
       <div className="external-grid">
         {offers.map((offer) => (
-          <article className="external-card" key={offer.id}>
+          <AnimatedCard className="external-card" key={offer.id}>
             <div className="external-company-heading">
               <CompanyLogo
                 company={{ ...offer.company, website: offer.companyWebsite }}
@@ -201,7 +202,7 @@ export function ExternalOffers() {
                 Annonce officielle <ExternalLink size={15} />
               </a>
             </div>
-          </article>
+          </AnimatedCard>
         ))}
       </div>
       {selected && (

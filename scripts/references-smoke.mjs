@@ -13,6 +13,7 @@ const browser = await chromium.launch({
 try {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   page.setDefaultTimeout(10000);
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   // Le catalogue distant peut être indisponible tandis que la liste éditoriale est servie.
@@ -53,6 +54,18 @@ try {
     true,
   );
   assert.equal(await section.locator(".verified-badge").count(), 0);
+  const lastCard = section.locator("article").last();
+  assert.equal(
+    await lastCard.evaluate((element) =>
+      element.classList.contains("reveal-pending"),
+    ),
+    true,
+  );
+  await lastCard.scrollIntoViewIfNeeded();
+  await page.waitForFunction(
+    (element) => element.classList.contains("reveal-visible"),
+    await lastCard.elementHandle(),
+  );
   assert.equal(await section.locator(".sector-visual").count(), 0);
   assert.doesNotMatch(
     await section.innerText(),
