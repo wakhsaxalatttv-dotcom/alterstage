@@ -87,7 +87,7 @@ try {
   );
   await page.goto(process.env.BASE_URL || "http://127.0.0.1:5173");
   await page.locator(".skeleton-card").first().waitFor();
-  assert.equal(await page.locator(".skeleton-logo").count(), 3);
+  assert.equal(await page.locator(".skeleton-card").count(), 3);
   await page.locator(".offer-card").first().waitFor();
   const source = page
       .locator(".offer-card")
@@ -118,7 +118,6 @@ try {
     await fallback.locator(".company-logo svg text").textContent(),
     "MR",
   );
-  assert.match(await source.innerText(), /Hybride/);
   assert.equal(await favicon.locator(".work-mode").count(), 0);
   assert.equal(await fallback.locator(".verified-badge").count(), 0);
   assert.equal(
@@ -128,12 +127,12 @@ try {
     48,
   );
   await source.locator("h3 button").click();
-  await page.locator("dialog.detail-drawer").waitFor();
-  assert.equal(
-    await page
-      .locator("dialog")
-      .evaluate((el) => Math.round(el.getBoundingClientRect().right)),
-    1440,
+  await page.locator("dialog[open]").waitFor();
+  assert.ok(
+    await page.locator("dialog").evaluate((el) => {
+      const box = el.getBoundingClientRect();
+      return box.left >= 0 && box.right <= innerWidth;
+    }),
   );
   await page.keyboard.press("Escape");
   assert.equal(
@@ -151,12 +150,28 @@ try {
       `Débordement à ${width}px`,
     );
   }
+  await page.waitForFunction(
+    () => document.querySelector(".app-logo")?.naturalWidth > 0,
+  );
+  await source.hover();
+  await page.waitForFunction(
+    (element) => {
+      const transform = getComputedStyle(element).transform;
+      return transform !== "none" && new DOMMatrixReadOnly(transform).m42 < 0;
+    },
+    await source.elementHandle(),
+  );
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  assert.equal(
+    await source.evaluate((el) => getComputedStyle(el).animationName),
+    "none",
+  );
   assert.equal(
     await page.getByRole("button", { name: "Gestion", exact: true }).count(),
     0,
   );
   console.log(
-    "Design : logo source, repli favicon, monogramme SVG, squelette, mode renseigné uniquement, tiroir/focus et responsive validés.",
+    "Design : logo source, repli favicon, monogramme SVG, squelette, logo d’application, réduction des animations, fenêtre/focus et responsive validés.",
   );
 } finally {
   await browser.close();

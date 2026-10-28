@@ -1,50 +1,33 @@
-# Système visuel — Offres Fraîches
+# Apparence — Offres Fraîches
 
-## Tokens
+## Design restauré
 
-`src/tokens.css` centralise l’ensemble des valeurs :
+L’interface reprend le design précédent : vert `#176B50`, fond crème `#FCFCF9`, cartes blanches et police Inter auto-hébergée. L’accroche « Votre avenir mérite des offres fraîches. » est conservée. Les filtres, l’ordre des informations et les fenêtres détaillées retrouvent leur disposition antérieure. Le thème ardoise, les métadonnées monospace et les tiroirs latéraux de la refonte ont été retirés.
 
-| Rôle | Token | Valeur |
-| --- | --- | --- |
-| Fond général | `--color-canvas` | `#F9FAFB` |
-| Cartes | `--color-surface` | `#FFFFFF` |
-| Fond de badge | `--color-surface-subtle` | `#F3F4F6` |
-| Texte / accent | `--color-text`, `--color-accent` | `#0F172A` |
-| Survol principal | `--color-accent-hover` | `#1E293B` |
-| Texte secondaire | `--color-text-secondary` | `#475569` |
-| Métadonnées | `--color-text-muted` | `#64748B` |
-| Bordure | `--color-border` | `#E5E7EB` |
-| Bordure survol | `--color-border-strong` | `#CBD5E1` |
-| Contrôle daté | `--color-success` | `#047857` |
-| Ombre survol | `--shadow-sm` | `0 1px 3px rgb(0 0 0 / .05)` |
-| Panneau | `--shadow-panel` | `-8px 0 32px rgb(15 23 42 / .08)` |
+`src/styles.css` contient le design restauré. `src/appearance.css` contient uniquement les ajouts de logos et d’animations.
 
-La grille utilise les tokens `--space-1` à `--space-12`, de 4 à 48 px. Les rayons sont de 4, 8 et 12 px. La largeur maximale est de 1248 px ; la colonne des filtres mesure 240 px. Les interactions utilisent uniquement une transition de 120 ms et respectent `prefers-reduced-motion`.
+## Identités visuelles
 
-Inter Variable reste auto-hébergée pour le texte. La pile monospace système SFMono / Consolas / Liberation Mono sert aux dates, niveaux et technologies, sans téléchargement supplémentaire. Aucune illustration générée ni aucun dégradé n’est utilisé.
+Le logo de l’application est un monogramme vectoriel OF sur fond vert (`public/brand-mark.svg`). `AppLogo` le réutilise dans l’en-tête public et privé ; le navigateur utilise le même asset comme favicon. Aucun visuel généré ni logo de tiers n’est employé pour représenter l’application.
 
-`src/styles.css` conserve la structure existante et utilise les tokens communs. `src/premium.css` contient les règles de présentation du catalogue, des entreprises et des tiroirs ; elle est chargée après les styles structurels dans les deux entrées, publique et privée.
+`CompanyLogo` est partagé entre cartes, annuaire et fiche entreprise :
 
-## Logos
+1. Logo HTTPS fourni par une source ou une entreprise autorisée.
+2. Favicon Google S2 du domaine officiel **déjà renseigné** ; aucun domaine n’est deviné.
+3. Monogramme SVG si les images sont absentes ou échouent.
 
-`CompanyLogo` applique la même chaîne sur les cartes, l’annuaire et la fiche entreprise :
+Le monogramme reste visible pendant le chargement pour éviter un cadre vide. La taille est fixe, avec `object-fit: contain`, chargement différé et `referrerPolicy="no-referrer"`. L’icône d’un domaine n’est pas présentée comme un logo certifié ; si seul le domaine d’un groupe est renseigné, son icône représente ce groupe. Le service distant reçoit le domaine et les informations réseau habituelles du navigateur, sans référent de recherche ni secret applicatif. Aucune clé Brandfetch ou autre n’est exposée côté client.
 
-1. URL de logo HTTPS fournie par la source ou l’entreprise avec son autorisation existante.
-2. Favicon du **domaine officiel renseigné**, via Google S2 en 128 px, sans clé API.
-3. Monogramme SVG, immédiatement visible pendant le chargement et conservé si les images échouent.
+## Animations limitées
 
-Le cadre est fixe : 48 × 48 px sur ordinateur et 40 × 40 px dans les cartes mobiles, bordure légère et `object-fit: contain`. Les images utilisent le chargement différé, le décodage asynchrone et `referrerPolicy="no-referrer"`. Aucun domaine n’est deviné à partir du nom d’une entreprise ou du site de l’agrégateur. L’icône d’un domaine n’est pas présentée comme un logo certifié : son libellé accessible indique sa provenance. Pour une filiale dont seul le site du groupe est renseigné, l’icône représente ce site de groupe.
+- Apparition des cartes en 240 ms, déplacement de 5 px ; léger décalage pour les premières cartes.
+- Survol à la souris : carte soulevée de 2 px et ombre discrète ; boutons de 1 px.
+- Favori : petite confirmation de 200 ms.
+- Fenêtre : ouverture en 180 ms et fondu du fond.
+- Logo : fondu court après chargement.
 
-Le service de favicon reçoit le domaine et les informations réseau habituelles du navigateur. Il ne reçoit ni les filtres de recherche dans un référent ni un secret applicatif. Il ne garantit pas qu’un logo existe pour chaque société ; le monogramme est le repli normal. Un fournisseur de marque nécessitant une clé privée devrait passer par un connecteur serveur, jamais une variable publique Vite.
-
-## Offres et confiance
-
-La carte met le poste en premier, puis l’entreprise, le lieu, le contrat, le niveau, les technologies, la date et les actions. Le mode de travail est affiché uniquement pour un champ explicite `workMode` (`remote`, `hybrid`, `onsite` ou `on_site`), jamais déduit du lieu. Les données actuelles ne fournissent pas systématiquement ce champ.
-
-Le badge **Vérifié** conserve le contrôle existant : statut actif et date de vérification réelle de moins de sept jours. Une ingestion API ou une simple consultation ne le déclenche pas. La limite de publication de 45 jours reste inchangée.
-
-Les skeletons reprennent l’entête avec cadre de logo, les trois lignes d’information, les badges et les actions de la carte. Ils restent statiques pour éviter les mouvements inutiles. Les fiches d’offres et d’entreprises s’ouvrent dans un `dialog` natif présenté comme un tiroir de 680 px sur ordinateur et plein écran sur téléphone. Le clavier, Échap, la fermeture par le fond, le verrouillage du défilement et le retour du focus sont conservés.
+Pas de bibliothèque d’animation ajoutée. `prefers-reduced-motion: reduce` désactive ces effets. Les survols nécessitent un périphérique précis qui les supporte. Le dialogue natif conserve Échap, le verrouillage du défilement et le retour du focus après fermeture.
 
 ## Validation
 
-Avec `npm run dev` lancé et Chromium disponible, `npm run test:design` vérifie les trois étapes de logo, l’absence de faux statut, le mode de travail conditionnel, les skeletons, le tiroir, le retour du focus et les débordements de 320 à 1440 px. Les annonces fictives de ce test n’entrent que dans une base temporaire. Les tests de recherche, favoris, modération et signalements restent applicables.
+`npm run test:design`, avec l’interface démarrée et Chromium disponible, vérifie les trois étapes de logo, le logo d’application chargé, la fenêtre et son focus, les largeurs de 320 à 1440 px et la réduction des animations. Les annonces fictives sont confinées à une base temporaire. La fiabilité des données, les badges de contrôle réel et la limite de 45 jours continuent d’être couverts par les tests existants.

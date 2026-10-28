@@ -1,16 +1,17 @@
+import { AppLogo } from "./AppLogo";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { Moderation } from "./Moderation";
 import "@fontsource-variable/inter/wght.css";
 import "./styles.css";
-import "./premium.css";
+import "./appearance.css";
 function Administration() {
   return (
     <>
       <header>
         <div className="nav wrap">
           <a className="brand" href="/">
-            offres fraîches
+            <AppLogo /> offres fraîches
           </a>
           <a href="/">Retour au site</a>
         </div>

@@ -1,5 +1,4 @@
 import { CompanyLogo } from "./CompanyLogo";
-import { Skeletons } from "./CatalogueParts";
 import React, { useState, useEffect } from "react";
 import { ExternalLink, MapPin } from "lucide-react";
 import { Dialog, Filter } from "./components";
@@ -145,7 +144,7 @@ export function ExternalOffers() {
         Tri : publication la plus récente. Seules les offres de 45 jours maximum
         sont affichées.
       </p>
-      {data.loading && <Skeletons count={3} />}
+      {data.loading && <p role="status">Chargement des offres repérées…</p>}
       {data.error && (
         <div role="alert" className="form-error">
           {data.error}{" "}
@@ -166,17 +165,16 @@ export function ExternalOffers() {
       <div className="external-grid">
         {offers.map((offer) => (
           <article className="external-card" key={offer.id}>
-            <div className="reference-heading">
+            <div className="external-company-heading">
               <CompanyLogo
                 company={{ ...offer.company, website: offer.companyWebsite }}
+                size={40}
               />
-              <div>
-                <h3>
-                  <button onClick={() => open(offer)}>{offer.title}</button>
-                </h3>
-                <p className="external-company">{offer.company.name}</p>
-              </div>
+              <p className="external-company">{offer.company.name}</p>
             </div>
+            <h3>
+              <button onClick={() => open(offer)}>{offer.title}</button>
+            </h3>
             <p>
               <MapPin size={15} aria-hidden="true" /> {offer.location.label} ·{" "}
               {offer.location.region}
@@ -185,11 +183,6 @@ export function ExternalOffers() {
               <span>{offer.contract}</span>
               {offer.education.map((level) => (
                 <span key={level}>{level}</span>
-              ))}
-            </div>
-            <div className="tech-tags">
-              {offer.technologies?.slice(0, 5).map((technology) => (
-                <span key={technology}>{technology}</span>
               ))}
             </div>
             <p className="external-summary">{offer.summary}</p>
@@ -212,14 +205,7 @@ export function ExternalOffers() {
         ))}
       </div>
       {selected && (
-        <Dialog
-          variant="drawer"
-          title={selected.title}
-          close={() => setSelected(null)}
-        >
-          <CompanyLogo
-            company={{ ...selected.company, website: selected.companyWebsite }}
-          />
+        <Dialog title={selected.title} close={() => setSelected(null)}>
           <p>
             <strong>{selected.company.name}</strong> · {selected.location.label}{" "}
             · {selected.location.region}

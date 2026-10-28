@@ -35,9 +35,12 @@ try {
   });
   await page.goto(process.env.BASE_URL || "http://127.0.0.1:5173");
   await page
-    .getByText("Sources des annonces", {
-      exact: true,
-    })
+    .getByText(
+      "Offres d’entreprises et annonces reçues de sources autorisées",
+      {
+        exact: true,
+      },
+    )
     .waitFor();
   await page.screenshot({ path: "/tmp/offres-v2-desktop.png", fullPage: true });
   await page.getByRole("button", { name: "Entreprises", exact: true }).click();
@@ -272,7 +275,7 @@ try {
     .click();
   await page
     .getByRole("dialog")
-    .getByText("Vérifié", { exact: true })
+    .getByText("Offre vérifiée · périmètre technique relu", { exact: true })
     .waitFor();
   await page.keyboard.press("Escape");
   await page.screenshot({

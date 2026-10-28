@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
-  Check,
+  ShieldCheck,
   ExternalLink,
   ArrowRight,
 } from "lucide-react";
@@ -42,23 +42,10 @@ export function Skeletons({ count = 3 }) {
     >
       {Array.from({ length: count }, (_, i) => (
         <div className="skeleton-card" key={i}>
-          <div className="skeleton-top">
-            <div className="skeleton-logo skeleton-block" />
-            <div className="skeleton-heading">
-              <div className="skeleton-block" />
-              <div className="skeleton-block short" />
-              <div className="skeleton-block medium" />
-            </div>
-          </div>
-          <div className="skeleton-tags">
-            <div className="skeleton-block short" />
-            <div className="skeleton-block short" />
-            <div className="skeleton-block short" />
-          </div>
-          <div className="skeleton-footer">
-            <div className="skeleton-block short" />
-            <div className="skeleton-block short" />
-          </div>
+          <div className="skeleton-block short" />
+          <div className="skeleton-block" />
+          <div className="skeleton-block medium" />
+          <div className="skeleton-block short" />
         </div>
       ))}
     </div>
@@ -77,8 +64,9 @@ export function VerifiedBadge({ offer }) {
       className="verified-badge"
       title={`Source et périmètre technique contrôlés le ${new Date(offer.lastVerifiedAt).toLocaleDateString("fr-FR")}. Ce contrôle ne garantit pas l’ouverture future du recrutement.`}
     >
-      <Check size={13} aria-hidden="true" />
-      Vérifié
+      <ShieldCheck size={13} />
+      Offre vérifiée
+      {offer.technicalReviewAt ? " · périmètre technique relu" : ""}
     </span>
   );
 }
@@ -134,13 +122,8 @@ export function CompanyProfile({ company: initial, openOffer }) {
   const c = data.company;
   return (
     <>
-      <div className="company-profile-heading">
-        <CompanyLogo company={c} size={48} />
-        <div>
-          <p className="section-label">ENTREPRISE</p>
-          <h3>{c.name}</h3>
-          {c.sector && <p>{c.sector}</p>}
-        </div>
+      <div className="profile-logo">
+        <CompanyLogo company={c} />
       </div>
       <span className="status-label">
         {c.researchLead
