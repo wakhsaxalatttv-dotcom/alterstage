@@ -12,7 +12,7 @@ npm run setup:admin
 npm run dev
 ```
 
-Ouvrir le port **5173** dans l’onglet Ports. Vite relaie `/api` à Express sur 3001. La clé de modération aléatoire est créée dans `.env`, ignoré par Git et non affiché dans les logs. Ne pas la partager ; la saisir dans l’écran **Modération** (pied de page) depuis l’éditeur local. Une clé existante valide n’est pas remplacée. Sans clé, le catalogue démarre mais les dépôts publics sont fermés.
+Ouvrir le port **5173** dans l’onglet Ports. Vite relaie `/api` à Express sur 3001. La clé de modération aléatoire est créée dans `.env`, ignoré par Git et non affiché dans les logs. Ne pas la partager ; la saisir dans l’écran **Gestion** (navigation principale, ou Modération en pied de page) depuis l’éditeur local. Une clé existante valide n’est pas remplacée. Sans clé, le catalogue démarre mais les dépôts publics sont fermés.
 
 ## Ce qui est disponible
 
@@ -22,7 +22,7 @@ Ouvrir le port **5173** dans l’onglet Ports. Vite relaie `/api` à Express sur
 - Dépôt entreprise avec aperçu, présentation et données enrichies sourcées, logo facultatif autorisé, contact générique RH/tutorat avec provenance. Une soumission reste privée avant revue.
 - Modération paginée, revue, retrait, import éditorial et panneau Sources & collecte.
 - Connecteurs JSON et RSS/Atom autorisés : normalisation, nettoyage, dédoublonnage, extraction de mentions, journal et collecte périodique optionnelle. Les modifications reviennent en attente.
-- Favoris/alertes/signalements locaux. Pas d’e-mail, pas de notifications navigateur fermé, pas de transmission automatique des signalements. Une copie locale ne confirme pas la disponibilité actuelle.
+- Favoris et alertes locaux, sans e-mail ni notification navigateur fermé. Les nouveaux signalements sont transmis au serveur et traités dans l’espace Gestion ; les anciens signalements locaux ne sont pas récupérés automatiquement.
 - UI responsive, skeletons, police auto-hébergée, écrans employeur/modération découpés en chargement différé et logos autorisés en lazy loading.
 
 ## Architecture et alimentation
@@ -76,7 +76,7 @@ L’onglet **Repérées**, à côté des offres et des entreprises, présente un
 
 Les références sont dans `shared/external-offers.js`, `shared/employer-references.js` et `shared/chemistry-references.js`, sans augmenter le compteur du catalogue synchronisé. Les textes complets ne sont pas reproduits. Certaines pages VINCI présentent un `datePosted` structuré plus récent que leur publication visible : `publishedAt` conserve la date visible et `sourceMetadataDate` préserve séparément la métadonnée, expliquée dans la fiche. Les anciennes annonces gardent leur avertissement. La date de consultation ne constitue pas une vérification de disponibilité : aucun badge « vérifiée » n’est attribué. La sélection est manuelle, sans actualisation automatique ; vérifier régulièrement les liens et retirer les références fermées. Aucune coordonnée ou condition manquante n’est déduite.
 
-Avec le serveur de développement démarré, `npm run test:references` contrôle dans Chromium l’onglet Repérées sur mobile et ordinateur, les nouvelles fiches, leurs liens employeurs, les filtres combinés, les dates anciennes et l’état vide. Le test fonctionne avec une API simulée indisponible pour vérifier l’indépendance de la sélection éditoriale.
+Avec le serveur de développement démarré, `npm run test:references` contrôle dans Chromium l’onglet Repérées sur mobile et ordinateur, les nouvelles fiches, leurs liens employeurs, les filtres combinés, les dates anciennes et l’état vide. Le test simule une source de catalogue indisponible tout en servant la liste éditoriale via son endpoint dédié.
 
 ### Limite de fraîcheur et accès supplémentaires
 
@@ -89,3 +89,16 @@ Pour une extension future, Adzuna demande un `app_id` et une `app_key` (https://
 ### Présentation des annonces
 
 Les cartes et fiches affichent la date de publication, sans les anciens encarts de fraîcheur ni les lignes de vérification non effectuée. La limite de 45 jours continue de s’appliquer automatiquement ; aucune vérification n’est inventée. La présentation reprend les couleurs d’origine vert et crème, des cartes sobres, une typographie lisible et des actions de candidature visibles. Aucun visuel généré ni bandeau décoratif n’est utilisé.
+
+### Gestion des dépôts et signalements
+
+1. Sur Render, configurer `ADMIN_TOKEN` dans **Environment** avec un secret aléatoire d’au moins 32 caractères, puis redéployer. Le jeton local du cloud n’est pas automatiquement transféré à Render. Ne pas saisir ce secret dans le chat ni dans une variable `VITE_`.
+2. Ouvrir **Gestion** en haut du site et saisir ce jeton. Il reste uniquement en mémoire jusqu’à la déconnexion ou au rechargement.
+3. Dans **À valider**, contrôler la source, les droits de diffusion, l’entreprise, les dates et contacts. Cocher les quatre attestations puis choisir **Valider et publier**, ou **Refuser**. Les dépôts d’entreprises sont privés et ne peuvent pas s’auto-publier.
+4. Dans **Signalements**, consulter le motif, les précisions, la date et l’annonce officielle. Ajouter une note privée puis marquer le signalement comme traité, le classer sans suite ou retirer l’annonce du site. Aucun signalement n’entraîne un retrait automatique.
+
+Les nouveaux signalements et décisions sont enregistrés en SQLite dans `DATA_DIR` (tables créées automatiquement au démarrage). Pour les conserver sur Render, un disque persistant est nécessaire ; une base sur un disque éphémère peut disparaître au redéploiement. Le retrait d’une référence éditoriale est aussi persistant et la liste `/api/references` applique ces décisions : le navigateur ne réaffiche pas une copie statique si le service de références est indisponible. Les signalements ne sont lisibles qu’avec le jeton administrateur. Les anciennes copies locales des visiteurs ne peuvent pas être rapatriées automatiquement et ne sont pas annoncées comme reçues.
+
+Les formulaires de signalement existent sur les fiches du catalogue et de Repérées. Ils ne demandent aucune coordonnée personnelle et sont limités à dix envois par heure et par adresse cliente. Sur Render, Express fait confiance au dernier proxy pour identifier cette adresse. Les notes sont privées ; aucun e-mail n’est envoyé à l’employeur. `npm run test:reports` vérifie le parcours visiteur → gestion authentifiée → retrait dans une base temporaire.
+
+Les raccourcis **Repérées** présentent tous les domaines actuellement représentés, en plus du menu complet. « Chimie & matériaux » est désormais un raccourci parmi les autres ; tous les filtres combinés restent disponibles.

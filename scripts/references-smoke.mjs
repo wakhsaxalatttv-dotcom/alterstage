@@ -15,13 +15,23 @@ try {
   page.setDefaultTimeout(10000);
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  // Les références éditoriales restent utilisables même sans réponse de la source API.
+  // Le catalogue distant peut être indisponible tandis que la liste éditoriale est servie.
   await page.route("**/api/**", (route) =>
-    route.fulfill({
-      status: 503,
-      contentType: "application/json",
-      body: JSON.stringify({ message: "Source temporairement indisponible" }),
-    }),
+    new URL(route.request().url()).pathname === "/api/references"
+      ? route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            offers: selectOffers(externalOffers, defaultFilters),
+          }),
+        })
+      : route.fulfill({
+          status: 503,
+          contentType: "application/json",
+          body: JSON.stringify({
+            message: "Source temporairement indisponible",
+          }),
+        }),
   );
   await page.goto(process.env.BASE_URL || "http://127.0.0.1:5173");
   const navigation = page.getByRole("navigation", {
@@ -31,6 +41,7 @@ try {
     .getByRole("button", { name: "Repérées", exact: true })
     .click();
   const section = page.locator("#offres-reperees");
+  await section.locator("article").first().waitFor();
   assert.equal(
     await section.locator("article").count(),
     selectOffers(externalOffers, defaultFilters).length,

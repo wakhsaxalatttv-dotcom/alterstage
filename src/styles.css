@@ -2614,3 +2614,50 @@ nav {
   margin-top: 24px;
   padding-top: 24px;
 }
+
+.domain-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 22px 0 10px;
+}
+.domain-shortcuts button {
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: white;
+  color: #52644f;
+  font-size: 11px;
+  text-align: left;
+}
+.domain-shortcuts button.active {
+  background: var(--green);
+  color: white;
+  border-color: var(--green);
+}
+.report-form,
+.report-reference {
+  margin-top: 22px;
+}
+.report-card > .field {
+  margin-top: 20px;
+}
+.report-card .description {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.admin-tabs button {
+  white-space: normal;
+}
+
+.nav nav .management-label {
+  display: inline;
+}
+@media (max-width: 380px) {
+  .nav nav {
+    gap: 5px;
+  }
+  .nav nav button {
+    font-size: 10px;
+  }
+}

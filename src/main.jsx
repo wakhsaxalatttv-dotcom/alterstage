@@ -1,3 +1,4 @@
+import { ReportForm } from "./ReportForm";
 import React, { useEffect, useState, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -148,7 +149,7 @@ function App() {
     alerts: "Mes alertes",
     employers: "Déposer une annonce",
     companies: "Les entreprises, à la source",
-    moderation: "Modération du catalogue",
+    moderation: "Gestion des annonces et signalements",
   };
   const subtitles = {
     spotted:
@@ -219,6 +220,14 @@ function App() {
             >
               <Bell size={17} />
               <span>Mes alertes</span>
+            </button>
+            <button
+              aria-label="Gestion"
+              className={page === "moderation" ? "selected" : ""}
+              onClick={() => navigate("moderation")}
+            >
+              <ShieldCheck size={17} />
+              <span className="management-label">Gestion</span>
             </button>
           </nav>
           <button
@@ -772,10 +781,11 @@ function App() {
                 </li>
               </ul>
               <p>
-                La recherche est gratuite. Les favoris, alertes et signalements
-                sont stockés uniquement sur cet appareil. Vous pouvez supprimer
-                les favoris et alertes depuis leurs écrans ; effacer les données
-                du site supprime l’ensemble.
+                La recherche est gratuite. Les favoris et alertes sont stockés
+                uniquement sur cet appareil. Les nouveaux signalements sont
+                transmis au responsable du site. Vous pouvez supprimer les
+                favoris et alertes depuis leurs écrans ; effacer les données du
+                site supprime l’ensemble.
               </p>
               {reports.length > 0 && (
                 <button
@@ -785,7 +795,8 @@ function App() {
                     setNotice("Signalements locaux supprimés.");
                   }}
                 >
-                  Supprimer mes {reports.length} signalement(s) local(aux)
+                  Supprimer mes {reports.length} ancien(s) signalement(s)
+                  local(aux)
                 </button>
               )}
             </>
@@ -947,52 +958,15 @@ function App() {
             <CompanyProfile company={modal.company} openOffer={openOffer} />
           )}
           {modal.type === "report" && (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const reason = new FormData(e.currentTarget).get("reason");
-                setReports((old) => [
-                  ...old,
-                  {
-                    id: crypto.randomUUID(),
-                    offerId: modal.offer.id,
-                    reason,
-                    createdAt: new Date().toISOString(),
-                  },
-                ]);
+            <ReportForm
+              offer={modal.offer}
+              onSent={() => {
                 setNotice(
-                  "Signalement enregistré localement. Il n’a pas été transmis à la source.",
+                  "Signalement transmis au responsable du site. Merci.",
                 );
                 setModal(null);
               }}
-            >
-              <p>
-                Ce signalement est conservé sur cet appareil uniquement. Aucun
-                message n’est envoyé à l’entreprise. Pour une correction,
-                utilisez également le site d’origine.
-              </p>
-              <label className="field">
-                Motif
-                <select name="reason" required>
-                  <option value="closed">L’offre semble fermée</option>
-                  <option value="incorrect">
-                    Des informations sont incorrectes
-                  </option>
-                  <option value="school">L’annonce provient d’une école</option>
-                </select>
-              </label>
-              <button className="primary" type="submit">
-                Enregistrer le signalement local
-              </button>
-              <a
-                className="standalone"
-                href={modal.offer.sourceUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Ouvrir la source <ExternalLink size={15} />
-              </a>
-            </form>
+            />
           )}
         </Dialog>
       )}

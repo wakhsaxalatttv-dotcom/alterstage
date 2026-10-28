@@ -47,3 +47,14 @@ CREATE TABLE IF NOT EXISTS offer_contracts (
 );
 CREATE INDEX IF NOT EXISTS contract_lookup ON offer_contracts(contract,offer_id);
 INSERT OR IGNORE INTO offer_contracts(offer_id,contract) SELECT id,contract FROM offers;
+CREATE TABLE IF NOT EXISTS offer_reports (
+ id TEXT PRIMARY KEY, offer_id TEXT NOT NULL, target_kind TEXT NOT NULL CHECK(target_kind IN ('catalogue','reference')),
+ reason TEXT NOT NULL, details TEXT NOT NULL DEFAULT '',
+ status TEXT NOT NULL DEFAULT 'open' CHECK(status IN ('open','resolved','dismissed')),
+ created_at TEXT NOT NULL, reviewed_at TEXT, review_note TEXT NOT NULL DEFAULT '', last_action TEXT,
+ offer_snapshot TEXT NOT NULL CHECK(json_valid(offer_snapshot))
+);
+CREATE INDEX IF NOT EXISTS reports_status_date ON offer_reports(status,created_at DESC,id);
+CREATE TABLE IF NOT EXISTS hidden_references (
+ id TEXT PRIMARY KEY, hidden_at TEXT NOT NULL, reason TEXT NOT NULL DEFAULT ''
+);

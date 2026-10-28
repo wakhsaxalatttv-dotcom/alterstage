@@ -1,13 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ExternalLink, MapPin } from "lucide-react";
 import { Dialog, Filter } from "./components";
 import { selectOffers, defaultFilters, regions } from "./domain";
 import { educationLevels } from "../shared/catalog";
-import { externalOffers } from "../shared/external-offers";
+import { request } from "./api";
+import { ReportForm } from "./ReportForm";
 const date = (value) =>
   value ? new Date(value).toLocaleDateString("fr-FR") : "Non fournie";
 export function ExternalOffers() {
   const [selected, setSelected] = useState(null);
+  const [data, setData] = useState({ offers: [], loading: true, error: "" });
+  const [reporting, setReporting] = useState(false),
+    [reported, setReported] = useState(false),
+    [refresh, setRefresh] = useState(0);
+  useEffect(() => {
+    const controller = new AbortController();
+    setData((previous) => ({ ...previous, loading: true, error: "" }));
+    request("/api/references", { signal: controller.signal })
+      .then((result) =>
+        setData({ offers: result.offers, loading: false, error: "" }),
+      )
+      .catch((error) => {
+        if (error.name !== "AbortError")
+          setData({ offers: [], loading: false, error: error.message });
+      });
+    return () => controller.abort();
+  }, [refresh]);
+  const externalOffers = data.offers;
+  const open = (offer) => {
+    setSelected(offer);
+    setReporting(false);
+    setReported(false);
+  };
   const [filters, setFilters] = useState(defaultFilters);
   const change = (key, value) =>
     setFilters((previous) => ({ ...previous, [key]: value }));
@@ -38,18 +62,30 @@ export function ExternalOffers() {
         fiche détaillée et candidatez sur le site officiel, où la disponibilité
         reste à confirmer.
       </p>
-      <div className="external-actions">
+      <div
+        className="domain-shortcuts"
+        role="group"
+        aria-label="Raccourcis par domaine"
+      >
         <button
-          className="secondary"
-          onClick={() =>
-            setFilters({
-              ...defaultFilters,
-              domain: "Chimie, procédés & matériaux",
-            })
-          }
+          className={!filters.domain ? "active" : ""}
+          aria-pressed={!filters.domain}
+          onClick={() => setFilters(defaultFilters)}
         >
-          Chimie & matériaux
+          Tous les domaines
         </button>
+        {domains.map((domain) => (
+          <button
+            key={domain}
+            className={filters.domain === domain ? "active" : ""}
+            aria-pressed={filters.domain === domain}
+            onClick={() => setFilters({ ...defaultFilters, domain })}
+          >
+            {domain === "Chimie, procédés & matériaux"
+              ? "Chimie & matériaux"
+              : domain}
+          </button>
+        ))}
       </div>
       <div className="reference-filters">
         <label className="field">
@@ -107,7 +143,19 @@ export function ExternalOffers() {
         Tri : publication la plus récente. Seules les offres de 45 jours maximum
         sont affichées.
       </p>
-      {!offers.length && (
+      {data.loading && <p role="status">Chargement des offres repérées…</p>}
+      {data.error && (
+        <div role="alert" className="form-error">
+          {data.error}{" "}
+          <button
+            className="secondary"
+            onClick={() => setRefresh((n) => n + 1)}
+          >
+            Réessayer
+          </button>
+        </div>
+      )}
+      {!data.loading && !data.error && !offers.length && (
         <p className="local-note">
           Aucun lien repéré ne correspond aux filtres sélectionnés. Essayez un
           autre domaine ou effacez les filtres.
@@ -118,7 +166,7 @@ export function ExternalOffers() {
           <article className="external-card" key={offer.id}>
             <p className="external-company">{offer.company.name}</p>
             <h3>
-              <button onClick={() => setSelected(offer)}>{offer.title}</button>
+              <button onClick={() => open(offer)}>{offer.title}</button>
             </h3>
             <p>
               <MapPin size={15} aria-hidden="true" /> {offer.location.label} ·{" "}
@@ -135,7 +183,7 @@ export function ExternalOffers() {
               Publication source : {date(offer.publishedAt)}
             </p>
             <div className="external-actions">
-              <button className="secondary" onClick={() => setSelected(offer)}>
+              <button className="secondary" onClick={() => open(offer)}>
                 Description détaillée
               </button>
               <a
@@ -218,6 +266,25 @@ export function ExternalOffers() {
             Voir l’annonce et candidater chez l’employeur{" "}
             <ExternalLink size={17} />
           </a>
+          <div className="report-reference">
+            {reported ? (
+              <p role="status" className="local-note">
+                Signalement transmis au responsable du site. Merci.
+              </p>
+            ) : reporting ? (
+              <ReportForm
+                offer={selected}
+                onSent={() => {
+                  setReporting(false);
+                  setReported(true);
+                }}
+              />
+            ) : (
+              <button className="secondary" onClick={() => setReporting(true)}>
+                Signaler une offre fermée ou incorrecte
+              </button>
+            )}
+          </div>
         </Dialog>
       )}
     </section>

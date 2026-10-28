@@ -1,3 +1,4 @@
+import { Reports } from "./reports.js";
 import express from "express";
 import compression from "compression";
 import path from "node:path";
@@ -14,8 +15,12 @@ export function createApp({
     store = new OfferStore(folder),
     limits = new Map();
   app.locals.store = store;
+  const reports = new Reports(store),
+    reportLimits = new Map();
+  app.locals.reports = reports;
   app.locals.pipeline = new IngestionPipeline(store, pipelineOptions);
   app.disable("x-powered-by");
+  if (process.env.RENDER === "true") app.set("trust proxy", 1);
   app.use(compression({ threshold: 1024 }));
   app.use((_req, res, next) => {
     res.set({
@@ -113,6 +118,39 @@ export function createApp({
     const offer = normalizeSubmission({ ...req.body, origin: "employer" });
     res.status(201).json(await store.submit(offer));
   });
+  app.get("/api/references", (_req, res) =>
+    res.json({ offers: reports.references() }),
+  );
+  app.post("/api/reports", async (req, res) => {
+    if (adminToken.length < 32)
+      return res
+        .status(503)
+        .json({
+          message:
+            "Les signalements sont temporairement indisponibles : la modération doit être configurée.",
+        });
+    const now = Date.now();
+    for (const [key, entry] of reportLimits)
+      if (entry.until < now) reportLimits.delete(key);
+    const key = req.ip,
+      entry = reportLimits.get(key) || { count: 0, until: now + 3600000 };
+    if (entry.count >= 10)
+      return res
+        .status(429)
+        .json({
+          message:
+            "Limite de dix signalements par heure atteinte. Réessayez plus tard.",
+        });
+    entry.count++;
+    reportLimits.set(key, entry);
+    res.status(201).json(await reports.create(req.body || {}));
+  });
+  app.get("/api/admin/reports", admin, (req, res) =>
+    res.json(reports.list(queryParams(req))),
+  );
+  app.post("/api/admin/reports/:id/review", admin, (req, res) =>
+    res.json(reports.review(req.params.id, req.body || {})),
+  );
   app.get("/api/admin/submissions", admin, async (req, res) =>
     res.json(await store.adminQuery(queryParams(req))),
   );

@@ -1,3 +1,4 @@
+import { ReportsPanel } from "./ReportsPanel";
 import React, { useState, useEffect } from "react";
 import { ShieldCheck, ExternalLink, Check, X, RotateCcw } from "lucide-react";
 import { request } from "./api";
@@ -15,7 +16,8 @@ export function Moderation({ onChanged }) {
     [adminPage, setAdminPage] = useState(1),
     [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
   useEffect(() => {
-    if (authenticated) load();
+    if (authenticated && !["reports", "sources", "import"].includes(view))
+      load();
   }, [view, adminPage]);
   async function load(event) {
     event?.preventDefault();
@@ -61,6 +63,12 @@ export function Moderation({ onChanged }) {
       </div>
       {!authenticated ? (
         <form className="admin-login" onSubmit={load}>
+          <h2>Connexion à votre espace de gestion</h2>
+          <p>
+            Utilisez le jeton administrateur défini dans la variable serveur
+            ADMIN_TOKEN. Sur Render, il se configure dans Environment. Ne
+            partagez pas ce jeton.
+          </p>
           <label className="field">
             Jeton de modération
             <input
@@ -91,6 +99,11 @@ export function Moderation({ onChanged }) {
               Déconnexion
             </button>
           </div>
+          <p className="local-note">
+            Les annonces déposées par les entreprises restent privées dans « À
+            valider ». Ouvrez la source, contrôlez les quatre points puis
+            choisissez « Valider et publier » ou « Refuser ».
+          </p>
           <div className="admin-tabs">
             {[
               ["pending", "À valider"],
@@ -99,6 +112,7 @@ export function Moderation({ onChanged }) {
               ["withdrawn", "Retirées"],
               ["import", "Ajouter depuis une source"],
               ["sources", "Sources & collecte"],
+              ["reports", "Signalements"],
             ].map(([id, label]) => (
               <button
                 className={view === id ? "active" : ""}
@@ -109,11 +123,14 @@ export function Moderation({ onChanged }) {
                 }}
               >
                 {label}
-                {!["import", "sources"].includes(id) && ` (${counts[id] || 0})`}
+                {!["import", "sources", "reports"].includes(id) &&
+                  ` (${counts[id] || 0})`}
               </button>
             ))}
           </div>
-          {view === "sources" ? (
+          {view === "reports" ? (
+            <ReportsPanel token={token} onChanged={onChanged} />
+          ) : view === "sources" ? (
             <SourcePanel token={token} onChanged={onChanged} />
           ) : view === "import" ? (
             <>
