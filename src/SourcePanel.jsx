@@ -53,9 +53,9 @@ export function SourcePanel({ token, onChanged }) {
       </h2>
       <p>
         Les connecteurs JSON et RSS/Atom alimentent la file de validation, les
-        annonces LBA sélectionnées restent non revérifiées dans le catalogue
-        public. Une source LBA est activée lorsqu’une clé serveur est
-        configurée.
+        annonces API sélectionnées restent non revérifiées dans le catalogue
+        public. France Travail est activé lorsque ses deux identifiants serveur
+        sont configurés ; la connexion doit ensuite réussir.
       </p>
       <p className="muted">
         Configuration serveur : SOURCES_FILE. Consultez le guide{" "}
@@ -93,6 +93,8 @@ export function SourcePanel({ token, onChanged }) {
                     {
                       {
                         disabled: "désactivée",
+                        not_configured:
+                          "source non configurée — identifiant ou secret absent",
                         authorization_required: "autorisation requise",
                         configured: "configurée — connexion à tester",
                       }[s.status]

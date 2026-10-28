@@ -10,7 +10,7 @@ export const publicAddress = (address) => {
   }
 };
 // Direct connections pin validated DNS answers. An explicit environment proxy retains its supported egress route.
-const dispatcher = new EnvHttpProxyAgent({
+export const dispatcher = new EnvHttpProxyAgent({
   connect: {
     lookup(hostname, options, callback) {
       lookup(hostname, { all: true }, (error, addresses) => {

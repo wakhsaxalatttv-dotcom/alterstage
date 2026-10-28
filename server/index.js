@@ -1,3 +1,4 @@
+import { franceTravailConfiguration } from "./ingestion/france-travail.js";
 import { seedBundledCatalogue } from "./ingestion/bundled.js";
 import { createApp } from "./app.js";
 import { closeFeedConnections } from "./ingestion/http.js";
@@ -8,18 +9,34 @@ await seedBundledCatalogue(app.locals.store);
 const server = app.listen(port, "0.0.0.0", () =>
   console.log(`Offres Fraîches : serveur prêt sur le port ${port}`),
 );
+const ft = franceTravailConfiguration();
+console.info(
+  `[France Travail] ${!ft.enabled ? "Collecte désactivée." : ft.configured ? "Identifiants présents ; connexion API à tester par la collecte." : "Source non configurée : identifiant client ou secret absent."}`,
+);
 const minutes = Number(
-  process.env.INGEST_INTERVAL_MINUTES || (process.env.LBA_API_KEY ? 180 : 0),
+  process.env.INGEST_INTERVAL_MINUTES ||
+    (process.env.LBA_API_KEY || (ft.configured && ft.enabled) ? 180 : 0),
 );
 const run = () =>
   app.locals.pipeline
     .run()
+    .then((result) => {
+      for (const report of result.reports)
+        if (report.sourceId === "france-travail")
+          console.info(
+            `[France Travail] ${report.status} : ${report.created} nouvelle(s), ${report.updated} modifiée(s), ${report.invalid} invalide(s). ${report.message || ""}`,
+          );
+    })
     .catch(() =>
       console.error(
         "Collecte indisponible : vérifier la configuration des sources.",
       ),
     );
-if (process.env.LBA_API_KEY && process.env.LBA_ENABLED !== "false") run();
+if (
+  (process.env.LBA_API_KEY && process.env.LBA_ENABLED !== "false") ||
+  (ft.configured && ft.enabled)
+)
+  run();
 const timer = minutes >= 5 ? setInterval(run, minutes * 60000) : null;
 timer?.unref();
 async function shutdown() {

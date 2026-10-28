@@ -27,7 +27,7 @@ L’API réserve la diffusion aux usages gratuits et non lucratifs. Respecter `c
 - The Muse : API examinée en mode test ; résultats techniques français trop anciens ou hors périmètre. Une application enregistrée est requise au-delà des tests. Aucun accès de production ni partenariat n’est prétendu.
 - data.gouv.fr : le jeu trouvé sur le baromètre de l’alternance du Rhône contient des statistiques, pas des annonces à transformer en postes.
 
-La présence d’une API ou d’une page publique ne vaut pas à elle seule autorisation de republication. Les offres d’origine France Travail restent exclues conformément au choix du projet.
+La présence d’une API ou d’une page publique ne vaut pas à elle seule autorisation de republication. Le responsable a ensuite demandé l’activation directe de France Travail et indiqué avoir enregistré les deux identifiants dans Render. Le nouveau connecteur est décrit dans [FRANCE_TRAVAIL.md](FRANCE_TRAVAIL.md). La connexion authentifiée Render reste à confirmer. LBA conserve son exclusion de France Travail pour éviter les doublons entre ces sources.
 
 ## Sélection éditoriale « Repérées »
 

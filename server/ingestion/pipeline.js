@@ -1,3 +1,10 @@
+import {
+  franceTravailSource,
+  franceTravailConfiguration,
+  fetchFranceTravail,
+  FranceTravailError,
+  FT_SEARCH_URL,
+} from "./france-travail.js";
 import { lbaSource } from "./lba.js";
 import { readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
@@ -6,16 +13,24 @@ import { plainText } from "../enrichment.js";
 import { parseFeed } from "./connectors.js";
 import { fetchFeed } from "./http.js";
 export async function readSources(file = process.env.SOURCES_FILE) {
-  if (!file)
-    return process.env.LBA_API_KEY && process.env.LBA_ENABLED !== "false"
+  const ft = franceTravailConfiguration();
+  const builtins = [
+    ...(process.env.LBA_API_KEY && process.env.LBA_ENABLED !== "false"
       ? [lbaSource]
-      : [];
+      : []),
+    ...(ft.requested && ft.enabled ? [franceTravailSource] : []),
+  ];
+  if (!file) return builtins;
   const parsed = JSON.parse(await readFile(file, "utf8"));
   if (!Array.isArray(parsed) || parsed.length > 30)
     throw new Error("Configuration des sources invalide");
   const ids = new Set();
   for (const source of parsed) {
-    if (!/^[a-z0-9-]{1,60}$/.test(source.id) || ids.has(source.id))
+    if (
+      !/^[a-z0-9-]{1,60}$/.test(source.id) ||
+      ids.has(source.id) ||
+      source.id === franceTravailSource.id
+    )
       throw new Error("Identifiants de source invalides ou dupliqués");
     if (
       source.enabled === true &&
@@ -34,7 +49,12 @@ export async function readSources(file = process.env.SOURCES_FILE) {
       throw new Error("Valeurs structurées par défaut invalides");
     ids.add(source.id);
   }
-  return parsed;
+  return [
+    ...parsed,
+    ...builtins.filter(
+      (source) => source.kind === "france-travail" && !ids.has(source.id),
+    ),
+  ];
 }
 const iso = (value) => {
   if (typeof value !== "string" || Number.isNaN(Date.parse(value))) return null;
@@ -79,11 +99,18 @@ export function normalizeRecord(
     safeUrl(source.url) &&
     new URL(source.url).hostname === "api.apprentissage.beta.gouv.fr" &&
     new URL(source.url).pathname === "/api/job/v1/search";
+  const trustedFt =
+    source.kind === "france-travail" &&
+    source.id === franceTravailSource.id &&
+    source.url === FT_SEARCH_URL;
+  const trustedApi = trustedLba || trustedFt;
   const normalized = normalizeSubmission(input, {
     now,
-    allowOlderActiveSource: trustedLba && source.includeOlderActive === true,
-    allowMissingWebsite: trustedLba,
-    companyIdentity: trustedLba ? record.companyIdentity : null,
+    allowOlderActiveSource:
+      trustedFt || (trustedLba && source.includeOlderActive === true),
+    allowMissingWebsite: trustedApi,
+    allowFranceTravailSource: trustedFt,
+    companyIdentity: trustedApi ? record.companyIdentity : null,
   });
   const externalId = String(record.externalId || record.sourceUrl || "").slice(
     0,
@@ -116,13 +143,13 @@ export function normalizeRecord(
     .digest("hex");
   return {
     ...normalized,
-    acceptedContracts: trustedLba
+    acceptedContracts: trustedApi
       ? record.acceptedContracts || [normalized.contract]
       : [normalized.contract],
     sourceExpiresAt: record.sourceExpiresAt || null,
     sourcePartner: record.sourcePartner || null,
     sourceStatus: record.sourceStatus || null,
-    sourcePolicyApproved: trustedLba && source.publishUnverified === true,
+    sourcePolicyApproved: trustedApi && source.publishUnverified === true,
     origin: "feed",
     sourceId: source.id,
     sourceName: source.name || source.id,
@@ -140,7 +167,16 @@ export function normalizeRecord(
   };
 }
 export class IngestionPipeline {
-  constructor(store, { sources = readSources, fetcher = fetchFeed } = {}) {
+  constructor(
+    store,
+    {
+      sources = readSources,
+      fetcher = (source) =>
+        source.kind === "france-travail"
+          ? fetchFranceTravail()
+          : fetchFeed(source),
+    } = {},
+  ) {
     this.store = store;
     this.sources = sources;
     this.fetcher = fetcher;
@@ -152,16 +188,29 @@ export class IngestionPipeline {
       return {
         running: Boolean(this.running),
         configured: sources.length > 0,
-        sources: sources.map((s) => ({
+        sources: [
+          ...sources,
+          ...(!sources.some((s) => s.id === franceTravailSource.id)
+            ? [
+                {
+                  ...franceTravailSource,
+                  enabled: franceTravailConfiguration().enabled,
+                },
+              ]
+            : []),
+        ].map((s) => ({
           id: s.id,
           name: s.name || s.id,
           kind: s.kind,
           status:
-            s.enabled !== true
-              ? "disabled"
-              : s.authorized !== true || !safeUrl(s.licenseUrl)
-                ? "authorization_required"
-                : "configured",
+            s.kind === "france-travail" &&
+            !franceTravailConfiguration().configured
+              ? "not_configured"
+              : s.enabled !== true
+                ? "disabled"
+                : s.authorized !== true || !safeUrl(s.licenseUrl)
+                  ? "authorization_required"
+                  : "configured",
         })),
         runs: this.store.runs(),
       };
@@ -205,6 +254,9 @@ export class IngestionPipeline {
         try {
           const records = parseFeed(source, await this.fetcher(source));
           if (records.exclusions) report.exclusions = records.exclusions;
+          if (records.collection?.truncated)
+            report.message =
+              "Collecte plafonnée : d’autres résultats peuvent exister. Augmenter FRANCE_TRAVAIL_MAX_PAGES côté serveur si le quota le permet.";
           for (const record of records) {
             let offer;
             try {
@@ -217,10 +269,16 @@ export class IngestionPipeline {
             report[result]++;
           }
           report.status = report.invalid ? "partial" : "success";
-        } catch {
+        } catch (error) {
           report.status = "error";
+          report.code =
+            error instanceof FranceTravailError
+              ? error.code
+              : "collection_error";
           report.message =
-            "Échec de connexion, de format ou de stockage. Vérifier la configuration, les droits et le réseau côté serveur.";
+            error instanceof FranceTravailError
+              ? error.message
+              : "Échec de connexion, de format ou de stockage. Vérifier la configuration, les droits et le réseau côté serveur.";
         }
       } else
         report.message =
@@ -232,7 +290,7 @@ export class IngestionPipeline {
     return {
       reports,
       message: sources.length
-        ? "Collecte terminée. Les dépôts et flux génériques attendent une validation ; les offres LBA éligibles restent explicitement non vérifiées."
+        ? "Collecte terminée. Les dépôts et flux génériques attendent une validation ; les offres API éligibles restent explicitement non vérifiées."
         : "Aucune source configurée. Aucun flux ni offre n’a été inventé.",
     };
   }

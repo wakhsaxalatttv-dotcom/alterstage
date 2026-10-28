@@ -61,6 +61,7 @@ export function normalizeSubmission(
     now = new Date().toISOString(),
     allowOlderActiveSource = false,
     allowMissingWebsite = false,
+    allowFranceTravailSource = false,
     companyIdentity = null,
   } = {},
 ) {
@@ -81,7 +82,9 @@ export function normalizeSubmission(
     sourceUrl = link(body.sourceUrl, "Annonce originale");
   const sourceHost = new URL(sourceUrl).hostname;
   if (
-    /(^|\.)(google\.[a-z.]+|bing\.com|francetravail\.(fr|io))$/.test(sourceHost)
+    /(^|\.)(google\.[a-z.]+|bing\.com)$/.test(sourceHost) ||
+    (!allowFranceTravailSource &&
+      /(^|\.)francetravail\.(fr|io)$/.test(sourceHost))
   ) {
     throw new ValidationError(
       "Utilisez l’annonce sur le site de l’entreprise ou son outil officiel de recrutement, pas un moteur de recherche ni France Travail.",

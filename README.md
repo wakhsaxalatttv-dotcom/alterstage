@@ -29,7 +29,7 @@ Ouvrir le port **5173** dans l’onglet Ports. Vite relaie `/api` à Express sur
 
 Le plan par étapes, le schéma et les compromis sont dans **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**. Les champs et interfaces se trouvent dans `server/models.d.ts`.
 
-Le guide **[docs/INGESTION.md](docs/INGESTION.md)** explique les flux, les conditions d’autorisation, les variables et la revue. `config/sources.example.json` est vide volontairement. Le serveur charge au démarrage `config/market-offers.json` dans sa base, y compris sur Render sans clé API. Il ne prétend pas être connecté en direct sans clé. Voir aussi [config/DATA_LICENSE.md](config/DATA_LICENSE.md). France Travail reste désactivé, sans clé requise. Les liens Google de l’annuaire sont des pistes de recherche, pas des sources de postes confirmés ou des partenariats.
+Le guide **[docs/INGESTION.md](docs/INGESTION.md)** explique les flux, les conditions d’autorisation, les variables et la revue. `config/sources.example.json` est vide volontairement. Le serveur charge au démarrage `config/market-offers.json` dans sa base, y compris sur Render sans clé API. Il ne prétend pas être connecté en direct sans clé. Voir aussi [config/DATA_LICENSE.md](config/DATA_LICENSE.md). France Travail dispose désormais d’un connecteur serveur qui s’active lorsque ses deux identifiants privés sont configurés ; voir [docs/FRANCE_TRAVAIL.md](docs/FRANCE_TRAVAIL.md). Les liens Google de l’annuaire sont des pistes de recherche, pas des sources de postes confirmés ou des partenariats.
 
 ## Tests et production
 
@@ -124,3 +124,7 @@ Avec le serveur de développement lancé, `npm run test:responsive` vérifie la 
 ### Interface et thème
 
 La palette d’origine est rétablie : vert `#176B50`, fond crème `#FCFCF9`, en-tête et cartes blancs. `src/styles.css` contient les styles d’origine ; `src/original-theme.css` conserve la feuille d’accueil et son adaptation mobile. Les corrections des menus, des champs tactiles et le texte d’accueil simplifié sont conservés.
+
+### Activer France Travail
+
+Les variables Render doivent être nommées `FRANCE_TRAVAIL_CLIENT_ID` et `FRANCE_TRAVAIL_CLIENT_SECRET`. Après déploiement, la collecte démarre automatiquement si elles sont présentes. Les logs privés indiquent son résultat, sans secret. L’application doit avoir accès à l’API Offres d’emploi. Si `INGEST_INTERVAL_MINUTES=0` est défini, le remplacer par `180` pour une collecte périodique. Détails et limites dans [docs/FRANCE_TRAVAIL.md](docs/FRANCE_TRAVAIL.md). La connexion réelle ne peut être annoncée qu’après une collecte réussie sur Render.

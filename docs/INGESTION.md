@@ -70,3 +70,7 @@ Ces annonces deviennent visibles **sans badge humain** et avec `lastVerifiedAt=n
 L’instantané `config/market-offers.json` est chargé par `server/index.js` au démarrage pour que Render puisse servir les offres collectées ici. Il ne contient ni clé ni contacts personnels. `npm run export:market` le régénère depuis les seules annonces LBA publiques non revérifiées de la base locale ; respecter [la restriction de réutilisation](../config/DATA_LICENSE.md). Une version d’instantané plus ancienne ne remplace pas une collecte locale plus récente. Sans clé sur Render, aucune actualisation API n’est prétendue ; les dates et avertissements restent visibles, et les échéances expirées sont masquées.
 
 Le fournisseur autorise une diffusion gratuite et non lucrative. Aucune offre payante, alerte payante utilisant ces données ni revente des données ne doit être activée sans accord approprié. Les clés doivent rester côté serveur. Le routage proxy de la plateforme est conservé : pour l’endpoint gouvernemental fixe autorisé, la résolution de la destination est confiée au proxy géré, sans désactiver TLS ni ouvrir de destination arbitraire.
+
+## France Travail
+
+Le connecteur intégré OAuth et sa collecte automatique avec `FRANCE_TRAVAIL_CLIENT_ID` et `FRANCE_TRAVAIL_CLIENT_SECRET` sont documentés dans [FRANCE_TRAVAIL.md](FRANCE_TRAVAIL.md). Il s’ajoute aux sources JSON/RSS sans mettre les identifiants dans `SOURCES_FILE`. Les annonces ont des dates de publication réelles de 45 jours maximum ; elles restent non revérifiées.

@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { regions } from "../../src/domain.js";
 import { plainText } from "../enrichment.js";
-const romeDomains = {
+export const romeDomains = {
   H1503: "Chimie, procédés & matériaux",
   H2301: "Chimie, procédés & matériaux",
   M1801: "Systèmes, réseaux & cloud",
