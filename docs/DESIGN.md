@@ -36,3 +36,5 @@ Pas de bibliothèque d’animation ajoutée. `prefers-reduced-motion: reduce` d�
 ## Décoration de l’accueil
 
 À la demande du propriétaire, les photos de matériel et leurs crédits ont été retirés. `HeroDecoration` reprend la feuille du logo en tracé vectoriel discret dans le fond de l’accueil, sans texte. `decoration.css` réduit sa présence sur téléphone ; aucun espace supplémentaire n’est réservé au décor. Le SVG est masqué aux lecteurs d’écran et ne capte aucun clic. Aucun service externe, photo ou génération d’image n’est nécessaire.
+
+Le conteneur public `.public-site` applique `public/site-pattern.svg` à toutes les pages publiques : points, fins tracés de connexion et feuilles vertes très atténuées sur fond crème. Les cartes gardent leur fond opaque ; le motif n’occupe pas de place et n’intercepte aucune interaction. Il est désactivé à l’impression et en mode couleurs forcées. Le motif reste local et ne nécessite aucun service externe.

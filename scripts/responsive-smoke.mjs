@@ -39,6 +39,14 @@ try {
       );
       assert.ok(await button.innerText(), `Libellé masqué : ${name}`);
       await button.click();
+      assert.ok(
+        await page
+          .locator(".public-site")
+          .evaluate((el) =>
+            getComputedStyle(el).backgroundImage.includes("site-pattern.svg"),
+          ),
+        `Fond absent : ${name}`,
+      );
       assert.equal(await button.getAttribute("aria-current"), "page");
       assert.ok(
         await page.evaluate(

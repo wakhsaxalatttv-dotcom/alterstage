@@ -164,7 +164,7 @@ function App() {
       "Explorez les sites des entreprises et retrouvez les annonces réellement publiées dans le catalogue.",
   };
   return (
-    <>
+    <div className="public-site">
       <header>
         <div className="nav wrap">
           <a
@@ -965,7 +965,7 @@ function App() {
           )}
         </Dialog>
       )}
-    </>
+    </div>
   );
 }
 function PublicContacts({ contacts = [] }) {

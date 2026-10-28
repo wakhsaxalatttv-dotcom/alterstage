@@ -27,3 +27,26 @@
     opacity: 0.05;
   }
 }
+
+.public-site {
+  min-height: 100svh;
+  background-color: #fcfcf9;
+  background-image: url("/site-pattern.svg");
+  background-size: 640px 640px;
+}
+.public-site > footer {
+  background-color: #fcfcf9;
+}
+@media (max-width: 700px) {
+  .public-site {
+    background-size: 480px 480px;
+  }
+}
+@media (forced-colors: active), print {
+  .public-site {
+    background-image: none;
+  }
+  .hero-decoration {
+    display: none;
+  }
+}
