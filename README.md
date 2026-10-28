@@ -123,4 +123,4 @@ Avec le serveur de développement lancé, `npm run test:responsive` vérifie la 
 
 ### Interface et thème
 
-Fond rouge clair (`#EB7770`), en-tête et boutons vert forêt (`#103D29`), cartes vertes (`#194B35`). Les textes sont vert foncé sur le fond rouge et vert clair (`#D1EDB8`) sur les surfaces vertes. Les couleurs sont centralisées dans `src/theme.css`, la disposition dans `src/responsive.css`. Le test responsive contrôle la répartition du fond et des actions sur onze largeurs d’écran.
+La palette d’origine est rétablie : vert `#176B50`, fond crème `#FCFCF9`, en-tête et cartes blancs. `src/styles.css` contient les styles d’origine ; `src/original-theme.css` conserve la feuille d’accueil et son adaptation mobile. Les corrections des menus, des champs tactiles et le texte d’accueil simplifié sont conservés.

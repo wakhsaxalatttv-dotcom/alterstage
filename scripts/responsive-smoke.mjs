@@ -63,19 +63,19 @@ try {
       await page
         .locator(".public-site")
         .evaluate((el) => getComputedStyle(el).backgroundColor),
-      "rgb(235, 119, 112)",
+      "rgb(252, 252, 249)",
     );
     assert.equal(
       await page
         .locator("header")
         .evaluate((el) => getComputedStyle(el).backgroundColor),
-      "rgb(16, 61, 41)",
+      "rgb(255, 255, 255)",
     );
     assert.equal(
       await page
         .locator(".search-box .primary")
         .evaluate((el) => getComputedStyle(el).backgroundColor),
-      "rgb(16, 61, 41)",
+      "rgb(23, 107, 80)",
     );
     assert.ok(
       !(await page.locator(".hero-copy p").innerText()).includes(

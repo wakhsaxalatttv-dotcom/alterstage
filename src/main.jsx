@@ -26,7 +26,7 @@ import "@fontsource-variable/inter/wght.css";
 import "./styles.css";
 import "./appearance.css";
 import "./responsive.css";
-import "./theme.css";
+import "./original-theme.css";
 import { useLocal } from "./storage";
 import { Filter, Empty, Offer, Dialog } from "./components";
 const EmployerForm = lazy(() =>

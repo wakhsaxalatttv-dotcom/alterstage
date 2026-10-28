@@ -24,10 +24,10 @@
   height: 100%;
 }
 .company-logo rect {
-  fill: #8d2431;
+  fill: #f7f8f5;
 }
 .company-logo text {
-  fill: #f0f7f2;
+  fill: #52644f;
   font:
     600 16px "Inter Variable",
     system-ui,
