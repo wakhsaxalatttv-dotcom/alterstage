@@ -24,10 +24,10 @@
   height: 100%;
 }
 .company-logo rect {
-  fill: #f7f8f5;
+  fill: #f8fafc;
 }
 .company-logo text {
-  fill: #52644f;
+  fill: #475569;
   font:
     600 16px "Inter Variable",
     system-ui,
@@ -104,8 +104,8 @@ dialog[open]::backdrop {
   .offer-card:hover,
   .external-card:hover,
   .directory-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 22px rgb(23 54 39 / 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgb(15 23 42 / 0.06);
   }
   .primary:hover,
   .secondary:hover {

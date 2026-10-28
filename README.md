@@ -121,6 +121,6 @@ La navigation publique conserve ses cinq rubriques nommées sur toutes les taill
 
 Avec le serveur de développement lancé, `npm run test:responsive` vérifie la navigation, la sélection active, le dépôt d’annonce, les filtres mobiles et les débordements sur onze largeurs de 320 à 1 920 px dans Chromium. Ce contrôle complète les essais des fiches dans `npm run test:design`. Les règles dédiées sont dans `src/responsive.css`.
 
-### Décoration de l’accueil
+### Interface et thème
 
-Une feuille vectorielle originale rappelle le logo en arrière-plan, sans légende ni fournisseur externe. `HeroDecoration` est purement décoratif (`aria-hidden`), n’intercepte pas les interactions et s’adapte à la largeur de l’écran. Les photographies précédentes et leurs crédits ont été retirés.
+La palette est blanche et bleu marine (`#0F172A`), sur fond gris clair (`#F8FAFC`). Les composants utilisent les tokens centralisés dans `src/theme.css` : surfaces, texte, accent, bordures et ombre. Le vert est réservé au badge de vérification. Les motifs décoratifs et les photographies précédentes ont été retirés. Le logo feuille reste présent, désormais sur fond marine. Les règles de disposition téléphone/PC restent dans `src/responsive.css`.

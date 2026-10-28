@@ -1,40 +1,39 @@
-# Apparence — Offres Fraîches
+# Interface Offres Fraîches
 
-## Design restauré
+## Direction visuelle
 
-L’interface reprend le design précédent : vert `#176B50`, fond crème `#FCFCF9`, cartes blanches et police Inter auto-hébergée. L’accroche « Votre avenir mérite des offres fraîches. » est conservée. Les filtres, l’ordre des informations et les fenêtres détaillées retrouvent leur disposition antérieure. Le thème ardoise, les métadonnées monospace et les tiroirs latéraux de la refonte ont été retirés.
+Le propriétaire a demandé une nouvelle présentation professionnelle : blanc, gris clair et bleu marine, sans photographies ni motifs de fond. Le slogan reste « Votre avenir mérite des offres fraîches. ». Le logo feuille est conservé dans `public/brand-leaf.svg`, désormais sur fond marine, et partagé avec la page privée et le favicon.
 
-`src/styles.css` contient le design restauré. `src/appearance.css` contient uniquement les ajouts de logos et d’animations.
+## Tokens
 
-## Identités visuelles
+`src/theme.css` définit la palette commune :
 
-Le logo de l’application est une feuille blanche vectorielle sur fond vert (`public/brand-leaf.svg`). `AppLogo` le réutilise dans l’en-tête public et privé ; le navigateur utilise le même asset comme favicon. Aucun visuel généré ni logo de tiers n’est employé pour représenter l’application.
+| Token | Valeur | Usage |
+| --- | --- | --- |
+| `--surface` | `#FFFFFF` | Cartes, formulaires, en-tête |
+| `--canvas` | `#F8FAFC` | Fond général |
+| `--ink` / `--accent` | `#0F172A` | Titres, navigation active, actions |
+| `--muted` | `#64748B` | Métadonnées et texte secondaire |
+| `--border` | `#E2E8F0` | Séparations et contours |
+| `--shadow` | `0 1px 3px rgb(15 23 42 / .04)` | Relief discret des cartes |
 
-`CompanyLogo` est partagé entre cartes, annuaire et fiche entreprise :
+Inter Variable reste la typographie principale. Les technologies gardent une police monospace système. Les badges de vérification utilisent le vert `#047857` sur fond `#ECFDF5` uniquement lorsque les données permettent de les afficher. Les erreurs conservent leurs couleurs distinctes. Le focus clavier bleu reste visible.
 
-1. Logo HTTPS fourni par une source ou une entreprise autorisée.
-2. Favicon Google S2 du domaine officiel **déjà renseigné** ; aucun domaine n’est deviné.
-3. Monogramme SVG si les images sont absentes ou échouent.
+## Disposition
 
-Le monogramme reste visible pendant le chargement pour éviter un cadre vide. La taille est fixe, avec `object-fit: contain`, chargement différé et `referrerPolicy="no-referrer"`. L’icône d’un domaine n’est pas présentée comme un logo certifié ; si seul le domaine d’un groupe est renseigné, son icône représente ce groupe. Le service distant reçoit le domaine et les informations réseau habituelles du navigateur, sans référent de recherche ni secret applicatif. Aucune clé Brandfetch ou autre n’est exposée côté client.
+L’accueil blanc mène à une barre de recherche puis à un catalogue sur fond gris clair. Les filtres ont leur propre panneau blanc sur ordinateur. Les cartes blanches emploient des bordures fines, des titres contrastés et des tags neutres. Les composants Entreprises, Repérées, favoris, alertes et dépôt utilisent la même palette. La page privée reste séparée du site public et son contenu protégé.
 
-## Animations limitées
+La navigation conserve les cinq rubriques nommées sur téléphone. Les champs mobiles restent en 16 px et les contrôles principaux en 44 px minimum. `responsive.css` gère les passages entre mobile, tablette et ordinateur ; `theme.css` applique la palette et les finitions après ces règles.
 
-- Apparition des cartes au moment où elles entrent dans l’écran, en 560 ms et avec un déplacement de 14 px ; léger décalage pour les premières cartes. Un `IntersectionObserver` est déconnecté après la première apparition.
-- Survol à la souris : carte soulevée de 4 px et ombre discrète ; boutons de 1 px.
-- Favori : confirmation de 320 ms.
-- Fenêtre : ouverture en 300 ms et fondu du fond.
-- Logo : apparition de la feuille en 650 ms et fondu des logos d’entreprises après chargement.
-- Sur téléphone : retour visuel à la pression des boutons ; les apparitions au défilement fonctionnent sans souris.
+## Logos et interactions
 
-Pas de bibliothèque d’animation ajoutée. `prefers-reduced-motion: reduce` désactive ces effets. Les survols nécessitent un périphérique précis qui les supporte. Le dialogue natif conserve Échap, le verrouillage du défilement et le retour du focus après fermeture.
+`CompanyLogo` utilise un logo autorisé fourni, puis le favicon d’un domaine officiel déjà renseigné, puis un monogramme SVG. Aucun domaine n’est deviné. Les images restent différées, avec dimensions réservées. Le fond des monogrammes est neutre.
+
+L’apparition des cartes au défilement, la confirmation des favoris et l’ouverture des fenêtres sont conservées. Le survol des cartes est réduit à 2 px. `prefers-reduced-motion` désactive les animations. Les fenêtres natives conservent Échap, le verrouillage du défilement et la restitution du focus.
 
 ## Validation
 
-`npm run test:design`, avec l’interface démarrée et Chromium disponible, vérifie les trois étapes de logo, le logo d’application chargé, la fenêtre et son focus, les largeurs de 320 à 1440 px et la réduction des animations. Les annonces fictives sont confinées à une base temporaire. La fiabilité des données, les badges de contrôle réel et la limite de 45 jours continuent d’être couverts par les tests existants.
-
-## Décoration de l’accueil
-
-À la demande du propriétaire, les photos de matériel et leurs crédits ont été retirés. `HeroDecoration` reprend la feuille du logo en tracé vectoriel discret dans le fond de l’accueil, sans texte. `decoration.css` réduit sa présence sur téléphone ; aucun espace supplémentaire n’est réservé au décor. Le SVG est masqué aux lecteurs d’écran et ne capte aucun clic. Aucun service externe, photo ou génération d’image n’est nécessaire.
-
-Le conteneur public `.public-site` applique `public/site-pattern.svg` à toutes les pages publiques : points, fins tracés de connexion et feuilles vertes très atténuées sur fond crème. Les cartes gardent leur fond opaque ; le motif n’occupe pas de place et n’intercepte aucune interaction. Il est désactivé à l’impression et en mode couleurs forcées. Le motif reste local et ne nécessite aucun service externe.
+- `npm run test:responsive` : menus, filtres mobiles, dépôt et absence de débordement sur onze largeurs de 320 à 1920 px, avec vérification du nouveau fond.
+- `npm run test:design` : logos, replis, fenêtres, focus, responsive et réduction des animations.
+- `npm run test:browser` : parcours de recherche, favoris, entreprises et modération dans un stockage isolé.
+- `npm run build` : compilation publique et administration séparées.

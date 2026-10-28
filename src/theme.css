@@ -1,0 +1,313 @@
+:root {
+  --surface: #ffffff;
+  --canvas: #f8fafc;
+  --ink: #0f172a;
+  --accent: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --green: var(--accent);
+  --shadow: 0 1px 3px rgb(15 23 42 / 0.04);
+  color: var(--ink);
+  background: var(--canvas);
+}
+.public-site {
+  min-height: 100svh;
+  background: var(--canvas);
+}
+header {
+  background: var(--surface);
+  border-top: 3px solid var(--accent);
+}
+.brand {
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: -0.7px;
+}
+.beta {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid var(--border);
+}
+.nav nav button {
+  color: #475569;
+  font-weight: 500;
+}
+.nav nav button.selected {
+  color: var(--ink);
+  font-weight: 700;
+}
+.nav nav button.selected::after {
+  background: var(--accent);
+  height: 2px;
+}
+.employer-nav {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.employer-nav:hover {
+  background: #1e293b;
+  color: #fff;
+}
+.hero {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+.hero-content {
+  padding-top: 44px;
+  padding-bottom: 64px;
+}
+.hero h1 {
+  max-width: 850px;
+  font-size: 44px;
+  line-height: 1.16;
+  letter-spacing: -1.6px;
+  font-weight: 700;
+}
+.hero h1 span {
+  color: #334155;
+}
+.hero p {
+  max-width: 700px;
+  color: #475569;
+  font-size: 15px;
+}
+.hero .eyebrow,
+.eyebrow {
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+}
+.hero-copy {
+  position: relative;
+}
+.search-box {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 16px rgb(15 23 42 / 0.04);
+  border-radius: 8px;
+}
+.search-box:focus-within {
+  border-color: #64748b;
+  box-shadow: 0 0 0 3px #e2e8f0;
+}
+.search-box input {
+  color: var(--ink);
+}
+.primary {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+}
+.primary:hover {
+  background: #1e293b;
+  color: #fff;
+}
+.secondary {
+  border-color: #cbd5e1;
+  color: #334155;
+}
+.secondary:hover {
+  background: #f1f5f9;
+}
+a:hover,
+button:hover {
+  color: #334155;
+}
+.primary:hover,
+.employer-nav:hover {
+  color: #fff;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline-color: #2563eb;
+}
+.filters {
+  border: 1px solid var(--border);
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  align-self: start;
+}
+.filter-heading {
+  margin-bottom: 24px;
+}
+.field {
+  color: #334155;
+  font-size: 12px;
+}
+.field input,
+.field select,
+.field textarea {
+  border-color: #cbd5e1;
+  border-radius: 6px;
+  color: var(--ink);
+  background: #fff;
+}
+.results-heading h2 {
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: -0.5px;
+}
+.results-heading p,
+.sort,
+.muted {
+  color: #64748b;
+}
+.offer-card,
+.external-card,
+.directory-card,
+.alert-card,
+.employer-form {
+  background: var(--surface);
+  border-color: var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+.offer-card,
+.external-card {
+  padding: 24px;
+}
+.offer-card:hover,
+.external-card:hover,
+.directory-card:hover {
+  border-color: #94a3b8;
+}
+.offer-card h3,
+.external-card h3 {
+  font-size: 18px;
+  color: var(--ink);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -0.3px;
+}
+.offer-top strong,
+.external-company {
+  color: #334155;
+}
+.offer-top p,
+.offer-bottom,
+.external-date,
+.external-card .external-summary {
+  color: #64748b;
+}
+.tags span,
+.tech-tags span,
+.company-type {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+.company-logo rect {
+  fill: #f8fafc;
+}
+.company-logo text {
+  fill: #475569;
+}
+.source-banner,
+.sidebar-tip,
+.local-note,
+.employer-help {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+.source-banner p,
+.source-symbol {
+  color: #64748b;
+}
+.source-banner.error {
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+.verified-badge {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #047857;
+}
+.empty {
+  background: #fff;
+  border-color: #cbd5e1;
+}
+.bottom-banner {
+  background: #0f172a;
+  border-color: #0f172a;
+  color: #fff;
+}
+.bottom-banner p {
+  color: #cbd5e1;
+}
+.bottom-icon {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+.bottom-banner .secondary {
+  background: #fff;
+  border-color: #fff;
+  color: #0f172a;
+}
+.domain-shortcuts button {
+  background: #fff;
+  border-color: var(--border);
+  color: #475569;
+}
+.domain-shortcuts button.active,
+.admin-tabs button.active {
+  background: #0f172a;
+  border-color: #0f172a;
+  color: #fff;
+}
+footer {
+  color: #64748b;
+  background: transparent;
+}
+dialog {
+  border-color: var(--border);
+  border-radius: 10px;
+  box-shadow: 0 24px 80px rgb(15 23 42 / 0.18);
+}
+.dialog-header {
+  border-bottom-color: var(--border);
+}
+@media (min-width: 1151px) {
+  header {
+    height: 81px;
+  }
+}
+@media (max-width: 700px) {
+  .hero-content {
+    padding-top: 30px;
+    padding-bottom: 54px;
+  }
+  .hero h1 {
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: -0.9px;
+  }
+  .hero p {
+    font-size: 14px;
+  }
+  .nav nav button.selected {
+    background: #f1f5f9;
+  }
+  .filters {
+    padding: 18px;
+  }
+  .offer-card,
+  .external-card {
+    padding: 18px;
+  }
+  .offer-card h3,
+  .external-card h3 {
+    font-size: 17px;
+  }
+  .results-heading h2 {
+    font-size: 18px;
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    font-size: 16px;
+  }
+}

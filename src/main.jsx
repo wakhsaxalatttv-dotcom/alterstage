@@ -1,4 +1,3 @@
-import { HeroDecoration } from "./HeroDecoration";
 import { AppLogo } from "./AppLogo";
 import { ReportForm } from "./ReportForm";
 import React, { useEffect, useState, lazy, Suspense } from "react";
@@ -27,7 +26,7 @@ import "@fontsource-variable/inter/wght.css";
 import "./styles.css";
 import "./appearance.css";
 import "./responsive.css";
-import "./decoration.css";
+import "./theme.css";
 import { useLocal } from "./storage";
 import { Filter, Empty, Offer, Dialog } from "./components";
 const EmployerForm = lazy(() =>
@@ -249,7 +248,6 @@ function App() {
                 candidatez directement auprès de l’employeur.
               </p>
             </div>
-            <HeroDecoration />
           </div>
         </section>
       )}

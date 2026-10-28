@@ -39,14 +39,6 @@ try {
       );
       assert.ok(await button.innerText(), `Libellé masqué : ${name}`);
       await button.click();
-      assert.ok(
-        await page
-          .locator(".public-site")
-          .evaluate((el) =>
-            getComputedStyle(el).backgroundImage.includes("site-pattern.svg"),
-          ),
-        `Fond absent : ${name}`,
-      );
       assert.equal(await button.getAttribute("aria-current"), "page");
       assert.ok(
         await page.evaluate(
@@ -68,12 +60,10 @@ try {
     );
     await menu.getByRole("button", { name: "Les offres", exact: true }).click();
     assert.equal(
-      await page.locator(".hero-decoration[aria-hidden='true']").count(),
-      1,
-    );
-    assert.equal(
-      await page.locator(".photo-credit, .technical-photos").count(),
-      0,
+      await page
+        .locator(".public-site")
+        .evaluate((el) => getComputedStyle(el).backgroundColor),
+      "rgb(248, 250, 252)",
     );
     if (width <= 700) {
       const filters = page.getByRole("button", { name: /^Filtres/ });

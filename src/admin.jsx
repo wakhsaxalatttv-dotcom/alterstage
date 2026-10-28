@@ -5,6 +5,7 @@ import { Moderation } from "./Moderation";
 import "@fontsource-variable/inter/wght.css";
 import "./styles.css";
 import "./appearance.css";
+import "./theme.css";
 function Administration() {
   return (
     <>
