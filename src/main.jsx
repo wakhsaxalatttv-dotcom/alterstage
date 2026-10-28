@@ -1,3 +1,4 @@
+import { TechnicalPhotos } from "./TechnicalPhotos";
 import { AppLogo } from "./AppLogo";
 import { ReportForm } from "./ReportForm";
 import React, { useEffect, useState, lazy, Suspense } from "react";
@@ -26,6 +27,7 @@ import "@fontsource-variable/inter/wght.css";
 import "./styles.css";
 import "./appearance.css";
 import "./responsive.css";
+import "./photography.css";
 import { useLocal } from "./storage";
 import { Filter, Empty, Offer, Dialog } from "./components";
 const EmployerForm = lazy(() =>
@@ -235,16 +237,19 @@ function App() {
       {page === "search" && (
         <section className="hero">
           <div className="wrap hero-content">
-            <div className="eyebrow">LE BON DÉPART, À LA BONNE SOURCE</div>
-            <h1>
-              Votre avenir mérite
-              <br />
-              des offres <span>fraîches.</span>
-            </h1>
-            <p>
-              Informatique, réseaux, industrie et chimie. Trouvez une offre et
-              candidatez directement auprès de l’employeur.
-            </p>
+            <div className="hero-copy">
+              <div className="eyebrow">LE BON DÉPART, À LA BONNE SOURCE</div>
+              <h1>
+                Votre avenir mérite
+                <br />
+                des offres <span>fraîches.</span>
+              </h1>
+              <p>
+                Informatique, réseaux, industrie et chimie. Trouvez une offre et
+                candidatez directement auprès de l’employeur.
+              </p>
+            </div>
+            <TechnicalPhotos />
           </div>
         </section>
       )}

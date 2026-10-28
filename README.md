@@ -120,3 +120,7 @@ Le design vert et crème et l’accroche d’origine sont conservés. La feuille
 La navigation publique conserve ses cinq rubriques nommées sur toutes les tailles d’écran. Sur téléphone, le menu occupe deux lignes, les filtres se déplient et les contrôles principaux offrent une cible tactile de 44 px. Les champs utilisent une taille de 16 px pour éviter le zoom automatique sur iPhone.
 
 Avec le serveur de développement lancé, `npm run test:responsive` vérifie la navigation, la sélection active, le dépôt d’annonce, les filtres mobiles et les débordements sur onze largeurs de 320 à 1 920 px dans Chromium. Ce contrôle complète les essais des fiches dans `npm run test:design`. Les règles dédiées sont dans `src/responsive.css`.
+
+### Photographies de l’accueil
+
+Deux photographies réelles de matériel (carte Raspberry Pi 5 et module caméra) sont livrées dans `public/images/`, en WebP avec variantes adaptées à l’écran. Elles viennent de la documentation officielle Raspberry Pi sous licence CC BY-SA 4.0 ; la provenance, les adaptations et les crédits publics figurent dans `public/images/credits.html`. Elles ne représentent pas les entreprises du catalogue. Aucune clé ni service distant ne sont nécessaires pour les afficher.
