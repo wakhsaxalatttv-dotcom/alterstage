@@ -191,7 +191,9 @@ try {
   await page
     .getByRole("button", { name: "Sources & collecte", exact: true })
     .click();
-  await page.getByText("Source non configurée.", { exact: false }).waitFor();
+  await page
+    .getByText("Aucun autre flux configuré.", { exact: false })
+    .waitFor();
   await page.getByRole("button", { name: "Publiées (1)", exact: true }).click();
   await page.getByRole("button", { name: "Retirer", exact: true }).click();
   await page

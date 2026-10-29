@@ -1,3 +1,5 @@
+import { SerpApiAutomation } from "./ingestion/serpapi-automation.js";
+import { createFrenchLocationResolver } from "./ingestion/french-location.js";
 import { SerpApiInbox } from "./ingestion/serpapi-inbox.js";
 import { createSerpApiProbe } from "./ingestion/serpapi.js";
 import { createRapidApiProbe } from "./ingestion/rapidapi-linkedin.js";
@@ -16,6 +18,7 @@ export function createApp({
   pipelineOptions = {},
   rapidApiOptions = {},
   serpApiOptions = {},
+  serpAutomationOptions = {},
 } = {}) {
   const app = express(),
     store = new OfferStore(folder),
@@ -33,6 +36,14 @@ export function createApp({
   serpApiInbox.excludeBlocked();
   app.locals.serpApiProbe = serpApiProbe;
   app.locals.serpApiInbox = serpApiInbox;
+  const serpApiAutomation = new SerpApiAutomation({
+    store,
+    probe: serpApiProbe,
+    inbox: serpApiInbox,
+    resolveLocation: createFrenchLocationResolver(),
+    ...serpAutomationOptions,
+  });
+  app.locals.serpApiAutomation = serpApiAutomation;
   app.disable("x-powered-by");
   if (process.env.RENDER === "true") app.set("trust proxy", 1);
   app.use(compression({ threshold: 1024 }));
@@ -253,6 +264,9 @@ export function createApp({
     });
     res.json(result);
   });
+  app.get("/api/admin/serpapi/automation", admin, (_req, res) =>
+    res.json(serpApiAutomation.status()),
+  );
   app.get("/api/admin/serpapi", admin, (_req, res) => {
     const latest = store.runs().find((r) => r.sourceId === "serpapi-test");
     res.json({

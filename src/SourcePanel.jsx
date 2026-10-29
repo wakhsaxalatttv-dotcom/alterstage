@@ -1,14 +1,12 @@
-import { SerpApiProbe } from "./SerpApiProbe";
+import { SerpApiAutomationStatus } from "./SerpApiAutomationStatus";
 import { RapidApiProbe } from "./RapidApiProbe";
 import React, { useEffect, useState, useRef } from "react";
-import { RefreshCw, Database, ExternalLink } from "lucide-react";
+import { Database } from "lucide-react";
 import { request } from "./api";
 import { Skeletons } from "./CatalogueParts";
 export function SourcePanel({ token, onChanged }) {
   const [data, setData] = useState(null),
-    [error, setError] = useState(""),
-    [busy, setBusy] = useState(false),
-    [message, setMessage] = useState("");
+    [error, setError] = useState("");
   const wasRunning = useRef(false);
   useEffect(() => {
     if (wasRunning.current && !data?.running) onChanged();
@@ -28,32 +26,16 @@ export function SourcePanel({ token, onChanged }) {
   }
   useEffect(() => {
     load();
-  }, []);
-  async function collect() {
-    setBusy(true);
-    setError("");
-    try {
-      const result = await request("/api/admin/ingest", {
-        token,
-        method: "POST",
-        body: "{}",
-      });
-      setMessage(result.message);
-      await load();
-      onChanged();
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setBusy(false);
-    }
-  }
+    const timer = setInterval(load, 15000);
+    return () => clearInterval(timer);
+  }, [token]);
   return (
     <section className="source-panel">
-      <SerpApiProbe token={token} />
+      <SerpApiAutomationStatus token={token} />
       <RapidApiProbe token={token} />
       <h2>
         <Database size={20} />
-        Sources et collecte autorisée
+        Suivi des sources
       </h2>
       <p>
         Les connecteurs JSON et RSS/Atom alimentent la file de validation, les
@@ -71,11 +53,6 @@ export function SourcePanel({ token, onChanged }) {
           {error}
         </p>
       )}
-      {message && (
-        <p className="notice" role="status">
-          {message}
-        </p>
-      )}
       {!data && !error ? (
         <Skeletons count={1} />
       ) : (
@@ -84,8 +61,8 @@ export function SourcePanel({ token, onChanged }) {
             {data.error && <p className="form-error">{data.error}</p>}
             {!data.configured && (
               <div className="local-note">
-                Source non configurée. Le catalogue et les dépôts manuels
-                restent utilisables.
+                Aucun autre flux configuré. Les dépôts manuels restent
+                utilisables.
               </div>
             )}
             <div className="source-statuses">
@@ -107,16 +84,6 @@ export function SourcePanel({ token, onChanged }) {
                 </article>
               ))}
             </div>
-            <button
-              className="primary"
-              onClick={collect}
-              disabled={busy || data.running || !data.configured}
-            >
-              <RefreshCw size={16} />
-              {busy || data.running
-                ? "Collecte en cours…"
-                : "Lancer une collecte"}
-            </button>
             <h3>Dernières exécutions</h3>
             {data.runs.length ? (
               <div className="ingestion-runs">

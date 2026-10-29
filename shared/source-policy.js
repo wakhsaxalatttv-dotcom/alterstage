@@ -35,6 +35,7 @@ export function isMeteojobUrl(value, depth = 0) {
 }
 // Check structured provenance, not a passing mention in an employer's description.
 export function isBlockedSource(offer = {}) {
+  if (!offer || typeof offer !== "object") return false;
   return (
     [
       offer.sourcePartner,

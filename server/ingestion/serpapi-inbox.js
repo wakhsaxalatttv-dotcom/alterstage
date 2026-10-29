@@ -1,3 +1,7 @@
+import {
+  analyzeSerpCandidate,
+  automaticSerpOffer,
+} from "./serpapi-analysis.js";
 import { isBlockedSource } from "../../shared/source-policy.js";
 import { createHash } from "node:crypto";
 import { plainText, extractKeywords } from "../enrichment.js";
@@ -35,7 +39,22 @@ export function parseSerpCandidate(job, now = new Date().toISOString()) {
   const description = plainText(job.description, 12000);
   if (!description) return null;
   // Relative snippets are evidence to consult, never manufactured exact publication dates.
-  const date = job.detected_extensions?.posted_at;
+  const extensions = Array.isArray(job.extensions) ? job.extensions : [];
+  const explicitExtension = extensions
+    .filter((v) => typeof v === "string")
+    .map(
+      (v) =>
+        v.match(
+          /^(?:(?:publiée?|publication|posted)\s*(?:le|on|:)?)?\s*(\d{4}-\d{2}-\d{2})$/i,
+        )?.[1],
+    )
+    .find(Boolean);
+  const detectedDate = job.detected_extensions?.posted_at;
+  const date =
+    typeof detectedDate === "string" &&
+    /^\d{4}-\d{2}-\d{2}(?:T.*)?$/.test(detectedDate)
+      ? detectedDate
+      : explicitExtension || detectedDate;
   const publishedAt =
     typeof date === "string" &&
     /^\d{4}-\d{2}-\d{2}(?:T.*)?$/.test(date) &&
@@ -61,6 +80,7 @@ export function parseSerpCandidate(job, now = new Date().toISOString()) {
     sourceUrl,
     applicationUrl: sourceUrl,
     publishedAt,
+    sourcePublishedAt: publishedAt ? date : null,
     publicationText: plainText(
       [date, ...(Array.isArray(job.extensions) ? job.extensions : [])]
         .filter((v) => typeof v === "string")
@@ -143,6 +163,103 @@ export class SerpApiInbox {
       }
     });
     return { created, duplicate, excluded };
+  }
+  async ingestAutomatically(jobs, resolveLocation) {
+    const report = {
+      created: 0,
+      updated: 0,
+      unchanged: 0,
+      duplicate: 0,
+      excluded: 0,
+      deferred: 0,
+      published: 0,
+      invalid: 0,
+      reasons: {},
+    };
+    const reason = (key) =>
+      (report.reasons[key] = (report.reasons[key] || 0) + 1);
+    for (const job of jobs.slice(0, 100)) {
+      const candidate = parseSerpCandidate(job);
+      if (!candidate) {
+        report.excluded++;
+        reason(isBlockedSource(job) ? "meteojob" : "ineligible_source_record");
+        continue;
+      }
+      const previous = this.db
+        .prepare("SELECT status,payload FROM serpapi_candidates WHERE id=?")
+        .get(candidate.id);
+      if (previous && ["rejected", "submitted"].includes(previous.status)) {
+        report.excluded++;
+        reason("editorial_decision_preserved");
+        continue;
+      }
+      if (previous)
+        candidate.firstRetrievedAt = JSON.parse(
+          previous.payload,
+        ).firstRetrievedAt;
+      const analysis = analyzeSerpCandidate(candidate);
+      let location = null;
+      if (!analysis.reasons.length) {
+        try {
+          location = await resolveLocation(candidate.location);
+        } catch {
+          /* A geocoding failure never authorizes publication. */
+        }
+        if (!location) analysis.reasons.push("french_location_not_established");
+      }
+      this.stage([job]);
+      if (analysis.reasons.length) {
+        report.deferred++;
+        for (const r of analysis.reasons) reason(r);
+        this.db
+          .prepare(
+            "UPDATE serpapi_candidates SET payload=? WHERE id=? AND status='pending'",
+          )
+          .run(
+            JSON.stringify({
+              ...candidate,
+              analysis: {
+                ...candidate.analysis,
+                domain: analysis.domain,
+                contracts: analysis.contracts,
+                requiresReview: analysis.reasons,
+              },
+            }),
+            candidate.id,
+          );
+        continue;
+      }
+      let offer;
+      try {
+        offer = automaticSerpOffer(candidate, analysis, location);
+      } catch {
+        offer = null;
+      }
+      if (!offer) {
+        report.deferred++;
+        reason("normalization_failed");
+        continue;
+      }
+      const result = await this.store.ingest(offer);
+      if (Object.hasOwn(report, result)) report[result]++;
+      const row = this.db
+        .prepare("SELECT id FROM offers WHERE source_id=? AND external_id=?")
+        .get(offer.sourceId, offer.externalId);
+      if (row && (await this.store.getPublic(row.id))) report.published++;
+      this.db
+        .prepare(
+          "UPDATE serpapi_candidates SET status=? WHERE id=? AND status!='rejected'",
+        )
+        .run(
+          result === "duplicate"
+            ? "matched"
+            : result === "invalid"
+              ? "pending"
+              : "published",
+          candidate.id,
+        );
+    }
+    return report;
   }
   reject(id) {
     if (

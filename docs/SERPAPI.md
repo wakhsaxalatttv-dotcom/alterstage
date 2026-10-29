@@ -1,52 +1,56 @@
-# SerpApi — Google Jobs
+# Google Jobs : collecte, analyse et publication automatiques
 
-## Configuration et utilisation
+## Configuration
 
-1. Dans Render → Environment, définir `SERPAPI_API_KEY` avec la clé personnelle du compte SerpApi.
-2. Déployer la version du code contenant ce connecteur.
-3. Dans `/administration/` → Sources & collecte → **SerpApi · Google Jobs**, cliquer **Tester SerpApi** pour le diagnostic, ou utiliser la file privée d’import décrite ci-dessous.
+Définir `SERPAPI_API_KEY` côté serveur Render, puis déployer le code. La clé ne doit jamais être préfixée `VITE_` ni être copiée dans le navigateur ou le dépôt. Aucun passage dans Sources pour lancer un import n’est nécessaire. L’espace privé affiche seulement le suivi de l’automatisation Google Jobs.
 
-Le contrôle utilise `GET https://serpapi.com/search.json`, `engine=google_jobs`, `q=alternance informatique`, `location=France`, `gl=fr`, `hl=fr`. Une seule page est demandée, sans pagination ni collecte automatique. Le nombre de résultats est celui de cette page, pas celui des offres éligibles au site ni du marché français entier. Un clic consomme le quota du compte ; limite par instance : un appel par minute, trois par heure. Le démarrage du serveur et la lecture du statut ne consomment pas d’appel.
+Le serveur démarre la rotation avec sa clé existante, puis vérifie toutes les minutes si une nouvelle recherche est due. `SERPAPI_AUTO_ENABLED=false` permet de désactiver ce processus. L’ancien import initial unique n’est plus exécuté. Les anciens endpoints de diagnostic et de préparation restent privés pour compatibilité, mais leurs commandes ne sont plus proposées dans l’interface. RapidAPI/LinkedIn reste limité à son diagnostic privé, sans collecte automatique ni abonnement supposé.
 
-Routes privées : `GET /api/admin/serpapi`, `POST /api/admin/serpapi/test`. Le diagnostic du test seul est conservé dans l’historique privé : statut HTTP, date, compteurs et structure anonymisée. Aucune valeur d’annonce, clé, URL de requête complète ni coordonnée n’est conservée. La clé est transmise au fournisseur via le paramètre `api_key` requis par son API ; l’application ne journalise pas cette URL et ne suit pas les redirections.
+## Couverture et quota
 
-## Import privé et validation
+`shared/serpapi-searches.js` définit **42 recherches : stage et alternance pour chacun des 21 domaines du site**, dont informatique, réseaux, télécoms, électronique, mécanique, maintenance, énergie, génie civil, aéronautique et chimie. Les domaines sont ceux de la recherche existante ; aucun domaine commercial ou école n’est ajouté.
 
-Le bouton **Importer Google Jobs** effectue une requête SerpApi pour la recherche sélectionnée : alternance/stage informatique, réseaux et télécoms, systèmes électroniques, maintenance industrielle, chimie/matériaux ou chimie/procédés. Une page seulement, sans pagination ni promesse d’exhaustivité. Test et import partagent le budget d’un appel par minute et trois par heure par instance. Un import initial unique au démarrage est désormais prévu à la demande du propriétaire, comme détaillé ci-dessous. Le planificateur général ne collecte pas Google Jobs.
+Chaque recherche utilise une page de `engine=google_jobs`, `location=France`, `gl=fr`, `hl=fr` via SerpApi. La découverte ne prétend pas collecter toutes les offres du marché et ne pagine pas sans limite. Le domaine de la requête ne suffit jamais à classer une annonce : l’analyse porte sur le poste reçu.
 
-Avant le clic, le responsable doit attester disposer des droits de conservation et de réutilisation des annonces et descriptions. L’accès technique à SerpApi ne prouve pas ces droits. Le serveur exige cette attestation ; aucun contenu n’est stocké par le test simple.
+Le budget par défaut est **un appel au plus toutes les 20 minutes, trois par heure et 24 par jour UTC**. Il est persistant dans SQLite, ainsi que l’avancement et les pauses. Il n’est pas remis à zéro par un redémarrage utilisant la même base. Une recherche réussie est renouvelée après **7 jours**. La rotation couvre progressivement tous les domaines ; elle n’est donc pas instantanée et dépend de la disponibilité du serveur et du quota du compte. Sur une instance Render en sommeil, les minuteurs ne tournent pas ; la rotation reprend au réveil.
 
-Les résultats importés sont stockés séparément dans SQLite, table `serpapi_candidates`, jamais dans le catalogue public. Ils conservent uniquement les champs utiles : titre, entreprise, lieu tel que fourni, description nettoyée, lien source/candidature, indication textuelle de publication, dates réelles de récupération. Les contacts et le HTML actif sont retirés ; les logos ne sont pas recopiés sans autorisation.
+Variables optionnelles :
 
-Le préfiltre exige une mention de stage/alternance/apprentissage dans le titre, exclut les CDI, freelances et écoles identifiées, exige un lien HTTPS hors moteur de recherche et une description. Il ne prétend pas vérifier automatiquement la région, le domaine ou l’identité de l’employeur. Une date ISO explicite ancienne ou future entraîne l’exclusion. Les mentions relatives restent du texte et ne deviennent jamais une date exacte inventée.
+- `SERPAPI_AUTO_ENABLED=true` : activation, par défaut.
+- `SERPAPI_DAILY_REQUEST_LIMIT=24` : maximum quotidien, borné entre 1 et 200, en conservant le plafond de trois appels/heure.
+- `SERPAPI_REFRESH_DAYS=7` : renouvellement entre 1 et 30 jours.
 
-Le hash titre/entreprise/lieu/URL empêche les imports répétés ; une fiche déjà écartée ou transmise n’est pas réactivée au clic suivant. La liste affiche au maximum 100 fiches privées récupérées depuis moins de 45 jours. L’ancienneté de récupération n’est pas présentée comme la date de publication.
+Adapter le budget au forfait réel ; ce code ne confirme pas les tarifs ni le solde du compte. Une réponse 429 suspend la rotation 24 heures, une clé refusée la suspend six heures, une autre erreur une heure. Les recherches suivantes reprennent automatiquement. Un verrou et le budget partagé empêchent deux processus utilisant la même base de lancer simultanément une requête. Un disque persistant reste nécessaire : supprimer la base efface aussi les budgets et l’historique.
 
-**Compléter pour validation** ouvre un formulaire prérempli. Le responsable consulte le lien, renseigne le vrai site entreprise, le contrat, le domaine autorisé, la région française et la date de publication source. Une attestation de contrôle de date et une date de 45 jours maximum sont exigées côté serveur. La fin de validité choisie dans le formulaire est un réglage local, pas une date de fermeture fournie par la source. Le dépôt rejoint ensuite **En attente** ; les contrôles habituels de source, droits, entreprise et contacts restent requis pour publier. Une fiche simplement reçue de Google Jobs n’obtient aucun badge vérifié.
+## Analyse et publication
 
-Routes privées supplémentaires :
+1. Exclure Meteojob (fournisseur, provenance, lien original, lien de candidature, redirection ou option Google Jobs), les écoles identifiées, les CDI/freelances et les titres sans mention de stage/alternance/apprentissage.
+2. Conserver les vrais titre, entreprise, lieu, description disponible et liens HTTPS. Nettoyer HTML actif et contacts ; ne pas recopier un logo ou une présentation d’entreprise sans provenance autorisée.
+3. Exiger une **date de publication explicite de moins de 45 jours**. Les dates ISO structurées et les extensions portant une date ISO explicite sont reconnues. « Il y a 3 jours » reste du texte : aucune date exacte n’en est fabriquée. Une date absente ou future bloque la publication automatique.
+4. Déterminer le domaine avec des règles transparentes sur le titre et la description, sans utiliser la requête comme preuve. Rejeter les fonctions commerciales/RH identifiées. Les technologies mentionnées sont extraites sans inventer de stack d’entreprise.
+5. Exiger un contrat explicite : stage, apprentissage ou professionnalisation. Le mot « alternance » seul ne devient pas automatiquement « apprentissage ».
+6. Exiger une localisation mentionnant la France, puis résoudre la commune par l’API géographique officielle `geo.api.gouv.fr`, sans clé, avec correspondance exacte et unique. Une ville ambiguë, étrangère, un simple télétravail ou un échec réseau ne deviennent pas une région française inventée. Les résultats géographiques sont mis en cache ; aucun site carrière n’est scrappé.
+7. Normaliser via le modèle existant, dédoublonner et insérer les fiches admissibles directement dans **Offres**. Conserver la source Google Jobs via SerpApi, la date d’origine et le lien de candidature. Le site de l’entreprise reste inconnu s’il n’est pas fourni ; le domaine d’un job board ne devient pas son site officiel.
 
-- `POST /api/admin/serpapi/import` : `{rightsConfirmed: true, query}` ; recherches limitées à la liste prévue par le serveur.
-- `GET /api/admin/serpapi/candidates` : file privée, aucune route publique.
-- `POST /api/admin/serpapi/candidates/:id/submit` : compléments documentés et `sourceDateChecked: true`, création atomique d’une annonce en attente.
-- `POST /api/admin/serpapi/candidates/:id/reject` : écarter sans publier.
+La publication automatique marque l’admissibilité aux règles du catalogue, **pas une vérification humaine de disponibilité**. `lastVerifiedAt` et `technicalReviewAt` restent nuls, sans faux badge « Vérifié ». Les retraits et refus antérieurs sont conservés. Une fin de validité locale d’environ une semaine depuis récupération et la limite globale de 45 jours évitent de laisser une offre indéfiniment visible.
 
-Le retour HTTP 200 du fournisseur valide seulement la connexion et le format. La collecte complète du marché, la couverture de tous les métiers, les descriptions intégrales et la réutilisation commerciale ne sont pas garanties. Aucune collecte de production n’est exécutée par les tests du dépôt.
+Les données incomplètes restent privées, avec leurs motifs de non-publication ; elles ne demandent aucune action pour que la rotation continue vers les autres recherches. Les annonces éligibles suivantes se publient seules. Si SerpApi ne fournit aucune date explicite, le résultat peut être **zéro publication**, même avec HTTP 200 : les informations manquantes ne sont jamais remplacées par une date inventée.
 
-Documentation du fournisseur : https://serpapi.com/google-jobs-api
-Tarifs et quotas du compte : https://serpapi.com/pricing
-Les prix actuels et droits de republication ne sont pas validés par ce code.
+## Interface et exploitation
 
-Tests : `npm test`, `npm run test:serpapi`, `npm run test:serpapi-import`, `npm run build`. Ils utilisent des réponses fictives en mémoire et ne consomment pas de quota SerpApi.
+Administration → Sources & collecte présente le nombre de recherches effectuées, les domaines parcourus, le budget utilisé, les publications admissibles, les exclusions et les motifs. Il n’y a plus de bouton d’import Google Jobs ni de bouton « Lancer une collecte ». L’historique `serpapi-automatic` conserve les compteurs et erreurs sans clé ni URL complète de requête. `GET /api/admin/serpapi/automation` est protégé par l’accès privé habituel.
 
-## Import initial demandé et exclusion Meteojob
+Les autres connecteurs LBA/France Travail continuent leur planification existante. Aucune clé n’est déplacée vers le navigateur. L’intégration s’appuie sur l’accès API du propriétaire ; elle ne certifie pas les droits commerciaux de redistribution des fournisseurs et sources originales. Conserver leurs conditions d’utilisation : https://serpapi.com/google-jobs-api et https://serpapi.com/pricing.
 
-Le propriétaire a demandé un import direct avec analyse et exclusion de Meteojob. Au prochain lancement de `server/index.js`, si `SERPAPI_API_KEY` est disponible, **un appel** est effectué pour « alternance informatique » en France. Les résultats éligibles au préfiltre sont analysés (technologies explicitement mentionnées et informations restant à vérifier), dédoublonnés et stockés dans la file privée ; aucune date manquante ni validation n’est fabriquée. Les résultats sans date ou critères confirmés ne sont pas publiés automatiquement.
+Les anciennes annonces Meteojob sont retirées au démarrage, y compris celles approuvées ou en attente ; leur historique reste privé. L’exclusion s’applique aussi à LBA, France Travail, aux flux génériques, aux favoris affichés et aux liens repérés. L’instantané versionné ne contient plus ses sept anciennes annonces.
 
-Un marqueur atomique dans `metadata`, propre à cette demande, empêche les appels répétés au redémarrage et entre processus utilisant la même base. L’échec n’entraîne pas de boucle de nouvelle tentative ; le bouton privé permet de réessayer. Le disque SQLite doit être persistant : si toute la base est supprimée, le marqueur disparaît aussi. `SERPAPI_STARTUP_IMPORT=false` désactive cet import initial. Les tests ne le lancent qu’avec des réponses simulées ; le test de connexion manuel reste disponible. Le journal privé `serpapi-import-startup` donne les compteurs réels du serveur, sans clé ni URL contenant la clé.
+## Code et vérification
 
-La politique partagée `shared/source-policy.js` bloque Meteojob par nom de fournisseur, domaine du lien original ou de candidature, champ `via` et options de candidature Google Jobs. Une annonce portant une provenance Meteojob est exclue même si un autre lien non Meteojob existe. Une simple mention dans le texte d’un employeur ne déclenche pas l’exclusion.
+- `shared/serpapi-searches.js` : couverture des domaines.
+- `server/ingestion/serpapi-automation.js` : rotation, budget, reprise et suivi.
+- `server/ingestion/serpapi-analysis.js` : classification et normalisation.
+- `server/ingestion/french-location.js` : communes françaises, correspondance et cache.
+- `server/ingestion/serpapi-inbox.js` : dédoublonnage et publication sans intervention.
+- `src/SerpApiAutomationStatus.jsx` : suivi privé sans commande d’import.
 
-Au démarrage, les anciennes annonces Meteojob approuvées, en attente ou expirées sont retirées ; leur historique reste privé. Les anciennes fiches Google Jobs concernées sont écartées. La règle s’applique aussi aux nouveaux dépôts, à LBA/France Travail/flux génériques, à la validation manuelle, aux liens repérés et aux favoris locaux affichés. Les sept annonces Meteojob de l’instantané versionné ont été supprimées ; aucune annonce de remplacement n’a été inventée. Le compteur des offres publiques peut donc baisser ou devenir nul jusqu’à réception d’offres éligibles d’autres sources.
-
-La clé Render et la base de production ne sont pas accessibles depuis le workspace : l’import et le retrait de production prennent effet lors du déploiement, et doivent être confirmés par les journaux Render. Un test local ne constitue pas une confirmation de collecte sur le site déployé.
+`npm test`, `npm run test:serpapi`, `npm run test:rapidapi`, `npm run test:browser`, `npm run build`. Les tests utilisent des offres explicitement fictives dans des bases temporaires et des réponses API simulées ; ils ne consomment aucun quota et n’ajoutent rien sur Render. La clé et la base de production ne sont pas accessibles depuis le workspace : la réussite de la collecte réelle doit être constatée dans les journaux du serveur après déploiement.

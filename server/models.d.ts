@@ -58,7 +58,8 @@ export interface Offer {
   lastFetchedAt?: string;
   updatedAt: string;
   lastVerifiedAt: string | null;
-  technicalReviewAt?: string;
+  technicalReviewAt?: string | null;
+  automaticAnalysis?: { method: string; domain: string; locationProvenance: string };
   status: OfferStatus;
   moderationStatus: ModerationStatus;
   expiresAt: string;

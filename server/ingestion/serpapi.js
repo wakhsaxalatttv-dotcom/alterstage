@@ -1,13 +1,17 @@
+import { SERPAPI_SEARCHES } from "../../shared/serpapi-searches.js";
 import { responseShape } from "./rapidapi-linkedin.js";
 import { dispatcher } from "./http.js";
 export const SERPAPI_QUERIES = [
-  "alternance informatique",
-  "stage informatique",
-  "alternance réseaux télécommunications",
-  "stage systèmes électroniques",
-  "alternance maintenance industrielle",
-  "stage chimie matériaux",
-  "alternance chimie procédés",
+  ...new Set([
+    "alternance informatique",
+    "stage informatique",
+    "alternance réseaux télécommunications",
+    "stage systèmes électroniques",
+    "alternance maintenance industrielle",
+    "stage chimie matériaux",
+    "alternance chimie procédés",
+    ...SERPAPI_SEARCHES.map((s) => s.query),
+  ]),
 ];
 export const SERPAPI_URL = "https://serpapi.com/search.json";
 export const serpApiConfigured = (env = process.env) =>
@@ -151,10 +155,10 @@ export function createSerpApiProbe({
           resultCount: jobs.length,
           withApplicationLinks: jobs.filter(
             (j) =>
-              Array.isArray(j.apply_options) &&
+              Array.isArray(j?.apply_options) &&
               j.apply_options.some(
                 (o) =>
-                  typeof o.link === "string" && o.link.startsWith("https://"),
+                  typeof o?.link === "string" && o.link.startsWith("https://"),
               ),
           ).length,
           status: "success",

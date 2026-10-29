@@ -63,3 +63,7 @@ L’intégration ne donne aucun droit de monétisation : voir `config/DATA_LICEN
 ## Annuaire et critères d’accueil
 
 La mise à jour de l’annuaire est décrite dans [COMPANY_CATALOGUE.md](COMPANY_CATALOGUE.md) : 56 fiches initiales, provenance par champ, distinction identité/accueil/offres, revue privée datée, critères périssables, FTS5 et filtres indexés. Le plan par étapes, les limites de vérification et les mesures locales y sont consignés.
+
+## Google Jobs autonome
+
+Le serveur démarre `SerpApiAutomation`, indépendamment de la navigation privée. Les recherches stage/alternance couvrent les domaines du catalogue dans une rotation persistante et bornée. La classification explicite, la résolution de communes françaises et les dates source autorisent uniquement les publications admissibles, sans badge humain. Le suivi privé est en lecture seule. Voir [le module et ses limites](SERPAPI.md).

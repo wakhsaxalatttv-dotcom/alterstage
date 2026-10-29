@@ -147,8 +147,8 @@ Le responsable peut documenter et contrôler les conditions dans **Administratio
 
 Le plan d’implémentation, le modèle, les endpoints, les performances mesurées et les limites actuelles sont dans [docs/COMPANY_CATALOGUE.md](docs/COMPANY_CATALOGUE.md). Avec le serveur de développement lancé, `npm run test:companies` vérifie le parcours de validation et de recherche dans une base fictive isolée. Aucun nouveau secret ni abonnement n’est nécessaire pour l’annuaire. RapidAPI reste en pause pour l’import.
 
-### SerpApi / Google Jobs
+### SerpApi / Google Jobs automatique
 
-Le test de connexion est disponible uniquement dans Administration → Sources & collecte → **SerpApi · Google Jobs**, après configuration de `SERPAPI_API_KEY` sur Render. Un clic consomme un appel. L’import manuel alimente une file privée distincte : dates et critères manquants sont à documenter avant envoi en modération. Aucune publication automatique n’est activée. Voir [configuration, limites et suite de l’intégration](docs/SERPAPI.md).
+Avec `SERPAPI_API_KEY` sur Render, le serveur lance seul la collecte et l’analyse sur les **21 domaines**, en stages et alternances. Les fiches admissibles rejoignent directement **Offres** ; Meteojob, les écoles, les annonces anciennes et les données insuffisantes sont exclues de la publication. Une date manquante n’est jamais inventée, et une analyse automatique ne donne pas un badge de vérification humaine.
 
-Les offres provenant de **Meteojob sont exclues**, y compris les anciennes annonces, les partenaires des flux et les liens de candidature Google Jobs. Le retrait est automatique au démarrage ; l’historique de modération reste privé. Un import SerpApi initial unique, demandé par le propriétaire, est lancé au prochain démarrage avec la clé configurée : les résultats analysés restent privés tant que dates et critères ne sont pas confirmés. Voir [le fonctionnement et les limites](docs/SERPAPI.md#import-initial-demandé-et-exclusion-meteojob).
+La rotation échelonnée respecte un budget persistant (par défaut trois appels/heure, 24/jour), avec reprise et renouvellement hebdomadaire. Aucun bouton d’import n’est nécessaire. L’espace privé sert au suivi. Voir [configuration, règles, quotas et limites](docs/SERPAPI.md).
