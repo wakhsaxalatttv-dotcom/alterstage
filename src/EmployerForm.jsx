@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ArrowRight, Check, ShieldCheck, Building2, Eye } from "lucide-react";
 import { domainGroups, contracts, educationLevels } from "../shared/catalog";
 import { companyTypes, companySizes, companyTags } from "../shared/company";
@@ -30,21 +30,38 @@ function Field({
     </label>
   );
 }
-export function EmployerForm({ token, editorial = false, onSaved }) {
+export function EmployerForm({
+  token,
+  editorial = false,
+  initialValues,
+  submitEndpoint,
+  sourceDateRequired = false,
+  onSaved,
+}) {
   const [state, setState] = useState({ status: "idle" }),
     [preview, setPreview] = useState(null);
+  const formRef = useRef(null);
+  useEffect(() => {
+    if (!initialValues || !formRef.current) return;
+    for (const [name, value] of Object.entries(initialValues)) {
+      const field = formRef.current.elements.namedItem(name);
+      if (field && typeof value === "string") field.value = value;
+    }
+  }, [initialValues]);
   async function submit(event) {
     event.preventDefault();
     const form = event.currentTarget,
       body = Object.fromEntries(new FormData(form));
     body.companyTags = new FormData(form).getAll("companyTags");
+    body.sourceDateChecked = body.sourceDateChecked === "on";
     body.logoConsent = body.logoConsent === "on";
     body.consent = body.consent === "on";
     body.contactConsent = body.contactConsent === "on";
     setState({ status: "loading" });
     try {
       const data = await request(
-        editorial ? "/api/admin/import" : "/api/submissions",
+        submitEndpoint ||
+          (editorial ? "/api/admin/import" : "/api/submissions"),
         { token, method: "POST", body: JSON.stringify(body) },
       );
       setState({ status: "saved", id: data.id });
@@ -81,7 +98,14 @@ export function EmployerForm({ token, editorial = false, onSaved }) {
     );
   return (
     <div className="employer-layout">
-      <form className="employer-form" onSubmit={submit}>
+      <form ref={formRef} className="employer-form" onSubmit={submit}>
+        {sourceDateRequired && (
+          <label className="consent">
+            <input type="checkbox" name="sourceDateChecked" required /> J’ai
+            consulté la source originale et confirmé sa date de publication,
+            datant de 45 jours maximum.
+          </label>
+        )}
         <div className="form-section-title">
           <span>01</span>
           <div>

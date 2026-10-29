@@ -1,5 +1,5 @@
 import { CompanyCatalogue } from "./company-catalogue.js";
-import { publicationCutoff } from "../shared/freshness.js";
+import { publicationCutoff, isRecentPublication } from "../shared/freshness.js";
 import { DatabaseSync } from "node:sqlite";
 import { mkdirSync, readFileSync, existsSync, chmodSync } from "node:fs";
 import path from "node:path";
@@ -651,7 +651,9 @@ export class OfferStore {
             "Une date de publication source est nécessaire avant publication.",
           );
         if (
-          Date.now() - Date.parse(offer.publishedAt) > 30 * 86400000 ||
+          (offer.sourceId === "serpapi-google-jobs"
+            ? !isRecentPublication(offer.publishedAt)
+            : Date.now() - Date.parse(offer.publishedAt) > 30 * 86400000) ||
           Date.parse(offer.expiresAt) + 86400000 <= Date.now()
         )
           throw new ValidationError("Annonce trop ancienne ou expirée.");

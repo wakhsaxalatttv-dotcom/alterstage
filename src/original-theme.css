@@ -237,3 +237,51 @@ body,
     display: grid;
   }
 }
+
+.serpapi-inbox {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  margin-top: 24px;
+}
+.serpapi-inbox .employer-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+.serpapi-inbox .employer-help {
+  display: none;
+}
+.serpapi-inbox .field,
+.serpapi-inbox fieldset,
+.serpapi-inbox .form-grid > * {
+  min-width: 0;
+}
+.serpapi-inbox select {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+.serpapi-inbox .button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.serpapi-inbox button {
+  max-width: 100%;
+  white-space: normal;
+}
+@media (max-width: 700px) {
+  .serpapi-inbox .local-note {
+    padding: 12px;
+  }
+  .serpapi-inbox .employer-form {
+    padding: 12px;
+  }
+  .serpapi-inbox .field input,
+  .serpapi-inbox .field select,
+  .serpapi-inbox .field textarea {
+    font-size: 16px;
+  }
+  .serpapi-inbox .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

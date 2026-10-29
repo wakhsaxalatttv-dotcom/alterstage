@@ -1,3 +1,4 @@
+import { SerpApiInbox } from "./ingestion/serpapi-inbox.js";
 import { createSerpApiProbe } from "./ingestion/serpapi.js";
 import { createRapidApiProbe } from "./ingestion/rapidapi-linkedin.js";
 import { administrationConfiguration } from "./admin-config.js";
@@ -28,6 +29,7 @@ export function createApp({
   app.locals.pipeline = new IngestionPipeline(store, pipelineOptions);
   const rapidApiProbe = createRapidApiProbe(rapidApiOptions);
   const serpApiProbe = createSerpApiProbe(serpApiOptions);
+  const serpApiInbox = new SerpApiInbox(store);
   app.disable("x-powered-by");
   if (process.env.RENDER === "true") app.set("trust proxy", 1);
   app.use(compression({ threshold: 1024 }));
@@ -207,10 +209,49 @@ export function createApp({
     });
     res.json(result);
   });
+  app.get("/api/admin/serpapi/candidates", admin, (_req, res) =>
+    res.json({ items: serpApiInbox.list() }),
+  );
+  app.post("/api/admin/serpapi/candidates/:id/reject", admin, (req, res) =>
+    res.json(serpApiInbox.reject(req.params.id)),
+  );
+  app.post(
+    "/api/admin/serpapi/candidates/:id/submit",
+    admin,
+    async (req, res) =>
+      res
+        .status(201)
+        .json(await serpApiInbox.submit(req.params.id, req.body || {})),
+  );
+  app.post("/api/admin/serpapi/import", admin, async (req, res) => {
+    if (req.body?.rightsConfirmed !== true)
+      throw new ValidationError(
+        "Confirmez les droits de conservation et de réutilisation avant l’import.",
+      );
+    const result = await serpApiProbe.run({
+      query: req.body?.query,
+      onResults: (jobs) => serpApiInbox.stage(jobs),
+    });
+    if (result.status === "not_configured")
+      return res.status(503).json({ message: result.message });
+    if (result.status === "limited")
+      return res.status(429).json({ message: result.message });
+    store.recordRun({
+      sourceId: "serpapi-import",
+      startedAt: new Date().toISOString(),
+      finishedAt: new Date().toISOString(),
+      status: result.status,
+      created: result.imported?.created || 0,
+      duplicate: result.imported?.duplicate || 0,
+      updated: 0,
+      unchanged: 0,
+      invalid: result.imported?.excluded || 0,
+      message: result.message,
+    });
+    res.json(result);
+  });
   app.get("/api/admin/serpapi", admin, (_req, res) => {
-    const latest = store
-      .runs()
-      .find((r) => r.sourceId === "serpapi-test");
+    const latest = store.runs().find((r) => r.sourceId === "serpapi-test");
     res.json({
       configured: serpApiProbe.configured(),
       latest: latest?.diagnostic || null,

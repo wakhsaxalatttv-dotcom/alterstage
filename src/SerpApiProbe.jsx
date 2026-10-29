@@ -1,3 +1,4 @@
+import { SerpApiInbox } from "./SerpApiInbox";
 import React, { useEffect, useState } from "react";
 import { request } from "./api";
 export function SerpApiProbe({ token }) {
@@ -65,7 +66,13 @@ export function SerpApiProbe({ token }) {
             {data.latest.httpStatus ? `HTTP ${data.latest.httpStatus} · ` : ""}
             {data.latest.message}
           </p>
-          {Number.isInteger(data.latest.resultCount) && <p>{data.latest.resultCount} résultat(s) reçu(s), dont {data.latest.withApplicationLinks} avec lien de candidature. Ce nombre ne représente pas les offres éligibles au site.</p>}
+          {Number.isInteger(data.latest.resultCount) && (
+            <p>
+              {data.latest.resultCount} résultat(s) reçu(s), dont{" "}
+              {data.latest.withApplicationLinks} avec lien de candidature. Ce
+              nombre ne représente pas les offres éligibles au site.
+            </p>
+          )}
           {data.latest.shape && (
             <details>
               <summary>
@@ -76,6 +83,7 @@ export function SerpApiProbe({ token }) {
           )}
         </div>
       )}
+      <SerpApiInbox token={token} configured={data?.configured} />
     </section>
   );
 }

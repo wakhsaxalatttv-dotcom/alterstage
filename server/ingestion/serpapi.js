@@ -1,5 +1,14 @@
 import { responseShape } from "./rapidapi-linkedin.js";
 import { dispatcher } from "./http.js";
+export const SERPAPI_QUERIES = [
+  "alternance informatique",
+  "stage informatique",
+  "alternance réseaux télécommunications",
+  "stage systèmes électroniques",
+  "alternance maintenance industrielle",
+  "stage chimie matériaux",
+  "alternance chimie procédés",
+];
 export const SERPAPI_URL = "https://serpapi.com/search.json";
 export const serpApiConfigured = (env = process.env) =>
   Boolean(env.SERPAPI_API_KEY?.trim());
@@ -33,7 +42,12 @@ export function createSerpApiProbe({
     calls = 0;
   return {
     configured: () => serpApiConfigured(env),
-    async run() {
+    async run({ onResults, query = SERPAPI_QUERIES[0] } = {}) {
+      if (!SERPAPI_QUERIES.includes(query))
+        return {
+          status: "error",
+          message: "Recherche Google Jobs non autorisée.",
+        };
       if (!serpApiConfigured(env))
         return {
           status: "not_configured",
@@ -62,7 +76,7 @@ export function createSerpApiProbe({
       const url = new URL(SERPAPI_URL);
       url.search = new URLSearchParams({
         engine: "google_jobs",
-        q: "alternance informatique",
+        q: query,
         location: "France",
         hl: "fr",
         gl: "fr",
@@ -119,22 +133,37 @@ export function createSerpApiProbe({
             httpStatus: response.status,
             message: "Format de réponse inattendu : aucune annonce importée.",
           };
-        if (data.error || (!Array.isArray(data.jobs_results) && data.search_information?.jobs_results_state !== "Fully empty"))
+        if (
+          data.error ||
+          (!Array.isArray(data.jobs_results) &&
+            data.search_information?.jobs_results_state !== "Fully empty")
+        )
           return {
             status: "error",
             httpStatus: response.status,
-            message: "Réponse SerpApi en erreur ou format Google Jobs inattendu. Aucune annonce importée.",
+            message:
+              "Réponse SerpApi en erreur ou format Google Jobs inattendu. Aucune annonce importée.",
           };
         const jobs = Array.isArray(data.jobs_results) ? data.jobs_results : [];
+        const imported = onResults ? await onResults(jobs) : null;
         return {
+          ...(imported ? { imported } : {}),
           resultCount: jobs.length,
-          withApplicationLinks: jobs.filter(j => Array.isArray(j.apply_options) && j.apply_options.some(o => typeof o.link === "string" && o.link.startsWith("https://"))).length,
+          withApplicationLinks: jobs.filter(
+            (j) =>
+              Array.isArray(j.apply_options) &&
+              j.apply_options.some(
+                (o) =>
+                  typeof o.link === "string" && o.link.startsWith("https://"),
+              ),
+          ).length,
           status: "success",
           httpStatus: response.status,
           checkedAt: new Date(now()).toISOString(),
           shape: responseShape({ jobs_results: jobs }, key),
-          message:
-            "Réponse API reçue. Résultats comptés et structure contrôlée ; aucune annonce importée. Les critères, dates et droits de réutilisation restent à valider.",
+          message: onResults
+            ? "Résultats enregistrés dans la file privée Google Jobs. Aucune annonce publiée."
+            : "Réponse API reçue. Résultats comptés et structure contrôlée ; aucune annonce importée. Les critères, dates et droits de réutilisation restent à valider.",
         };
       } catch {
         return {

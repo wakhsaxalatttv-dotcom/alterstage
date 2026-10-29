@@ -149,4 +149,4 @@ Le plan d’implémentation, le modèle, les endpoints, les performances mesuré
 
 ### SerpApi / Google Jobs
 
-Le test de connexion est disponible uniquement dans Administration → Sources & collecte → **SerpApi · Google Jobs**, après configuration de `SERPAPI_API_KEY` sur Render. Un clic consomme un appel ; aucun import automatique ni publication n’est activé. Voir [configuration, limites et suite de l’intégration](docs/SERPAPI.md).
+Le test de connexion est disponible uniquement dans Administration → Sources & collecte → **SerpApi · Google Jobs**, après configuration de `SERPAPI_API_KEY` sur Render. Un clic consomme un appel. L’import manuel alimente une file privée distincte : dates et critères manquants sont à documenter avant envoi en modération. Aucune publication automatique n’est activée. Voir [configuration, limites et suite de l’intégration](docs/SERPAPI.md).
