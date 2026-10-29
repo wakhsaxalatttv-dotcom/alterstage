@@ -1,3 +1,4 @@
+import { isBlockedSource } from "../../shared/source-policy.js";
 import { isTrainingEmployer } from "../../shared/employer-policy.js";
 import { isRecentPublication } from "../../shared/freshness.js";
 import { createHash } from "node:crypto";
@@ -56,6 +57,7 @@ export function parseLba(body, now = Date.now()) {
   if (!Array.isArray(data.jobs)) throw new Error("Réponse LBA invalide");
   const excluded = {
       old: 0,
+      meteojob: 0,
       sandbox: 0,
       school: 0,
       inactive: 0,
@@ -66,6 +68,12 @@ export function parseLba(body, now = Date.now()) {
     records = [];
   for (const j of data.jobs) {
     const label = j.identifier?.partner_label || "";
+    if (
+      isBlockedSource({ sourcePartner: label, applicationUrl: j.apply?.url })
+    ) {
+      excluded.meteojob++;
+      continue;
+    }
     if (
       /\b(sandbox|recette|demo|démonstration|simulation|test)\b/i.test(label)
     ) {

@@ -1,3 +1,4 @@
+import { isBlockedSource } from "../../shared/source-policy.js";
 import { isTrainingEmployer } from "../../shared/employer-policy.js";
 import { createHash } from "node:crypto";
 import { dispatcher } from "./http.js";
@@ -364,6 +365,21 @@ export function parseFranceTravail(body, now = Date.now()) {
     };
   for (const offer of data.resultats) {
     if (!offer || typeof offer !== "object") {
+      exclusions.incomplete++;
+      continue;
+    }
+    if (
+      isBlockedSource({
+        sourceUrl: offer.origineOffre?.urlOrigine,
+        applicationUrl: offer.contact?.urlPostulation,
+        apply_options: Array.isArray(offer.origineOffre?.partenaires)
+          ? offer.origineOffre.partenaires.map((p) => ({
+              title: p.nom,
+              link: p.url,
+            }))
+          : [],
+      })
+    ) {
       exclusions.incomplete++;
       continue;
     }

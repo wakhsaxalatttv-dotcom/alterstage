@@ -1,3 +1,4 @@
+import { isBlockedSource } from "../shared/source-policy.js";
 import { CompanyCatalogue } from "./company-catalogue.js";
 import { publicationCutoff, isRecentPublication } from "../shared/freshness.js";
 import { DatabaseSync } from "node:sqlite";
@@ -303,6 +304,8 @@ export class OfferStore {
       .map(parse);
   }
   async submit(offer) {
+    if (isBlockedSource(offer))
+      throw new ValidationError("Les annonces Meteojob sont exclues.");
     try {
       return this.transaction(() => {
         this.writeOffer(offer);
@@ -315,6 +318,7 @@ export class OfferStore {
     }
   }
   async ingest(offer) {
+    if (isBlockedSource(offer)) return "invalid";
     try {
       return this.transaction(() => {
         const row = this.db
@@ -364,7 +368,7 @@ export class OfferStore {
     return this.transaction(() => {
       const rows = this.db
         .prepare(
-          "SELECT id,payload FROM offers WHERE moderation='approved' AND status NOT IN ('expired','withdrawn')",
+          "SELECT id,payload FROM offers WHERE moderation NOT IN ('withdrawn','rejected')",
         )
         .all();
       const audit = {
@@ -376,7 +380,13 @@ export class OfferStore {
       };
       for (const row of rows) {
         const offer = parse(row);
-        const reasons = nonComplianceReasons(offer, now);
+        if (offer.status === "expired" && !isBlockedSource(offer)) continue;
+        const reasons =
+          offer.moderationStatus === "approved"
+            ? nonComplianceReasons(offer, now)
+            : isBlockedSource(offer)
+              ? ["blocked_source_meteojob"]
+              : [];
         if (!reasons.length) continue;
         const expirationOnly = reasons.every((r) =>
           [

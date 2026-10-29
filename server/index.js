@@ -1,3 +1,4 @@
+import { importSerpApiOnce } from "./ingestion/serpapi-startup.js";
 import { franceTravailConfiguration } from "./ingestion/france-travail.js";
 import { seedBundledCatalogue } from "./ingestion/bundled.js";
 import { createApp } from "./app.js";
@@ -13,6 +14,22 @@ await seedBundledCatalogue(app.locals.store);
 const server = app.listen(port, "0.0.0.0", () =>
   console.log(`Offres Fraîches : serveur prêt sur le port ${port}`),
 );
+const serpApiStartupImport = importSerpApiOnce({
+  store: app.locals.store,
+  probe: app.locals.serpApiProbe,
+  inbox: app.locals.serpApiInbox,
+  enabled: process.env.SERPAPI_STARTUP_IMPORT !== "false",
+})
+  .then((result) => {
+    console.info(
+      `[Google Jobs] ${result.status} : ${result.imported?.created || 0} résultat(s) importé(s) en privé, ${result.imported?.excluded || 0} exclu(s). Aucune publication sans contrôle des dates et critères.`,
+    );
+  })
+  .catch(() =>
+    console.error(
+      "[Google Jobs] Import indisponible. Consulter l’espace privé.",
+    ),
+  );
 const ft = franceTravailConfiguration();
 console.info(
   `[France Travail] ${!ft.enabled ? "Collecte désactivée." : ft.configured ? "Identifiants présents ; connexion API à tester par la collecte." : "Source non configurée : identifiant client ou secret absent."}`,
@@ -48,6 +65,7 @@ async function shutdown() {
   server.close(async () => {
     if (app.locals.pipeline.running)
       await app.locals.pipeline.running.catch(() => {});
+    await serpApiStartupImport;
     await closeFeedConnections();
     app.locals.store.close();
     process.exit(0);

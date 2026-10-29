@@ -1,5 +1,6 @@
+import { isBlockedSource } from "../../shared/source-policy.js";
 import { createHash } from "node:crypto";
-import { plainText } from "../enrichment.js";
+import { plainText, extractKeywords } from "../enrichment.js";
 import { safeUrl, normalizeSubmission, ValidationError } from "../domain.js";
 import { isTrainingEmployer } from "../../shared/employer-policy.js";
 import { isRecentPublication } from "../../shared/freshness.js";
@@ -12,7 +13,7 @@ const originalLink = (value) => {
     : url;
 };
 export function parseSerpCandidate(job, now = new Date().toISOString()) {
-  if (!job || typeof job !== "object") return null;
+  if (!job || typeof job !== "object" || isBlockedSource(job)) return null;
   const title = plainText(job.title || job.job_title, 180);
   const companyName = plainText(job.company_name, 120);
   if (
@@ -67,6 +68,15 @@ export function parseSerpCandidate(job, now = new Date().toISOString()) {
       500,
     ),
     via: plainText(job.via, 200),
+    analysis: {
+      technologies: extractKeywords(description).technologies,
+      publicationConfirmed: false,
+      requiresReview: [
+        ...(publishedAt ? [] : ["Date de publication source manquante"]),
+        "Région française, domaine et contrat à confirmer",
+        "Identité de l’employeur et droits de réutilisation à contrôler",
+      ],
+    },
     firstRetrievedAt: now,
     lastRetrievedAt: now,
   };
@@ -79,7 +89,28 @@ export class SerpApiInbox {
       `CREATE TABLE IF NOT EXISTS serpapi_candidates(id TEXT PRIMARY KEY, status TEXT NOT NULL DEFAULT 'pending', retrieved_at TEXT NOT NULL, payload TEXT NOT NULL); CREATE INDEX IF NOT EXISTS serpapi_candidates_status ON serpapi_candidates(status,retrieved_at);`,
     );
   }
+  excludeBlocked() {
+    let withdrawn = 0;
+    this.store.transaction(() => {
+      for (const row of this.db
+        .prepare(
+          "SELECT id,payload FROM serpapi_candidates WHERE status='pending'",
+        )
+        .all()) {
+        if (isBlockedSource(JSON.parse(row.payload))) {
+          this.db
+            .prepare(
+              "UPDATE serpapi_candidates SET status='rejected' WHERE id=?",
+            )
+            .run(row.id);
+          withdrawn++;
+        }
+      }
+    });
+    return withdrawn;
+  }
   list() {
+    this.excludeBlocked();
     return this.db
       .prepare(
         "SELECT payload FROM serpapi_candidates WHERE status='pending' AND retrieved_at>=? ORDER BY retrieved_at DESC LIMIT 100",
@@ -132,6 +163,8 @@ export class SerpApiInbox {
       .get(id);
     if (!row) throw new ValidationError("Résultat introuvable ou déjà traité.");
     const candidate = JSON.parse(row.payload);
+    if (isBlockedSource(candidate))
+      throw new ValidationError("Source Meteojob exclue.");
     if (
       body.sourceDateChecked !== true ||
       !isRecentPublication(body.publishedAt)

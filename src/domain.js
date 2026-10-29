@@ -1,3 +1,4 @@
+import { isBlockedSource } from "../shared/source-policy.js";
 import { isTrainingEmployer } from "../shared/employer-policy.js";
 import { isRecentPublication } from "../shared/freshness.js";
 import { inScope, groupOf, contracts } from "../shared/catalog.js";
@@ -49,6 +50,7 @@ export function selectOffers(offers, filters, now = Date.now()) {
       .toLowerCase();
   return offers
     .filter(inScope)
+    .filter((o) => !isBlockedSource(o))
     .filter((o) => !filters.companyId || o.company.id === filters.companyId)
     .filter((o) => contracts.includes(o.contract))
     .filter((o) => !isTrainingEmployer(o.company?.name, o.company?.sector))

@@ -1,3 +1,4 @@
+import { isBlockedSource } from "../../shared/source-policy.js";
 import {
   franceTravailSource,
   franceTravailConfiguration,
@@ -67,6 +68,11 @@ export function normalizeRecord(
 ) {
   if (!record || typeof record !== "object")
     throw new Error("Annonce invalide");
+  if (
+    isBlockedSource(record) ||
+    isBlockedSource({ sourceName: source.name, sourceId: source.id })
+  )
+    throw new Error("Source Meteojob exclue");
   const publishedAt = iso(record.publishedAt);
   if (!publishedAt || Date.parse(publishedAt) > Date.parse(now))
     throw new Error("Date source absente ou future");

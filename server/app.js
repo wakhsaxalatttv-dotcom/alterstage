@@ -30,6 +30,9 @@ export function createApp({
   const rapidApiProbe = createRapidApiProbe(rapidApiOptions);
   const serpApiProbe = createSerpApiProbe(serpApiOptions);
   const serpApiInbox = new SerpApiInbox(store);
+  serpApiInbox.excludeBlocked();
+  app.locals.serpApiProbe = serpApiProbe;
+  app.locals.serpApiInbox = serpApiInbox;
   app.disable("x-powered-by");
   if (process.env.RENDER === "true") app.set("trust proxy", 1);
   app.use(compression({ threshold: 1024 }));

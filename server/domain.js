@@ -1,3 +1,4 @@
+import { isBlockedSource } from "../shared/source-policy.js";
 import { isTrainingEmployer } from "../shared/employer-policy.js";
 import { isRecentPublication } from "../shared/freshness.js";
 import { domains, contracts } from "../shared/catalog.js";
@@ -68,6 +69,10 @@ export function normalizeSubmission(
 ) {
   if (!body || typeof body !== "object" || Array.isArray(body))
     throw new ValidationError("Formulaire invalide.");
+  if (isBlockedSource(body))
+    throw new ValidationError(
+      "Les annonces provenant de Meteojob sont exclues.",
+    );
   if (body.websiteTrap) throw new ValidationError("Dépôt refusé.");
   if (body.consent !== true)
     throw new ValidationError("Confirmez votre autorisation de publication.");
@@ -290,6 +295,7 @@ export function deduplicate(offers) {
 }
 export function nonComplianceReasons(offer, now = Date.now()) {
   const reasons = [];
+  if (isBlockedSource(offer)) reasons.push("blocked_source_meteojob");
   if (!isRecentPublication(offer.sourcePublishedAt || offer.publishedAt, now))
     reasons.push("publication_outside_45_days");
   if (!domains.includes(offer.domain)) reasons.push("non_technical_domain");

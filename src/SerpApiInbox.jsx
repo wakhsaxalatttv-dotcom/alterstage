@@ -58,6 +58,10 @@ export function SerpApiInbox({ token, configured }) {
   }
   return (
     <section className="serpapi-inbox" aria-labelledby="serpapi-inbox-title">
+      <p className="muted">
+        Les annonces provenant de Meteojob sont exclues, y compris lorsqu’elles
+        sont relayées par un autre agrégateur.
+      </p>
       <h4 id="serpapi-inbox-title">Importer dans la file privée Google Jobs</h4>
       <p>
         Une page de la recherche sélectionnée en France par clic. Le test et
@@ -130,6 +134,18 @@ export function SerpApiInbox({ token, configured }) {
               <p className="muted">
                 Indication du fournisseur : {item.publicationText}
               </p>
+            )}
+            {item.analysis?.technologies?.length > 0 && (
+              <p>
+                Technologies repérées : {item.analysis.technologies.join(", ")}
+              </p>
+            )}
+            {item.analysis?.requiresReview?.length > 0 && (
+              <ul>
+                {item.analysis.requiresReview.map((reason) => (
+                  <li key={reason}>{reason}</li>
+                ))}
+              </ul>
             )}
             <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">
               Consulter la source

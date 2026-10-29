@@ -219,7 +219,9 @@ function App() {
               onClick={() => navigate("favorites")}
             >
               <Bookmark size={17} /> <span>Mes favoris</span>
-              {favorites.length > 0 && <small>{favorites.length}</small>}
+              {scopedFavorites.length > 0 && (
+                <small>{scopedFavorites.length}</small>
+              )}
             </button>
             <button
               aria-label="Mes alertes"

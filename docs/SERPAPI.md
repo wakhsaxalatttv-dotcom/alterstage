@@ -12,7 +12,7 @@ Routes privées : `GET /api/admin/serpapi`, `POST /api/admin/serpapi/test`. Le d
 
 ## Import privé et validation
 
-Le bouton **Importer Google Jobs** effectue une requête SerpApi pour la recherche sélectionnée : alternance/stage informatique, réseaux et télécoms, systèmes électroniques, maintenance industrielle, chimie/matériaux ou chimie/procédés. Une page seulement, sans pagination ni promesse d’exhaustivité. Test et import partagent le budget d’un appel par minute et trois par heure par instance. Aucun import au démarrage ni dans le planificateur général.
+Le bouton **Importer Google Jobs** effectue une requête SerpApi pour la recherche sélectionnée : alternance/stage informatique, réseaux et télécoms, systèmes électroniques, maintenance industrielle, chimie/matériaux ou chimie/procédés. Une page seulement, sans pagination ni promesse d’exhaustivité. Test et import partagent le budget d’un appel par minute et trois par heure par instance. Un import initial unique au démarrage est désormais prévu à la demande du propriétaire, comme détaillé ci-dessous. Le planificateur général ne collecte pas Google Jobs.
 
 Avant le clic, le responsable doit attester disposer des droits de conservation et de réutilisation des annonces et descriptions. L’accès technique à SerpApi ne prouve pas ces droits. Le serveur exige cette attestation ; aucun contenu n’est stocké par le test simple.
 
@@ -38,3 +38,15 @@ Tarifs et quotas du compte : https://serpapi.com/pricing
 Les prix actuels et droits de republication ne sont pas validés par ce code.
 
 Tests : `npm test`, `npm run test:serpapi`, `npm run test:serpapi-import`, `npm run build`. Ils utilisent des réponses fictives en mémoire et ne consomment pas de quota SerpApi.
+
+## Import initial demandé et exclusion Meteojob
+
+Le propriétaire a demandé un import direct avec analyse et exclusion de Meteojob. Au prochain lancement de `server/index.js`, si `SERPAPI_API_KEY` est disponible, **un appel** est effectué pour « alternance informatique » en France. Les résultats éligibles au préfiltre sont analysés (technologies explicitement mentionnées et informations restant à vérifier), dédoublonnés et stockés dans la file privée ; aucune date manquante ni validation n’est fabriquée. Les résultats sans date ou critères confirmés ne sont pas publiés automatiquement.
+
+Un marqueur atomique dans `metadata`, propre à cette demande, empêche les appels répétés au redémarrage et entre processus utilisant la même base. L’échec n’entraîne pas de boucle de nouvelle tentative ; le bouton privé permet de réessayer. Le disque SQLite doit être persistant : si toute la base est supprimée, le marqueur disparaît aussi. `SERPAPI_STARTUP_IMPORT=false` désactive cet import initial. Les tests ne le lancent qu’avec des réponses simulées ; le test de connexion manuel reste disponible. Le journal privé `serpapi-import-startup` donne les compteurs réels du serveur, sans clé ni URL contenant la clé.
+
+La politique partagée `shared/source-policy.js` bloque Meteojob par nom de fournisseur, domaine du lien original ou de candidature, champ `via` et options de candidature Google Jobs. Une annonce portant une provenance Meteojob est exclue même si un autre lien non Meteojob existe. Une simple mention dans le texte d’un employeur ne déclenche pas l’exclusion.
+
+Au démarrage, les anciennes annonces Meteojob approuvées, en attente ou expirées sont retirées ; leur historique reste privé. Les anciennes fiches Google Jobs concernées sont écartées. La règle s’applique aussi aux nouveaux dépôts, à LBA/France Travail/flux génériques, à la validation manuelle, aux liens repérés et aux favoris locaux affichés. Les sept annonces Meteojob de l’instantané versionné ont été supprimées ; aucune annonce de remplacement n’a été inventée. Le compteur des offres publiques peut donc baisser ou devenir nul jusqu’à réception d’offres éligibles d’autres sources.
+
+La clé Render et la base de production ne sont pas accessibles depuis le workspace : l’import et le retrait de production prennent effet lors du déploiement, et doivent être confirmés par les journaux Render. Un test local ne constitue pas une confirmation de collecte sur le site déployé.

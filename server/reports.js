@@ -1,3 +1,4 @@
+import { isBlockedSource } from "../shared/source-policy.js";
 import { randomUUID } from "node:crypto";
 import { ValidationError } from "./domain.js";
 import { externalOffers } from "../shared/external-offers.js";
@@ -22,7 +23,9 @@ export class Reports {
     );
     return externalOffers.filter(
       (offer) =>
-        !hidden.has(offer.id) && isRecentPublication(offer.publishedAt),
+        !hidden.has(offer.id) &&
+        !isBlockedSource(offer) &&
+        isRecentPublication(offer.publishedAt),
     );
   }
   async create(body) {
