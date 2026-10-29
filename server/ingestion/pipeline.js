@@ -291,8 +291,10 @@ export class IngestionPipeline {
       this.store.recordRun(report);
       reports.push(report);
     }
+    const audit = this.store.auditPublicOffers();
     return {
       reports,
+      audit,
       message: sources.length
         ? "Collecte terminée. Les dépôts et flux génériques attendent une validation ; les offres API éligibles restent explicitement non vérifiées."
         : "Aucune source configurée. Aucun flux ni offre n’a été inventé.",

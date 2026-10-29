@@ -1,3 +1,5 @@
+import { isTrainingEmployer } from "../../shared/employer-policy.js";
+import { isRecentPublication } from "../../shared/freshness.js";
 import { createHash } from "node:crypto";
 import { regions } from "../../src/domain.js";
 import { plainText } from "../enrichment.js";
@@ -53,6 +55,7 @@ export function parseLba(body, now = Date.now()) {
   const data = typeof body === "string" ? JSON.parse(body) : body;
   if (!Array.isArray(data.jobs)) throw new Error("Réponse LBA invalide");
   const excluded = {
+      old: 0,
       sandbox: 0,
       school: 0,
       inactive: 0,
@@ -78,9 +81,10 @@ export function parseLba(body, now = Date.now()) {
     }
     if (
       j.is_delegated !== false ||
-      /^(85)/.test(j.workplace?.domain?.naf?.code || "") ||
-      /\b(CFA|UIMM|école|ecole|campus|centre de formation)\b/i.test(
-        j.workplace?.name || "",
+      isTrainingEmployer(
+        j.workplace?.name || j.workplace?.legal_name,
+        j.workplace?.domain?.naf?.label,
+        j.workplace?.domain?.naf?.code,
       ) ||
       /RH Alternance|Bloom Alternance|Bretagne Alternance/i.test(label)
     ) {
@@ -95,6 +99,10 @@ export function parseLba(body, now = Date.now()) {
       expiry <= now
     ) {
       excluded.inactive++;
+      continue;
+    }
+    if (!isRecentPublication(j.offer?.publication?.creation, now)) {
+      excluded.old++;
       continue;
     }
     const domain = j.offer?.rome_codes

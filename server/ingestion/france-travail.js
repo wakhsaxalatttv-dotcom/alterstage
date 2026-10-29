@@ -1,3 +1,4 @@
+import { isTrainingEmployer } from "../../shared/employer-policy.js";
 import { createHash } from "node:crypto";
 import { dispatcher } from "./http.js";
 import { franceTravailDomains } from "./france-travail-domains.js";
@@ -372,9 +373,10 @@ export function parseFranceTravail(body, now = Date.now()) {
     }
     const employer = offer.entreprise;
     if (
-      /^85/.test(offer.codeNAF || "") ||
-      /\b(cfa|école|ecole|campus|centre de formation|organisme de formation)\b/i.test(
-        employer?.nom || "",
+      isTrainingEmployer(
+        employer?.nom,
+        offer.secteurActiviteLibelle,
+        offer.codeNAF,
       )
     ) {
       exclusions.school++;

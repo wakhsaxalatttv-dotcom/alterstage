@@ -3,7 +3,11 @@ import { DatabaseSync } from "node:sqlite";
 import { mkdirSync, readFileSync, existsSync, chmodSync } from "node:fs";
 import path from "node:path";
 import { createHash } from "node:crypto";
-import { publicOffer, ValidationError } from "./domain.js";
+import {
+  publicOffer,
+  nonComplianceReasons,
+  ValidationError,
+} from "./domain.js";
 import { QueryCache } from "./cache.js";
 import { searchText, extractKeywords } from "./enrichment.js";
 import { directory, domains, contracts, groupOf } from "../shared/catalog.js";
@@ -37,6 +41,7 @@ export class OfferStore {
     try {
       this.migrateLegacy(folder);
       this.seedDirectory();
+      this.lastComplianceAudit = this.auditPublicOffers();
     } catch (error) {
       this.db.close();
       throw error;
@@ -304,6 +309,74 @@ export class OfferStore {
       if (/UNIQUE constraint/.test(e.message)) return "duplicate";
       throw e;
     }
+  }
+  auditPublicOffers(now = Date.now()) {
+    return this.transaction(() => {
+      const rows = this.db
+        .prepare(
+          "SELECT id,payload FROM offers WHERE moderation='approved' AND status NOT IN ('expired','withdrawn')",
+        )
+        .all();
+      const audit = {
+        checked: rows.length,
+        withdrawn: 0,
+        expired: 0,
+        reasons: {},
+        items: [],
+      };
+      for (const row of rows) {
+        const offer = parse(row);
+        const reasons = nonComplianceReasons(offer, now);
+        if (!reasons.length) continue;
+        const expirationOnly = reasons.every((r) =>
+          [
+            "publication_outside_45_days",
+            "local_expiration",
+            "source_expiration",
+          ].includes(r),
+        );
+        if (expirationOnly) {
+          offer.status = "expired";
+          audit.expired++;
+        } else {
+          offer.status = "withdrawn";
+          offer.moderationStatus = "withdrawn";
+          audit.withdrawn++;
+        }
+        offer.reviewNote =
+          "Contrôle automatique de conformité : " + reasons.join(", ");
+        this.db
+          .prepare(
+            "UPDATE offers SET moderation=?,status=?,payload=? WHERE id=?",
+          )
+          .run(
+            offer.moderationStatus,
+            offer.status,
+            JSON.stringify(offer),
+            row.id,
+          );
+        audit.items.push({ id: offer.id, reasons });
+        for (const reason of reasons)
+          audit.reasons[reason] = (audit.reasons[reason] || 0) + 1;
+      }
+      if (audit.withdrawn || audit.expired) {
+        const date = new Date(now).toISOString();
+        this.recordRun({
+          sourceId: "catalogue-audit",
+          startedAt: date,
+          finishedAt: date,
+          status: "success",
+          created: 0,
+          updated: audit.withdrawn + audit.expired,
+          unchanged: 0,
+          duplicate: 0,
+          invalid: 0,
+          audit,
+          message: `Conformité : ${audit.withdrawn} annonce(s) retirée(s), ${audit.expired} expirée(s). Historique conservé en privé.`,
+        });
+      }
+      return audit;
+    });
   }
   publicConditions() {
     return {
@@ -599,6 +672,10 @@ export class OfferStore {
           Date.parse(offer.expiresAt) + 86400000 <= Date.now()
         )
           throw new ValidationError("Annonce trop ancienne ou expirée.");
+        if (nonComplianceReasons(offer).length)
+          throw new ValidationError(
+            "Cette annonce ne respecte pas les critères du catalogue (entreprise, domaine, contrat, lieu, source ou dates).",
+          );
         offer.moderationStatus = "approved";
         offer.status = "active";
         offer.lastVerifiedAt = new Date().toISOString();

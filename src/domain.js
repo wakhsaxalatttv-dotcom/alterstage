@@ -1,5 +1,6 @@
+import { isTrainingEmployer } from "../shared/employer-policy.js";
 import { isRecentPublication } from "../shared/freshness.js";
-import { inScope, groupOf } from "../shared/catalog.js";
+import { inScope, groupOf, contracts } from "../shared/catalog.js";
 export const regions = {
   "Auvergne-Rhône-Alpes": "01 03 07 15 26 38 42 43 63 69 73 74",
   "Bourgogne-Franche-Comté": "21 25 39 58 70 71 89 90",
@@ -47,9 +48,12 @@ export function selectOffers(offers, filters, now = Date.now()) {
       .toLowerCase();
   return offers
     .filter(inScope)
+    .filter((o) => contracts.includes(o.contract))
+    .filter((o) => !isTrainingEmployer(o.company?.name, o.company?.sector))
     .filter((offer) => isRecentPublication(offer.publishedAt, now))
     .filter((o) => !["expired", "withdrawn"].includes(o.status))
     .filter((o) => !o.expiresAt || Date.parse(o.expiresAt) + 86400000 > now)
+    .filter((o) => !o.sourceExpiresAt || Date.parse(o.sourceExpiresAt) > now)
     .filter(
       (o) =>
         !filters.query ||

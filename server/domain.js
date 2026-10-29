@@ -1,3 +1,4 @@
+import { isTrainingEmployer } from "../shared/employer-policy.js";
 import { isRecentPublication } from "../shared/freshness.js";
 import { domains, contracts } from "../shared/catalog.js";
 import { regions } from "../src/domain.js";
@@ -91,11 +92,7 @@ export function normalizeSubmission(
     );
   }
   const companyName = required(body.companyName, "Entreprise", 120);
-  if (
-    /(?:^|\s)(?:école|ecole|campus|cfa|centre de formation)(?:\s|$)/i.test(
-      companyName,
-    )
-  )
+  if (isTrainingEmployer(companyName, body.sector || ""))
     throw new ValidationError(
       "Les annonces d’écoles et organismes de formation ne sont pas acceptées.",
     );
@@ -291,15 +288,56 @@ export function deduplicate(offers) {
     [],
   );
 }
+export function nonComplianceReasons(offer, now = Date.now()) {
+  const reasons = [];
+  if (!isRecentPublication(offer.sourcePublishedAt || offer.publishedAt, now))
+    reasons.push("publication_outside_45_days");
+  if (!domains.includes(offer.domain)) reasons.push("non_technical_domain");
+  if (!contracts.includes(offer.contract)) reasons.push("ineligible_contract");
+  if (
+    !Object.hasOwn(regions, offer.location?.region || "") ||
+    !offer.location?.label?.trim()
+  )
+    reasons.push("location_not_established_in_france");
+  if (!offer.company?.name?.trim()) reasons.push("missing_employer");
+  if (
+    isTrainingEmployer(
+      offer.company?.name,
+      offer.company?.sector,
+      offer.company?.nafCode,
+    )
+  )
+    reasons.push("training_employer");
+  const source = safeUrl(offer.sourceUrl);
+  if (
+    !source ||
+    /(^|\.)(google\.[a-z.]+|bing\.com)$/.test(new URL(source).hostname)
+  )
+    reasons.push("missing_original_source");
+  if (
+    !Number.isFinite(Date.parse(offer.expiresAt)) ||
+    Date.parse(offer.expiresAt) + 86400000 <= now
+  )
+    reasons.push("local_expiration");
+  if (
+    offer.sourceExpiresAt &&
+    (!Number.isFinite(Date.parse(offer.sourceExpiresAt)) ||
+      Date.parse(offer.sourceExpiresAt) <= now)
+  )
+    reasons.push("source_expiration");
+  if (
+    offer.sourceId === "la-bonne-alternance" &&
+    offer.sourceStatus &&
+    offer.sourceStatus !== "Active"
+  )
+    reasons.push("source_inactive");
+  return reasons;
+}
 export function publicOffer(offer, now = Date.now()) {
   if (
-    !isRecentPublication(offer.sourcePublishedAt || offer.publishedAt, now) ||
+    nonComplianceReasons(offer, now).length ||
     offer.moderationStatus !== "approved" ||
-    !domains.includes(offer.domain) ||
-    !contracts.includes(offer.contract) ||
-    ["expired", "withdrawn"].includes(offer.status) ||
-    (offer.sourceExpiresAt && Date.parse(offer.sourceExpiresAt) <= now) ||
-    Date.parse(offer.expiresAt) + 86400000 <= now
+    ["expired", "withdrawn"].includes(offer.status)
   )
     return null;
   // A dated manual review expires after seven days unless an editor rechecks it.

@@ -5,6 +5,10 @@ import { closeFeedConnections } from "./ingestion/http.js";
 const app = createApp(),
   port = Number(process.env.PORT || 3001);
 console.info(app.locals.adminConfiguration.message);
+const audit = app.locals.store.lastComplianceAudit;
+console.info(
+  `[Catalogue] Contrôle de conformité : ${audit.checked} annonce(s) contrôlée(s), ${audit.withdrawn} retirée(s), ${audit.expired} expirée(s).`,
+);
 await seedBundledCatalogue(app.locals.store);
 const server = app.listen(port, "0.0.0.0", () =>
   console.log(`Offres Fraîches : serveur prêt sur le port ${port}`),
