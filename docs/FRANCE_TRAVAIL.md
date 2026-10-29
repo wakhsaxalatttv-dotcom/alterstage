@@ -61,3 +61,7 @@ La page privée `/administration/`, section Sources, permet également de lancer
 ## Validation locale sans secrets
 
 `npm test` utilise des réponses entièrement fictives en mémoire et des bases temporaires pour OAuth, cache, pagination, dédoublonnage, dates, contrats, exclusions, normalisation et retraits. Ces tests ne prouvent pas la connexion authentifiée de Render. Les variables Render ne sont pas accessibles depuis le workspace cloud.
+
+### Diagnostic OAuth précis
+
+Les erreurs d’authentification indiquent désormais le statut HTTP et, si fourni, un code standard reconnu uniquement. `invalid_client` oriente vers le couple d’identifiants de la même application ; `invalid_scope` ou `unauthorized_client` vers les droits/abonnements API. Les champs `error_description`, réponses arbitraires, jetons, secrets et URL de redirection ne sont jamais repris dans les logs. Une erreur serveur HTTP 5xx est distinguée d’un rejet des identifiants. Une présence de variables ne prouve jamais la validité des clés.

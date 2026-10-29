@@ -76,6 +76,58 @@ async function jsonResponse(response) {
     reader.releaseLock();
   }
 }
+const oauthDiagnostics = {
+  invalid_client:
+    "Identifiant client ou secret refusé. Recopier le couple client_id/client_secret de la même application dans Render.",
+  invalid_scope:
+    "Droits OAuth demandés non accordés. Vérifier que l’application est abonnée à l’API Offres d’emploi et autorisée pour api_offresdemploiv2 o2dsoffre.",
+  unauthorized_client:
+    "Application non autorisée pour cet accès. Vérifier son activation et son abonnement à l’API Offres d’emploi dans l’espace partenaire.",
+  access_denied:
+    "Accès refusé par France Travail. Vérifier l’autorisation de l’application dans l’espace partenaire.",
+  invalid_request:
+    "Requête OAuth refusée. Vérifier la configuration de l’application partenaire et le format de ses identifiants.",
+  unsupported_grant_type:
+    "Le serveur ne permet pas le flux client_credentials demandé pour cette application.",
+  temporarily_unavailable:
+    "Le service d’authentification France Travail est temporairement indisponible. Réessayer plus tard.",
+};
+async function oauthFailure(response) {
+  let remoteCode;
+  try {
+    const body = await jsonResponse(response);
+    // Only fixed standard codes may leave this boundary. Never log descriptions or arbitrary OAuth response fields.
+    if (Object.hasOwn(oauthDiagnostics, body?.error)) remoteCode = body.error;
+  } catch {
+    /* Non-JSON responses still produce a safe HTTP-only diagnostic. */
+  }
+  const prefix = `France Travail : OAuth HTTP ${response.status}${remoteCode ? ` (${remoteCode})` : ""}. `;
+  if (remoteCode)
+    return failure("authentication", prefix + oauthDiagnostics[remoteCode]);
+  if (response.status >= 300 && response.status < 400)
+    return failure(
+      "authentication",
+      prefix +
+        "Redirection du service d’authentification non suivie pour protéger les identifiants. Vérifier l’adresse OAuth officielle.",
+    );
+  if (response.status === 429)
+    return failure(
+      "rate_limited",
+      prefix +
+        "Quota du service d’authentification atteint. Réessayer plus tard.",
+    );
+  if (response.status >= 500)
+    return failure(
+      "network",
+      prefix + "Service d’authentification indisponible. Réessayer plus tard.",
+    );
+  return failure(
+    "authentication",
+    prefix +
+      "Authentification refusée. Vérifier le couple client_id/client_secret et l’abonnement de cette application à l’API Offres d’emploi.",
+  );
+}
+
 // The connector can only call these two fixed HTTPS endpoints; secrets never enter source files or URLs.
 export function createFranceTravailClient({
   env = process.env,
@@ -121,11 +173,7 @@ export function createFranceTravailClient({
         scope: "api_offresdemploiv2 o2dsoffre",
       }),
     });
-    if (!response.ok)
-      throw failure(
-        "authentication",
-        "France Travail : authentification refusée. Vérifier les deux identifiants et l’accès à l’API Offres d’emploi.",
-      );
+    if (!response.ok) throw await oauthFailure(response);
     const data = await jsonResponse(response);
     if (
       typeof data.access_token !== "string" ||

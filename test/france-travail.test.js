@@ -423,3 +423,49 @@ test("Incomplete FT coverage stays partial in the persisted ingestion report whi
     await rm(directory, { recursive: true, force: true });
   }
 });
+test("OAuth diagnostics distinguish known causes and never echo response descriptions or secrets", async () => {
+  for (const [error, expected] of [
+    ["invalid_client", "même application"],
+    ["invalid_scope", "Droits OAuth"],
+    ["unauthorized_client", "Application non autorisée"],
+    ["unexpected-server-text", "Authentification refusée"],
+  ]) {
+    const client = createFranceTravailClient({
+      env: credentials,
+      wait: async () => {},
+      fetcher: async () =>
+        json(
+          {
+            error,
+            error_description: credentials.FRANCE_TRAVAIL_CLIENT_SECRET,
+            access_token: "must-not-leak",
+          },
+          400,
+        ),
+    });
+    await assert.rejects(client.collect(), (failure) => {
+      assert.ok(failure.message.includes("OAuth HTTP 400"));
+      assert.ok(failure.message.includes(expected));
+      assert.ok(
+        !failure.message.includes(credentials.FRANCE_TRAVAIL_CLIENT_SECRET),
+      );
+      assert.ok(!failure.message.includes("must-not-leak"));
+      if (error === "unexpected-server-text")
+        assert.ok(!failure.message.includes(error));
+      return true;
+    });
+  }
+  const unavailable = createFranceTravailClient({
+    env: credentials,
+    wait: async () => {},
+    fetcher: async () =>
+      new Response("private upstream details", { status: 503 }),
+  });
+  await assert.rejects(
+    unavailable.collect(),
+    (error) =>
+      error.code === "network" &&
+      error.message.includes("HTTP 503") &&
+      !error.message.includes("private upstream"),
+  );
+});
