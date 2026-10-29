@@ -1,3 +1,4 @@
+import { SerpApiProbe } from "./SerpApiProbe";
 import { RapidApiProbe } from "./RapidApiProbe";
 import React, { useEffect, useState, useRef } from "react";
 import { RefreshCw, Database, ExternalLink } from "lucide-react";
@@ -48,6 +49,7 @@ export function SourcePanel({ token, onChanged }) {
   }
   return (
     <section className="source-panel">
+      <SerpApiProbe token={token} />
       <RapidApiProbe token={token} />
       <h2>
         <Database size={20} />

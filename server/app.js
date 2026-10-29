@@ -1,3 +1,4 @@
+import { createSerpApiProbe } from "./ingestion/serpapi.js";
 import { createRapidApiProbe } from "./ingestion/rapidapi-linkedin.js";
 import { administrationConfiguration } from "./admin-config.js";
 import { Reports } from "./reports.js";
@@ -13,6 +14,7 @@ export function createApp({
   adminToken = process.env.ADMIN_TOKEN || "",
   pipelineOptions = {},
   rapidApiOptions = {},
+  serpApiOptions = {},
 } = {}) {
   const app = express(),
     store = new OfferStore(folder),
@@ -25,6 +27,7 @@ export function createApp({
   app.locals.reports = reports;
   app.locals.pipeline = new IngestionPipeline(store, pipelineOptions);
   const rapidApiProbe = createRapidApiProbe(rapidApiOptions);
+  const serpApiProbe = createSerpApiProbe(serpApiOptions);
   app.disable("x-powered-by");
   if (process.env.RENDER === "true") app.set("trust proxy", 1);
   app.use(compression({ threshold: 1024 }));
@@ -191,6 +194,37 @@ export function createApp({
       return res.status(429).json({ message: result.message });
     store.recordRun({
       sourceId: "rapidapi-linkedin-test",
+      startedAt,
+      finishedAt: new Date().toISOString(),
+      status: result.status,
+      created: 0,
+      updated: 0,
+      unchanged: 0,
+      duplicate: 0,
+      invalid: 0,
+      message: result.message,
+      diagnostic: result,
+    });
+    res.json(result);
+  });
+  app.get("/api/admin/serpapi", admin, (_req, res) => {
+    const latest = store
+      .runs()
+      .find((r) => r.sourceId === "serpapi-test");
+    res.json({
+      configured: serpApiProbe.configured(),
+      latest: latest?.diagnostic || null,
+    });
+  });
+  app.post("/api/admin/serpapi/test", admin, async (_req, res) => {
+    const startedAt = new Date().toISOString();
+    const result = await serpApiProbe.run();
+    if (result.status === "not_configured")
+      return res.status(503).json({ message: result.message });
+    if (result.status === "limited")
+      return res.status(429).json({ message: result.message });
+    store.recordRun({
+      sourceId: "serpapi-test",
       startedAt,
       finishedAt: new Date().toISOString(),
       status: result.status,
