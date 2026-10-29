@@ -1,3 +1,4 @@
+import { CompanyReviewPanel } from "./CompanyReviewPanel";
 import { ReportsPanel } from "./ReportsPanel";
 import React, { useState, useEffect } from "react";
 import { ShieldCheck, ExternalLink, Check, X, RotateCcw } from "lucide-react";
@@ -12,11 +13,15 @@ export function Moderation({ onChanged }) {
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
     [view, setView] = useState("pending");
+  const [companyRevision, setCompanyRevision] = useState(0);
   const [counts, setCounts] = useState({}),
     [adminPage, setAdminPage] = useState(1),
     [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
   useEffect(() => {
-    if (authenticated && !["reports", "sources", "import"].includes(view))
+    if (
+      authenticated &&
+      !["reports", "sources", "import", "companies"].includes(view)
+    )
       load();
   }, [view, adminPage]);
   async function load(event) {
@@ -81,7 +86,15 @@ export function Moderation({ onChanged }) {
             </p>
           </div>
           <div className="admin-toolbar">
-            <button className="secondary" onClick={load} disabled={busy}>
+            <button
+              className="secondary"
+              onClick={
+                view === "companies"
+                  ? () => setCompanyRevision((v) => v + 1)
+                  : load
+              }
+              disabled={busy}
+            >
               <RotateCcw size={15} /> Actualiser
             </button>
             <button
@@ -107,6 +120,7 @@ export function Moderation({ onChanged }) {
               ["withdrawn", "Retirées"],
               ["import", "Ajouter depuis une source"],
               ["sources", "Sources & collecte"],
+              ["companies", "Entreprises"],
               ["reports", "Signalements"],
             ].map(([id, label]) => (
               <button
@@ -118,12 +132,18 @@ export function Moderation({ onChanged }) {
                 }}
               >
                 {label}
-                {!["import", "sources", "reports"].includes(id) &&
+                {!["import", "sources", "reports", "companies"].includes(id) &&
                   ` (${counts[id] || 0})`}
               </button>
             ))}
           </div>
-          {view === "reports" ? (
+          {view === "companies" ? (
+            <CompanyReviewPanel
+              key={companyRevision}
+              token={token}
+              onChanged={onChanged}
+            />
+          ) : view === "reports" ? (
             <ReportsPanel token={token} onChanged={onChanged} />
           ) : view === "sources" ? (
             <SourcePanel token={token} onChanged={onChanged} />

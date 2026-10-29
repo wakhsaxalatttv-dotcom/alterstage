@@ -58,3 +58,29 @@ CREATE INDEX IF NOT EXISTS reports_status_date ON offer_reports(status,created_a
 CREATE TABLE IF NOT EXISTS hidden_references (
  id TEXT PRIMARY KEY, hidden_at TEXT NOT NULL, reason TEXT NOT NULL DEFAULT ''
 );
+
+CREATE VIRTUAL TABLE IF NOT EXISTS company_search USING fts5(company_id UNINDEXED, document, tokenize='unicode61 remove_diacritics 2');
+CREATE TABLE IF NOT EXISTS company_tag_index (
+ company_id TEXT NOT NULL REFERENCES companies(id) ON DELETE CASCADE, tag TEXT NOT NULL,
+ PRIMARY KEY(company_id,tag)
+);
+CREATE INDEX IF NOT EXISTS company_tag_lookup ON company_tag_index(tag,company_id);
+CREATE TABLE IF NOT EXISTS company_location_index (
+ company_id TEXT NOT NULL REFERENCES companies(id) ON DELETE CASCADE, location_key TEXT NOT NULL,
+ PRIMARY KEY(company_id,location_key)
+);
+CREATE INDEX IF NOT EXISTS company_location_lookup ON company_location_index(location_key,company_id);
+CREATE TABLE IF NOT EXISTS company_hosting_reviews (
+ company_id TEXT PRIMARY KEY REFERENCES companies(id) ON DELETE CASCADE,
+ reviewed_at TEXT NOT NULL, valid_until INTEGER NOT NULL,
+ payload TEXT NOT NULL CHECK(json_valid(payload))
+);
+CREATE INDEX IF NOT EXISTS company_hosting_freshness ON company_hosting_reviews(valid_until,company_id);
+CREATE TABLE IF NOT EXISTS company_hosting_contracts (
+ company_id TEXT NOT NULL REFERENCES companies(id) ON DELETE CASCADE, contract TEXT NOT NULL,
+ PRIMARY KEY(company_id,contract)
+);
+CREATE INDEX IF NOT EXISTS company_hosting_contract_lookup ON company_hosting_contracts(contract,company_id);
+CREATE TABLE IF NOT EXISTS company_exclusions (
+ company_id TEXT PRIMARY KEY REFERENCES companies(id) ON DELETE CASCADE
+);

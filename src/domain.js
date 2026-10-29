@@ -30,6 +30,7 @@ export function regionOf(offer) {
   );
 }
 export const defaultFilters = {
+  companyId: "",
   query: "",
   region: "",
   domain: "",
@@ -48,6 +49,7 @@ export function selectOffers(offers, filters, now = Date.now()) {
       .toLowerCase();
   return offers
     .filter(inScope)
+    .filter((o) => !filters.companyId || o.company.id === filters.companyId)
     .filter((o) => contracts.includes(o.contract))
     .filter((o) => !isTrainingEmployer(o.company?.name, o.company?.sector))
     .filter((offer) => isRecentPublication(offer.publishedAt, now))

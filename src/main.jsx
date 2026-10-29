@@ -66,6 +66,14 @@ function App() {
     [alerts, setAlerts, alertError] = useLocal("offres-alerts-v1", []),
     [reports, setReports, reportError] = useLocal("offres-reports-v1", []);
   const [listPage, setListPage] = useState(1);
+  const [companyScopeName, setCompanyScopeName] = useState("");
+  function browseCompanyOffers(company) {
+    setFilters({ ...defaultFilters, companyId: company.id });
+    setCompanyScopeName(company.name);
+    setModal(null);
+    navigate("search");
+  }
+
   useEffect(() => setListPage(1), [filters]);
   useEffect(() => {
     const controller = new AbortController();
@@ -113,6 +121,7 @@ function App() {
       {
         id: crypto.randomUUID(),
         filters: { ...filters },
+        companyName: filters.companyId ? companyScopeName : null,
         createdAt: new Date().toISOString(),
       },
     ]);
@@ -339,6 +348,7 @@ function App() {
         ) : page === "companies" ? (
           <Companies
             offers={offers}
+            browseOffers={browseCompanyOffers}
             openCompany={(company) => setModal({ type: "company", company })}
           />
         ) : page === "alerts" ? (
@@ -362,12 +372,15 @@ function App() {
                       <h2>{a.filters.query || "Stages et alternances"}</h2>
                       <p>
                         {Object.entries(a.filters)
-                          .filter(([k, v]) => v && k !== "query")
+                          .filter(
+                            ([k, v]) => v && k !== "query" && k !== "companyId",
+                          )
                           .map(([k, v]) =>
                             k === "age" ? `Moins de ${v} jours` : v,
                           )
                           .join(" · ") || "Tous les filtres"}{" "}
-                        · Créée le {date(a.createdAt)}
+                        {a.companyName && ` · ${a.companyName}`} · Créée le{" "}
+                        {date(a.createdAt)}
                       </p>
                       <AlertMatches filters={a.filters} />
                     </div>
@@ -376,6 +389,7 @@ function App() {
                         className="secondary"
                         onClick={() => {
                           setFilters({ ...defaultFilters, ...a.filters });
+                          setCompanyScopeName(a.companyName || "");
                           navigate("search");
                         }}
                       >
@@ -519,6 +533,16 @@ function App() {
               </aside>
             )}
             <section className="results" aria-label="Résultats de recherche">
+              {page === "search" && filters.companyId && (
+                <div className="company-scope">
+                  <strong>
+                    Offres de {companyScopeName || "l’entreprise sélectionnée"}
+                  </strong>
+                  <button onClick={() => change("companyId", "")}>
+                    Toutes les entreprises <X size={14} />
+                  </button>
+                </div>
+              )}
               <div className="results-heading">
                 <div>
                   <h2>
@@ -962,7 +986,11 @@ function App() {
             </>
           )}
           {modal.type === "company" && (
-            <CompanyProfile company={modal.company} openOffer={openOffer} />
+            <CompanyProfile
+              company={modal.company}
+              openOffer={openOffer}
+              browseOffers={browseCompanyOffers}
+            />
           )}
           {modal.type === "report" && (
             <ReportForm

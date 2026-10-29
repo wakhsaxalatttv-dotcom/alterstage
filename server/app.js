@@ -152,6 +152,12 @@ export function createApp({
   app.post("/api/admin/reports/:id/review", admin, (req, res) =>
     res.json(reports.review(req.params.id, req.body || {})),
   );
+  app.get("/api/admin/companies", admin, async (req, res) =>
+    res.json(await store.companies(queryParams(req))),
+  );
+  app.post("/api/admin/companies/:id/review", admin, async (req, res) =>
+    res.json(await store.reviewCompany(req.params.id, req.body || {})),
+  );
   app.get("/api/admin/submissions", admin, async (req, res) =>
     res.json(await store.adminQuery(queryParams(req))),
   );

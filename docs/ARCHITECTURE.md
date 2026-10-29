@@ -23,7 +23,7 @@ flowchart LR
   A --> U[Recherche et vue rapide React]
 ```
 
-La récupération d’un flux n’est jamais une vérification. Le badge est daté, expire après sept jours, et mentionne le périmètre technique uniquement si celui-ci a été relu. Une date de mise à jour source est distinguée de la réception dans le catalogue. Dares publie notamment des statistiques et ne doit pas être présenté comme un flux de postes à pourvoir. France Travail reste désactivé ; un éventuel adaptateur demanderait des habilitations et conditions propres, pas un scraping.
+La récupération d’un flux n’est jamais une vérification. Le badge est daté, expire après sept jours, et mentionne le périmètre technique uniquement si celui-ci a été relu. Une date de mise à jour source est distinguée de la réception dans le catalogue. Dares publie notamment des statistiques et ne doit pas être présenté comme un flux de postes à pourvoir. France Travail dispose désormais d’un connecteur OAuth conditionné à ses habilitations et variables serveur ; voir `FRANCE_TRAVAIL.md`. RapidAPI reste un test privé, sans import actif ni scraping de LinkedIn.
 
 ## 2. Recherche et vitesse
 
@@ -59,3 +59,7 @@ L’application ajoute une base solide pour un pilote en production, pas toutes 
 Un instantané daté de 47 offres d’alternance LBA est désormais chargé au démarrage. La sélection source fonctionne sans badge humain, avec une politique spécifique « active dans l’API, disponibilité à confirmer ». Les anciennes annonces sont incluses à la demande explicite du responsable ; les dépôts et flux génériques conservent les règles de modération précédentes. Les sites d’entreprise absents sont laissés nuls, et les deux types de contrats sont indexés lorsqu’ils sont tous deux acceptés. La table `offer_contracts` et son index permettent ce filtrage sans perdre le second type de contrat. La date exacte d’expiration source prime sur l’échéance interne.
 
 L’intégration ne donne aucun droit de monétisation : voir `config/DATA_LICENSE.md`. Les données de test/sandbox et les entreprises à candidature spontanée sont exclues. Une reprise de l’instantané ne peut pas écraser un état plus récent ou annuler un refus/retrait manuel. La source LBA est choisie par défaut si sa clé est disponible et qu’aucun fichier de sources personnalisé n’est configuré ; la périodicité par défaut devient trois heures avec cette clé. Sans clé côté déploiement, le site sert uniquement l’instantané daté.
+
+## Annuaire et critères d’accueil
+
+La mise à jour de l’annuaire est décrite dans [COMPANY_CATALOGUE.md](COMPANY_CATALOGUE.md) : 56 fiches initiales, provenance par champ, distinction identité/accueil/offres, revue privée datée, critères périssables, FTS5 et filtres indexés. Le plan par étapes, les limites de vérification et les mesures locales y sont consignés.

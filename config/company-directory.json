@@ -1,0 +1,989 @@
+{
+  "sourceNote": "Identités et localisations déclarées sur les profils techniques publics des organisations, consultés le 29 octobre 2026. Expertise classée éditorialement ; aucun accueil ni effectif n’est présumé.",
+  "companies": [
+    {
+      "id": "jolicode.com",
+      "name": "JoliCode",
+      "website": "https://jolicode.com",
+      "focus": "Services de développement logiciel",
+      "type": "ESN",
+      "tags": [
+        "Dév Web/Cloud"
+      ],
+      "location": "Paris, France",
+      "identitySourceUrl": "https://github.com/jolicode",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/jolicode",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/jolicode",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/jolicode",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "jolicode.com"
+    },
+    {
+      "id": "theodo.fr",
+      "name": "Theodo FR",
+      "website": null,
+      "focus": "Conception et développement de produits numériques",
+      "type": "ESN",
+      "tags": [
+        "Dév Web/Cloud"
+      ],
+      "location": "Paris",
+      "identitySourceUrl": "https://github.com/theodo",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/theodo",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/theodo",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "theodo.fr"
+    },
+    {
+      "id": "marmelab.com",
+      "name": "marmelab",
+      "website": "https://marmelab.com/",
+      "focus": "Développement d’applications et logiciels open source",
+      "type": "ESN",
+      "tags": [
+        "Dév Web/Cloud"
+      ],
+      "location": "France",
+      "identitySourceUrl": "https://github.com/marmelab",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/marmelab",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/marmelab",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/marmelab/react-admin/blob/master/README.md",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "marmelab.com"
+    },
+    {
+      "id": "blog.ippon.fr",
+      "name": "Ippon Technologies",
+      "website": "https://blog.ippon.fr",
+      "focus": "Conseil et ingénierie logicielle",
+      "type": "ESN",
+      "tags": [
+        "Dév Web/Cloud",
+        "Data & IA"
+      ],
+      "location": "France, USA and Australia",
+      "identitySourceUrl": "https://github.com/ippontech",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/ippontech",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/ippontech",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/ippontech",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "blog.ippon.fr"
+    },
+    {
+      "id": "eleven-labs.com",
+      "name": "Eleven Labs",
+      "website": "https://eleven-labs.com/",
+      "focus": "Ingénierie logicielle et développement web",
+      "type": "ESN",
+      "tags": [
+        "Dév Web/Cloud"
+      ],
+      "location": "Paris",
+      "identitySourceUrl": "https://github.com/eleven-labs",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/eleven-labs",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/eleven-labs",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/eleven-labs",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "eleven-labs.com"
+    },
+    {
+      "id": "arolla.fr",
+      "name": "Arolla",
+      "website": null,
+      "focus": "Conseil et développement logiciel",
+      "type": "ESN",
+      "tags": [
+        "Dév Web/Cloud"
+      ],
+      "location": "Paris",
+      "identitySourceUrl": "https://github.com/arolla",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/arolla",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/arolla",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "arolla.fr"
+    },
+    {
+      "id": "bearstech.com",
+      "name": "Bearstech",
+      "website": null,
+      "focus": "Infrastructures et services numériques",
+      "type": "Entreprise",
+      "tags": [
+        "Systèmes & Infrastructure"
+      ],
+      "location": "Paris, France",
+      "identitySourceUrl": "https://github.com/bearstech",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/bearstech",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/bearstech",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "bearstech.com"
+    },
+    {
+      "id": "easter-eggs.com",
+      "name": "Easter-eggs",
+      "website": "https://www.easter-eggs.com",
+      "focus": "Services et logiciels libres",
+      "type": "ESN",
+      "tags": [
+        "Systèmes & Infrastructure",
+        "Dév Web/Cloud"
+      ],
+      "location": null,
+      "identitySourceUrl": "https://github.com/Easter-eggs",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/Easter-eggs",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/Easter-eggs",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "easter-eggs.com"
+    },
+    {
+      "id": "camptocamp.com",
+      "name": "Camptocamp",
+      "website": "https://www.camptocamp.com/",
+      "focus": "Solutions logicielles open source",
+      "type": "ESN",
+      "tags": [
+        "Dév Web/Cloud",
+        "Systèmes & Infrastructure"
+      ],
+      "location": "Lausanne Switzerland / Chambéry France / München Germany",
+      "identitySourceUrl": "https://github.com/camptocamp",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/camptocamp",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/camptocamp",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/camptocamp",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "camptocamp.com"
+    },
+    {
+      "id": "makina-corpus.com",
+      "name": "Makina Corpus",
+      "website": null,
+      "focus": "Développement logiciel et géomatique",
+      "type": "ESN",
+      "tags": [
+        "Dév Web/Cloud",
+        "Data & IA"
+      ],
+      "location": "France",
+      "identitySourceUrl": "https://github.com/makinacorpus",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/makinacorpus",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/makinacorpus",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "makina-corpus.com"
+    },
+    {
+      "id": "oslandia.com",
+      "name": "Oslandia",
+      "website": null,
+      "focus": "Logiciels et systèmes d’information géographique",
+      "type": "Entreprise",
+      "tags": [
+        "Dév Web/Cloud",
+        "Data & IA"
+      ],
+      "location": "France",
+      "identitySourceUrl": "https://github.com/Oslandia",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/Oslandia",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/Oslandia",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "oslandia.com"
+    },
+    {
+      "id": "logilab.org",
+      "name": "Logilab",
+      "website": null,
+      "focus": "Ingénierie logicielle et données",
+      "type": "Entreprise",
+      "tags": [
+        "Dév Web/Cloud",
+        "Data & IA"
+      ],
+      "location": "Paris - France",
+      "identitySourceUrl": "https://github.com/logilab",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/logilab",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/logilab",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "logilab.org"
+    },
+    {
+      "id": "codelutin.com",
+      "name": "Code Lutin",
+      "website": null,
+      "focus": "Développement logiciel et open source",
+      "type": "ESN",
+      "tags": [
+        "Dév Web/Cloud"
+      ],
+      "location": "Nantes, FR",
+      "identitySourceUrl": "https://github.com/codelutin",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/codelutin",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/codelutin",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "codelutin.com"
+    },
+    {
+      "id": "dalibo.com",
+      "name": "Dalibo",
+      "website": "https://www.dalibo.com",
+      "focus": "Services autour des bases de données PostgreSQL",
+      "type": "Entreprise",
+      "tags": [
+        "Systèmes & Infrastructure",
+        "Data & IA"
+      ],
+      "location": "France",
+      "identitySourceUrl": "https://github.com/dalibo",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/dalibo",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/dalibo",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/dalibo",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "dalibo.com"
+    },
+    {
+      "id": "dev.entrouvert.org",
+      "name": "Entr'ouvert",
+      "website": "https://dev.entrouvert.org",
+      "focus": "Services et logiciels libres",
+      "type": "Entreprise",
+      "tags": [
+        "Dév Web/Cloud"
+      ],
+      "location": "Paris",
+      "identitySourceUrl": "https://github.com/entrouvert",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/entrouvert",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/entrouvert",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/entrouvert",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "dev.entrouvert.org"
+    },
+    {
+      "id": "algoo.fr",
+      "name": "algoo",
+      "website": "https://www.algoo.fr",
+      "focus": "Développement et services logiciels",
+      "type": "Entreprise",
+      "tags": [
+        "Dév Web/Cloud"
+      ],
+      "location": "Grenoble, France",
+      "identitySourceUrl": "https://github.com/algoo",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/algoo",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/algoo",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/algoo",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "algoo.fr"
+    },
+    {
+      "id": "worteks.com",
+      "name": "Worteks",
+      "website": "https://worteks.com",
+      "focus": "Services et infrastructures open source",
+      "type": "ESN",
+      "tags": [
+        "Systèmes & Infrastructure"
+      ],
+      "location": "Paris",
+      "identitySourceUrl": "https://github.com/Worteks",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/Worteks",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/Worteks",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/Worteks",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "worteks.com"
+    },
+    {
+      "id": "linagora.com",
+      "name": "LINAGORA",
+      "website": "https://linagora.com/",
+      "focus": "Édition et services logiciels open source",
+      "type": "Entreprise",
+      "tags": [
+        "Dév Web/Cloud",
+        "Systèmes & Infrastructure"
+      ],
+      "location": "France",
+      "identitySourceUrl": "https://github.com/linagora",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/linagora",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/linagora",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/linagora",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "linagora.com"
+    },
+    {
+      "id": "bluemind.net",
+      "name": "BlueMind",
+      "website": null,
+      "focus": "Édition de logiciels de messagerie collaborative",
+      "type": "Entreprise",
+      "tags": [
+        "Dév Web/Cloud",
+        "Systèmes & Infrastructure"
+      ],
+      "location": "France",
+      "identitySourceUrl": "https://github.com/bluemind-net",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/bluemind-net",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/bluemind-net",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "bluemind.net"
+    },
+    {
+      "id": "vates.tech",
+      "name": "Vates",
+      "website": "https://vates.tech/",
+      "focus": "Virtualisation et infrastructures open source",
+      "type": "Entreprise",
+      "tags": [
+        "Systèmes & Infrastructure"
+      ],
+      "location": "Grenoble (France)",
+      "identitySourceUrl": "https://github.com/vatesfr",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/vatesfr",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/vatesfr",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/vatesfr/.github/blob/main/profile/README.md",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "vates.tech"
+    },
+    {
+      "id": "scalingo.com",
+      "name": "Scalingo",
+      "website": "https://scalingo.com",
+      "focus": "Plateforme cloud et hébergement d’applications",
+      "type": "Hébergeur cloud",
+      "tags": [
+        "Dév Web/Cloud",
+        "Systèmes & Infrastructure"
+      ],
+      "location": "Strasbourg, France",
+      "identitySourceUrl": "https://github.com/Scalingo",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/Scalingo",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/Scalingo",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/Scalingo",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "scalingo.com"
+    },
+    {
+      "id": "scaleway.com",
+      "name": "Scaleway",
+      "website": "https://scaleway.com",
+      "focus": "Services cloud et infrastructures",
+      "type": "Hébergeur cloud",
+      "tags": [
+        "Systèmes & Infrastructure"
+      ],
+      "location": "Paris, France",
+      "identitySourceUrl": "https://github.com/scaleway",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/scaleway",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/scaleway",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/scaleway",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "scaleway.com"
+    },
+    {
+      "id": "gandi.net",
+      "name": "Gandi",
+      "website": "https://www.gandi.net",
+      "focus": "Services Internet et hébergement",
+      "type": "Hébergeur cloud",
+      "tags": [
+        "Systèmes & Infrastructure",
+        "Réseaux & Télécoms"
+      ],
+      "location": "Paris, San Francisco",
+      "identitySourceUrl": "https://github.com/gandi",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/gandi",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/gandi",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/gandi",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "gandi.net"
+    },
+    {
+      "id": "qarnot-computing.com",
+      "name": "Qarnot computing",
+      "website": null,
+      "focus": "Services de calcul informatique",
+      "type": "Entreprise",
+      "tags": [
+        "Systèmes & Infrastructure"
+      ],
+      "location": null,
+      "identitySourceUrl": "https://github.com/qarnot",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/qarnot",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "qarnot-computing.com"
+    },
+    {
+      "id": "actility.com",
+      "name": "Actility",
+      "website": "https://actility.com/",
+      "focus": "Connectivité et plateformes pour l’Internet des objets",
+      "type": "Entreprise",
+      "tags": [
+        "Réseaux & Télécoms",
+        "Systèmes embarqués"
+      ],
+      "location": "France",
+      "identitySourceUrl": "https://github.com/Actility",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/Actility",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/Actility",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/Actility",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "actility.com"
+    },
+    {
+      "id": "kerlink.com",
+      "name": "Kerlink",
+      "website": "https://www.kerlink.com",
+      "focus": "Équipements et solutions de connectivité IoT",
+      "type": "Entreprise",
+      "tags": [
+        "Réseaux & Télécoms",
+        "Systèmes embarqués"
+      ],
+      "location": "France",
+      "identitySourceUrl": "https://github.com/kerlink",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/kerlink",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/kerlink",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/kerlink",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "kerlink.com"
+    },
+    {
+      "id": "yeswehack.com",
+      "name": "Yes We Hack",
+      "website": "https://www.yeswehack.com",
+      "focus": "Services et solutions de cybersécurité",
+      "type": "Entreprise",
+      "tags": [
+        "Cybersécurité"
+      ],
+      "location": null,
+      "identitySourceUrl": "https://github.com/yeswehack",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/yeswehack",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/yeswehack",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "yeswehack.com"
+    },
+    {
+      "id": "stormshield.com",
+      "name": "Stormshield",
+      "website": "https://www.stormshield.com",
+      "focus": "Solutions de cybersécurité",
+      "type": "Entreprise",
+      "tags": [
+        "Cybersécurité",
+        "Réseaux & Télécoms"
+      ],
+      "location": null,
+      "identitySourceUrl": "https://github.com/stormshield",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/stormshield",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/stormshield",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "stormshield.com"
+    },
+    {
+      "id": "wallix.com",
+      "name": "WALLIX",
+      "website": "https://www.wallix.com",
+      "focus": "Logiciels de cybersécurité et gestion des accès",
+      "type": "Entreprise",
+      "tags": [
+        "Cybersécurité"
+      ],
+      "location": "France",
+      "identitySourceUrl": "https://github.com/wallix",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/wallix",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/wallix",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/wallix",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "wallix.com"
+    },
+    {
+      "id": "sensiolabs.com",
+      "name": "SensioLabs",
+      "website": "https://sensiolabs.com",
+      "focus": "Services et expertise PHP et Symfony",
+      "type": "Entreprise",
+      "tags": [
+        "Dév Web/Cloud"
+      ],
+      "location": null,
+      "identitySourceUrl": "https://github.com/sensiolabs",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/sensiolabs",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/sensiolabs",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "sensiolabs.com"
+    },
+    {
+      "id": "apps.theodo.com",
+      "name": "BAM",
+      "website": "https://apps.theodo.com/",
+      "focus": "Développement d’applications mobiles",
+      "type": "ESN",
+      "tags": [
+        "Dév Web/Cloud"
+      ],
+      "location": "Paris",
+      "identitySourceUrl": "https://github.com/bamlab",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/bamlab",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/bamlab",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/bamlab",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "apps.theodo.com"
+    },
+    {
+      "id": "ekino.com",
+      "name": "Ekino",
+      "website": null,
+      "focus": "Ingénierie et services numériques",
+      "type": "ESN",
+      "tags": [
+        "Dév Web/Cloud"
+      ],
+      "location": "France",
+      "identitySourceUrl": "https://github.com/ekino",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/ekino",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/ekino",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "ekino.com"
+    },
+    {
+      "id": "les-tilleuls.coop",
+      "name": "Les-Tilleuls.coop",
+      "website": "https://les-tilleuls.coop",
+      "focus": "Développement logiciel et technologies web",
+      "type": "ESN",
+      "tags": [
+        "Dév Web/Cloud"
+      ],
+      "location": "France",
+      "identitySourceUrl": "https://github.com/coopTilleuls",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/coopTilleuls",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/coopTilleuls",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/coopTilleuls",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "les-tilleuls.coop"
+    },
+    {
+      "id": "xwiki.com",
+      "name": "XWiki SAS",
+      "website": null,
+      "focus": "Édition de logiciels collaboratifs",
+      "type": "Entreprise",
+      "tags": [
+        "Dév Web/Cloud"
+      ],
+      "location": "Paris, France",
+      "identitySourceUrl": "https://github.com/xwikisas",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/xwikisas",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/xwikisas",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "xwiki.com"
+    },
+    {
+      "id": "bootlin.com",
+      "name": "Bootlin",
+      "website": "https://bootlin.com",
+      "focus": "Ingénierie Linux et systèmes embarqués",
+      "type": "Entreprise",
+      "tags": [
+        "Systèmes embarqués",
+        "Systèmes & Infrastructure"
+      ],
+      "location": null,
+      "identitySourceUrl": "https://github.com/bootlin",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/bootlin",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/bootlin",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "bootlin.com"
+    },
+    {
+      "id": "witekio.com",
+      "name": "Witekio",
+      "website": "https://witekio.com",
+      "focus": "Ingénierie logicielle pour systèmes embarqués",
+      "type": "Entreprise",
+      "tags": [
+        "Systèmes embarqués"
+      ],
+      "location": "Lyon, France",
+      "identitySourceUrl": "https://github.com/Witekio",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/Witekio",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/Witekio",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/Witekio",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "witekio.com"
+    },
+    {
+      "id": "adacore.com",
+      "name": "AdaCore",
+      "website": "https://www.adacore.com",
+      "focus": "Outils et services pour logiciels critiques",
+      "type": "Entreprise",
+      "tags": [
+        "Systèmes embarqués",
+        "Ingénierie & Bureau d’études"
+      ],
+      "location": "Paris, France - New York City, NY",
+      "identitySourceUrl": "https://github.com/Adacore",
+      "identityCheckedAt": "2026-10-29T10:56:32.169582Z",
+      "fieldEvidence": {
+        "name": {
+          "sourceUrl": "https://github.com/Adacore",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "location": {
+          "sourceUrl": "https://github.com/Adacore",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        },
+        "website": {
+          "sourceUrl": "https://github.com/Adacore",
+          "checkedAt": "2026-10-29T10:56:32.169582Z"
+        }
+      },
+      "declaredDomain": "adacore.com"
+    }
+  ]
+}

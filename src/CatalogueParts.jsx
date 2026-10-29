@@ -1,3 +1,4 @@
+import { CompanyHostingBadge } from "./CompanyHostingBadge";
 import { CompanyLogo } from "./CompanyLogo";
 import React, { useEffect, useState } from "react";
 import {
@@ -95,7 +96,7 @@ export function AlertMatches({ filters }) {
     </span>
   );
 }
-export function CompanyProfile({ company: initial, openOffer }) {
+export function CompanyProfile({ company: initial, openOffer, browseOffers }) {
   const [page, setPage] = useState(1),
     [data, setData] = useState(null),
     [error, setError] = useState("");
@@ -125,33 +126,77 @@ export function CompanyProfile({ company: initial, openOffer }) {
       <div className="profile-logo">
         <CompanyLogo company={c} />
       </div>
-      <span className="status-label">
-        {c.researchLead
-          ? "Piste entreprise — recrutement non confirmé"
-          : c.profileVerifiedAt
-            ? "Fiche issue de données contrôlées"
-            : "Données source — entreprise non revérifiée"}
-      </span>
+      <CompanyHostingBadge company={c} />
+      {c.identityCheckedAt && (
+        <p className="muted">
+          Identité sourcée le{" "}
+          {new Date(c.identityCheckedAt).toLocaleDateString("fr-FR")}.
+        </p>
+      )}
       {c.description && <p className="description">{c.description}</p>}
       <dl>
         {[
           ["Secteur", c.sector],
-          ["Type", c.type],
-          ["Taille", c.size],
-          ["Localisation", c.location],
-          ["Agences", c.locations?.join(" · ")],
-          ["Stack déclarée", c.stack?.join(" · ")],
-          ["Rythme accepté", c.rhythm],
+          ["Domaine déclaré", !c.website ? c.declaredDomain : null],
+          ["Type", c.type, "type"],
+          ["Taille", c.size, "size"],
+          ["Localisation déclarée", c.location, "location"],
+          ["Agences", c.locations?.join(" · "), "locations"],
+          ["Stack déclarée", c.stack?.join(" · "), "stack"],
+          ["Rythme indiqué par la source", c.rhythm, "rhythm"],
           ["Labels / certifications", c.certifications?.join(" · ")],
         ]
           .filter(([, v]) => v)
-          .map(([label, value]) => (
+          .map(([label, value, field]) => (
             <React.Fragment key={label}>
               <dt>{label}</dt>
-              <dd>{value}</dd>
+              <dd>
+                {value}
+                {field && c.fieldEvidence?.[field] && (
+                  <>
+                    {" "}
+                    ·{" "}
+                    <a
+                      href={c.fieldEvidence[field].sourceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      title={`Consulté le ${new Date(c.fieldEvidence[field].checkedAt).toLocaleDateString("fr-FR")}`}
+                    >
+                      Source
+                    </a>
+                  </>
+                )}
+              </dd>
             </React.Fragment>
           ))}
       </dl>
+      {c.hostingReview && (
+        <section className="hosting-criteria">
+          <h3>Critères d’accueil documentés</h3>
+          <p>{c.hostingReview.acceptedContracts.join(" · ")}</p>
+          {!!c.hostingReview.rhythms?.length && (
+            <p>Rythmes : {c.hostingReview.rhythms.join(" · ")}</p>
+          )}
+          <p className="muted">
+            Contrôle du{" "}
+            {new Date(c.hostingReview.reviewedAt).toLocaleDateString("fr-FR")}
+            {c.hostingStatus !== "reviewed" ? " — à renouveler" : ""} ·{" "}
+            <a
+              href={c.hostingReview.sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Source des conditions d’accueil
+            </a>
+          </p>
+        </section>
+      )}
+      {!!c.currentContracts?.length && (
+        <p>
+          Contrats observés dans les offres récentes :{" "}
+          {c.currentContracts.join(" · ")}
+        </p>
+      )}
       <div className="tags">
         {c.tags?.map((t) => (
           <span key={t}>{t}</span>
@@ -162,6 +207,12 @@ export function CompanyProfile({ company: initial, openOffer }) {
         annonce ne devient pas la stack déclarée de l’entreprise.
       </p>
       <div className="review-links">
+        {c.identitySourceUrl && (
+          <a href={c.identitySourceUrl} target="_blank" rel="noreferrer">
+            Source de l’identité
+            <ExternalLink size={14} />
+          </a>
+        )}
         {c.website && (
           <a href={c.website} target="_blank" rel="noreferrer">
             Site entreprise
@@ -196,6 +247,12 @@ export function CompanyProfile({ company: initial, openOffer }) {
         </>
       )}
       <h3>{data.total} offre(s) liée(s) dans le catalogue actuel</h3>
+      {data.total > 0 && browseOffers && (
+        <button className="secondary" onClick={() => browseOffers(c)}>
+          Voir ses offres dans la recherche
+          <ArrowRight size={14} />
+        </button>
+      )}
       {data.offers.map((o) => (
         <button
           className="company-offer"
@@ -207,10 +264,7 @@ export function CompanyProfile({ company: initial, openOffer }) {
         </button>
       ))}
       {!data.total && (
-        <p>
-          Aucun recrutement n’est confirmé dans le catalogue pour cette
-          entreprise.
-        </p>
+        <p>Aucune offre de cette entreprise dans le catalogue actuel.</p>
       )}
       <Pagination {...data} onChange={setPage} />
     </>

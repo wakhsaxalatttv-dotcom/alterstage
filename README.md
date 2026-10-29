@@ -138,3 +138,11 @@ Au démarrage et après chaque collecte, un audit retire des résultats les offr
 ### Tester RapidAPI sans Shell
 
 Après ajout de `RAPIDAPI_LINKEDIN_KEY` dans Render et déploiement, ouvrir l’administration, section Sources, puis **Tester RapidAPI**. Le bouton réalise un appel avec la clé côté serveur et fournit un diagnostic et une structure anonymisée, sans commande Shell ni publication d’offre. Le format et les droits de réutilisation doivent encore être validés avant un import. Voir [docs/RAPIDAPI_LINKEDIN.md](docs/RAPIDAPI_LINKEDIN.md).
+
+### Annuaire enrichi et accueil des candidats
+
+L’annuaire initial contient 56 fiches, dont 37 nouvelles structures techniques avec une source d’identité consultée. Une identité sourcée ne vaut pas confirmation d’accueil. Les filtres distinguent **Accueil contrôlé**, **Offres récentes** et **Accueil à confirmer**, avec recherche combinée par ville, expertise, taille et contrat. Les critères absents restent inconnus.
+
+Le responsable peut documenter et contrôler les conditions dans **Administration → Entreprises** ; le badge est daté, valable 90 jours, et révocable. Les critères gardent leur source. Depuis une fiche publique, **Voir ses offres** ouvre la section Offres filtrée sur l’identifiant exact de l’entreprise. Les cartes et détails conservent logos, technologies et liens d’origine. Aucun recrutement n’est inventé depuis une fiche d’annuaire.
+
+Le plan d’implémentation, le modèle, les endpoints, les performances mesurées et les limites actuelles sont dans [docs/COMPANY_CATALOGUE.md](docs/COMPANY_CATALOGUE.md). Avec le serveur de développement lancé, `npm run test:companies` vérifie le parcours de validation et de recherche dans une base fictive isolée. Aucun nouveau secret ni abonnement n’est nécessaire pour l’annuaire. RapidAPI reste en pause pour l’import.

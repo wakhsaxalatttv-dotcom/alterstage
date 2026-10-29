@@ -1,3 +1,4 @@
+import { CompanyCatalogue } from "./company-catalogue.js";
 import { publicationCutoff } from "../shared/freshness.js";
 import { DatabaseSync } from "node:sqlite";
 import { mkdirSync, readFileSync, existsSync, chmodSync } from "node:fs";
@@ -38,9 +39,11 @@ export class OfferStore {
     this.cache = new QueryCache();
     this.version = this.db.prepare("PRAGMA data_version").get().data_version;
     this.publicationDay = publicationCutoff();
+    this.companyCatalogue = new CompanyCatalogue(this);
     try {
       this.migrateLegacy(folder);
       this.seedDirectory();
+      this.companyCatalogue.seed();
       this.lastComplianceAudit = this.auditPublicOffers();
     } catch (error) {
       this.db.close();
@@ -145,32 +148,79 @@ export class OfferStore {
       }
     });
   }
-  saveCompany(company, verifiedAt, contacts = []) {
+  saveCompany(
+    company,
+    verifiedAt,
+    contacts = [],
+    { replaceProfileFields = false } = {},
+  ) {
     if (!verifiedAt) {
       const existing = this.db
         .prepare("SELECT payload FROM companies WHERE id=?")
         .get(company.id);
       if (existing && parse(existing).profileVerifiedAt) return;
     }
+    const previousRow = this.db
+      .prepare("SELECT payload FROM companies WHERE id=?")
+      .get(company.id);
+    const previous = previousRow ? parse(previousRow) : {};
+    const supplied = Object.fromEntries(
+      Object.entries(company).filter(
+        ([, value]) =>
+          value !== null &&
+          value !== undefined &&
+          value !== "" &&
+          (!Array.isArray(value) || value.length),
+      ),
+    );
     const profile = {
-      ...company,
+      ...previous,
+      ...supplied,
+      sector: company.sector || previous.sector || null,
+      type: company.type || previous.type || null,
+      size: replaceProfileFields
+        ? company.size || null
+        : company.size || previous.size || null,
+      location: company.location || previous.location || null,
+      tags: company.tags?.length ? company.tags : previous.tags || [],
+      stack: replaceProfileFields
+        ? company.stack || []
+        : company.stack?.length
+          ? company.stack
+          : previous.stack || [],
+      rhythm: replaceProfileFields
+        ? company.rhythm || null
+        : company.rhythm || previous.rhythm || null,
+      locations: replaceProfileFields
+        ? company.locations || []
+        : company.locations?.length
+          ? company.locations
+          : previous.locations || [],
+      identitySourceUrl:
+        previous.identitySourceUrl || company.identitySourceUrl || null,
+      identityCheckedAt:
+        previous.identityCheckedAt || company.identityCheckedAt || null,
+      fieldEvidence: replaceProfileFields
+        ? company.fieldEvidence || {}
+        : { ...previous.fieldEvidence, ...company.fieldEvidence },
       profileVerifiedAt: verifiedAt || null,
       publicContacts: contacts,
-      researchLead: false,
+      researchLead: company.researchLead === true,
     };
     this.db
       .prepare(
         "INSERT INTO companies(id,name,name_key,type,size,city_key,payload) VALUES(?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET name=excluded.name,name_key=excluded.name_key,type=excluded.type,size=excluded.size,city_key=excluded.city_key,payload=excluded.payload",
       )
       .run(
-        company.id,
-        company.name,
-        searchText(company.name),
-        company.type || null,
-        company.size || null,
-        searchText([company.location, ...(company.locations || [])].join(" ")),
+        profile.id,
+        profile.name,
+        searchText(profile.name),
+        profile.type || null,
+        profile.size || null,
+        searchText([profile.location, ...(profile.locations || [])].join(" ")),
         JSON.stringify(profile),
       );
+    this.companyCatalogue?.index(profile);
   }
   writeOffer(offer) {
     const inferred = extractKeywords(
@@ -567,80 +617,13 @@ export class OfferStore {
     return row ? publicOffer(parse(row)) : null;
   }
   async companies(filters = {}) {
-    this.freshCache();
-    const key = "companies:" + JSON.stringify(filters),
-      hit = this.cache.get(key);
-    if (hit) return hit;
-    const clauses = ["1=1"],
-      args = [];
-    if (filters.query) {
-      clauses.push("name_key LIKE ?");
-      args.push(
-        "%" +
-          searchText(String(filters.query).slice(0, 100)).replace(/[%_]/g, "") +
-          "%",
-      );
-    }
-    if (filters.type) {
-      clauses.push("type=?");
-      args.push(String(filters.type).slice(0, 60));
-    }
-    if (filters.size) {
-      clauses.push("size=?");
-      args.push(String(filters.size).slice(0, 60));
-    }
-    if (filters.city) {
-      clauses.push("city_key LIKE ?");
-      args.push(
-        "%" +
-          searchText(String(filters.city).slice(0, 100)).replace(/[%_]/g, "") +
-          "%",
-      );
-    }
-    if (filters.tag) {
-      clauses.push(
-        "EXISTS(SELECT 1 FROM json_each(payload,'$.tags') WHERE value=?)",
-      );
-      args.push(String(filters.tag).slice(0, 80));
-    }
-    const where = clauses.join(" AND "),
-      total = Number(
-        this.db
-          .prepare("SELECT count(*) AS n FROM companies WHERE " + where)
-          .get(...args).n,
-      ),
-      pageSize = 12,
-      pages = Math.max(1, Math.ceil(total / pageSize)),
-      page = Math.min(
-        pages,
-        Math.max(1, Math.trunc(Number(filters.page) || 1)),
-      );
-    const { sql, params } = this.publicConditions();
-    const rows = this.db
-      .prepare(
-        `SELECT c.payload,(SELECT count(*) FROM offers WHERE company_id=c.id AND ${sql}) AS offer_count FROM companies c WHERE ${where} ORDER BY name_key LIMIT ? OFFSET ?`,
-      )
-      .all(...params, ...args, pageSize, (page - 1) * pageSize);
-    return this.cache.set(key, {
-      companies: rows.map((r) => ({
-        ...parse(r),
-        offerCount: Number(r.offer_count),
-      })),
-      total,
-      page,
-      pages,
-      pageSize,
-    });
+    return this.companyCatalogue.list(filters);
   }
   async company(id) {
-    this.freshCache();
-    const key = "profile:" + id,
-      hit = this.cache.get(key);
-    if (hit) return hit;
-    const row = this.db
-      .prepare("SELECT payload FROM companies WHERE id=?")
-      .get(id);
-    return row ? this.cache.set(key, parse(row)) : null;
+    return this.companyCatalogue.get(id);
+  }
+  async reviewCompany(id, body) {
+    return this.companyCatalogue.review(id, body);
   }
   async review(id, body) {
     return this.transaction(() => {
