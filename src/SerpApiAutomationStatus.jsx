@@ -52,6 +52,13 @@ export function SerpApiAutomationStatus({ token }) {
             aujourd’hui. La rotation est échelonnée, dans la limite du quota
             fournisseur. Meteojob est exclu.
           </p>
+          {data.reanalysis && (
+            <p>
+              Réanalyse des résultats déjà reçus, sans appel SerpApi :{" "}
+              {data.reanalysis.published} offre(s) admissible(s),{" "}
+              {data.reanalysis.deferred} résultat(s) encore incomplet(s).
+            </p>
+          )}
           {data.state && (
             <div className="local-note" role="status">
               <p>Dernière recherche : {data.state.query}.</p>
@@ -76,7 +83,7 @@ export function SerpApiAutomationStatus({ token }) {
                         <li key={reason}>
                           {{
                             publication_missing_or_outside_45_days:
-                              "Date source absente ou hors des 45 jours",
+                              "Publication absente, ambiguë ou potentiellement au-delà des 45 jours",
                             technical_domain_not_established:
                               "Domaine technique non établi",
                             contract_not_established:
@@ -84,6 +91,18 @@ export function SerpApiAutomationStatus({ token }) {
                             french_location_not_established:
                               "Localisation française non établie",
                             meteojob: "Provenance Meteojob",
+                            source_title_missing:
+                              "Intitulé absent de la source",
+                            source_employer_missing:
+                              "Entreprise absente de la source",
+                            training_employer:
+                              "École ou organisme de formation",
+                            source_link_missing:
+                              "Lien original absent ou non admissible",
+                            source_description_missing: "Description absente",
+                            ineligible_contract:
+                              "CDI ou contrat hors périmètre",
+                            invalid_source_record: "Donnée source illisible",
                             ineligible_source_record:
                               "Annonce incomplète ou hors périmètre",
                             editorial_decision_preserved:

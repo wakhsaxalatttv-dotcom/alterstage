@@ -149,6 +149,6 @@ Le plan d’implémentation, le modèle, les endpoints, les performances mesuré
 
 ### SerpApi / Google Jobs automatique
 
-Avec `SERPAPI_API_KEY` sur Render, le serveur lance seul la collecte et l’analyse sur les **21 domaines**, en stages et alternances. Les fiches admissibles rejoignent directement **Offres** ; Meteojob, les écoles, les annonces anciennes et les données insuffisantes sont exclues de la publication. Une date manquante n’est jamais inventée, et une analyse automatique ne donne pas un badge de vérification humaine.
+Avec `SERPAPI_API_KEY` sur Render, le serveur lance seul la collecte et l’analyse sur les **21 domaines**, en stages et alternances. Les fiches admissibles rejoignent directement **Offres** ; Meteojob, les écoles, les annonces anciennes et les données insuffisantes sont exclues de la publication. Une date manquante n’est jamais inventée : une indication relative exploitable reste affichée comme telle, avec son relevé. L’alternance sans sous-type est identifiée explicitement. Une analyse automatique ne donne pas un badge de vérification humaine.
 
 La rotation échelonnée respecte un budget persistant (par défaut trois appels/heure, 24/jour), avec reprise et renouvellement hebdomadaire. Aucun bouton d’import n’est nécessaire. L’espace privé sert au suivi. Voir [configuration, règles, quotas et limites](docs/SERPAPI.md).

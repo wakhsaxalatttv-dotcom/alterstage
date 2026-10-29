@@ -7,7 +7,11 @@ import { createHash } from "node:crypto";
 import { plainText, extractKeywords } from "../enrichment.js";
 import { safeUrl, normalizeSubmission, ValidationError } from "../domain.js";
 import { isTrainingEmployer } from "../../shared/employer-policy.js";
-import { isRecentPublication } from "../../shared/freshness.js";
+import {
+  isRecentPublication,
+  relativePublicationWindow,
+  publicationIndex,
+} from "../../shared/freshness.js";
 const originalLink = (value) => {
   const url = safeUrl(value);
   if (!url) return null;
@@ -20,14 +24,24 @@ export function parseSerpCandidate(job, now = new Date().toISOString()) {
   if (!job || typeof job !== "object" || isBlockedSource(job)) return null;
   const title = plainText(job.title || job.job_title, 180);
   const companyName = plainText(job.company_name, 120);
+  const contractText = plainText(
+    [
+      title,
+      job.detected_extensions?.schedule_type,
+      ...(Array.isArray(job.extensions) ? job.extensions : []),
+    ]
+      .filter((v) => typeof v === "string")
+      .join(" · "),
+    1000,
+  );
   if (
     !title ||
     !companyName ||
     isTrainingEmployer(companyName) ||
-    !/\b(stage|stagiaire|internship|alternance|alternant\w*|apprentissage|apprentice\w*)\b/i.test(
-      title,
+    !/\b(stage|stagiaire|intern(?:ship)?|alternance|alternant\w*|apprentissage|apprentice\w*)\b/i.test(
+      contractText,
     ) ||
-    /\b(CDI|freelance)\b/i.test(title)
+    /\b(CDI|freelance)\b/i.test(contractText)
   )
     return null;
   const sourceUrl =
@@ -67,6 +81,13 @@ export function parseSerpCandidate(job, now = new Date().toISOString()) {
     !publishedAt
   )
     return null;
+  const relativeText = [detectedDate, ...extensions].find((value) =>
+    relativePublicationWindow(value, now),
+  );
+  const publicationEvidence =
+    !publishedAt && relativeText
+      ? { kind: "relative", text: relativeText, observedAt: now }
+      : null;
   const location = plainText(job.location, 200);
   const identity = [title, companyName, location, sourceUrl]
     .map((s) => s.toLowerCase().trim())
@@ -74,12 +95,14 @@ export function parseSerpCandidate(job, now = new Date().toISOString()) {
   return {
     id: createHash("sha256").update(identity).digest("hex"),
     title,
+    contractText,
     companyName,
     location,
     description,
     sourceUrl,
     applicationUrl: sourceUrl,
     publishedAt,
+    publicationEvidence,
     sourcePublishedAt: publishedAt ? date : null,
     publicationText: plainText(
       [date, ...(Array.isArray(job.extensions) ? job.extensions : [])]
@@ -100,6 +123,36 @@ export function parseSerpCandidate(job, now = new Date().toISOString()) {
     firstRetrievedAt: now,
     lastRetrievedAt: now,
   };
+}
+export function serpExclusionReason(job) {
+  if (!job || typeof job !== "object") return "invalid_source_record";
+  if (isBlockedSource(job)) return "meteojob";
+  if (!plainText(job.title || job.job_title, 180))
+    return "source_title_missing";
+  if (!plainText(job.company_name, 120)) return "source_employer_missing";
+  if (isTrainingEmployer(job.company_name)) return "training_employer";
+  const contractText = [
+    job.title,
+    job.detected_extensions?.schedule_type,
+    ...(Array.isArray(job.extensions) ? job.extensions : []),
+  ].join(" ");
+  if (/\b(CDI|freelance)\b/i.test(contractText)) return "ineligible_contract";
+  if (
+    !/\b(stage|stagiaire|intern(?:ship)?|alternance|alternant\w*|apprentissage|apprentice\w*)\b/i.test(
+      contractText,
+    )
+  )
+    return "contract_not_established";
+  if (!plainText(job.description)) return "source_description_missing";
+  if (
+    !originalLink(job.source_link) &&
+    !(
+      Array.isArray(job.apply_options) &&
+      job.apply_options.some((o) => originalLink(o?.link))
+    )
+  )
+    return "source_link_missing";
+  return "publication_missing_or_outside_45_days";
 }
 export class SerpApiInbox {
   constructor(store) {
@@ -164,7 +217,7 @@ export class SerpApiInbox {
     });
     return { created, duplicate, excluded };
   }
-  async ingestAutomatically(jobs, resolveLocation) {
+  async ingestAutomatically(jobs, resolveLocation, { observedAt } = {}) {
     const report = {
       created: 0,
       updated: 0,
@@ -179,10 +232,13 @@ export class SerpApiInbox {
     const reason = (key) =>
       (report.reasons[key] = (report.reasons[key] || 0) + 1);
     for (const job of jobs.slice(0, 100)) {
-      const candidate = parseSerpCandidate(job);
+      const candidate = parseSerpCandidate(
+        job,
+        observedAt || new Date().toISOString(),
+      );
       if (!candidate) {
         report.excluded++;
-        reason(isBlockedSource(job) ? "meteojob" : "ineligible_source_record");
+        reason(serpExclusionReason(job));
         continue;
       }
       const previous = this.db
@@ -193,10 +249,29 @@ export class SerpApiInbox {
         reason("editorial_decision_preserved");
         continue;
       }
-      if (previous)
-        candidate.firstRetrievedAt = JSON.parse(
-          previous.payload,
-        ).firstRetrievedAt;
+      if (previous) {
+        const old = JSON.parse(previous.payload);
+        candidate.firstRetrievedAt = old.firstRetrievedAt;
+        if (
+          candidate.publicationEvidence &&
+          publicationIndex({ ...old, sourceId: "serpapi-google-jobs" }) &&
+          Date.parse(
+            publicationIndex({ ...old, sourceId: "serpapi-google-jobs" }),
+          ) <=
+            Date.parse(
+              publicationIndex({
+                ...candidate,
+                sourceId: "serpapi-google-jobs",
+              }),
+            )
+        ) {
+          candidate.publishedAt = old.publishedAt || null;
+          candidate.sourcePublishedAt = old.sourcePublishedAt || null;
+          candidate.publicationEvidence = old.publishedAt
+            ? null
+            : old.publicationEvidence;
+        }
+      }
       const analysis = analyzeSerpCandidate(candidate);
       let location = null;
       if (!analysis.reasons.length) {
@@ -208,7 +283,24 @@ export class SerpApiInbox {
         if (!location) analysis.reasons.push("french_location_not_established");
       }
       this.stage([job]);
+      this.db
+        .prepare(
+          "UPDATE serpapi_candidates SET payload=? WHERE id=? AND status NOT IN ('rejected','submitted')",
+        )
+        .run(JSON.stringify(candidate), candidate.id);
       if (analysis.reasons.length) {
+        const existing = this.db
+          .prepare(
+            "SELECT payload FROM offers WHERE source_id='serpapi-google-jobs' AND external_id=?",
+          )
+          .get(candidate.id);
+        if (existing) {
+          const offer = JSON.parse(existing.payload);
+          if (offer.moderationStatus === "approved" && !offer.lastVerifiedAt) {
+            offer.moderationStatus = "pending";
+            this.store.transaction(() => this.store.writeOffer(offer));
+          }
+        }
         report.deferred++;
         for (const r of analysis.reasons) reason(r);
         this.db
@@ -260,6 +352,55 @@ export class SerpApiInbox {
         );
     }
     return report;
+  }
+  async reanalyzeSaved(resolveLocation) {
+    const total = {
+      published: 0,
+      deferred: 0,
+      excluded: 0,
+      created: 0,
+      updated: 0,
+      duplicate: 0,
+      unchanged: 0,
+    };
+    const rows = this.db
+      .prepare(
+        "SELECT payload FROM serpapi_candidates WHERE status='pending' ORDER BY retrieved_at DESC LIMIT 100",
+      )
+      .all();
+    for (const row of rows) {
+      const candidate = JSON.parse(row.payload);
+      const observedAt =
+        candidate.lastRetrievedAt || candidate.firstRetrievedAt;
+      if (
+        !Number.isFinite(Date.parse(observedAt)) ||
+        Date.parse(observedAt) > Date.now()
+      )
+        continue;
+      const report = await this.ingestAutomatically(
+        [
+          {
+            title: candidate.title,
+            company_name: candidate.companyName,
+            location: candidate.location,
+            description: candidate.description,
+            source_link: candidate.sourceUrl,
+            via: candidate.via,
+            extensions: (candidate.publicationText || "").split(" · "),
+            detected_extensions: {
+              posted_at:
+                candidate.sourcePublishedAt ||
+                candidate.publishedAt ||
+                undefined,
+            },
+          },
+        ],
+        resolveLocation,
+        { observedAt },
+      );
+      for (const key of Object.keys(total)) total[key] += report[key] || 0;
+    }
+    return total;
   }
   reject(id) {
     if (

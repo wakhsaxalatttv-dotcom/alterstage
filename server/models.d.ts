@@ -34,7 +34,11 @@ export interface Offer {
   id: string;
   title: string;
   company: Company;
-  contract: "Stage" | "Apprentissage" | "Contrat de professionnalisation";
+  contract:
+    | "Stage"
+    | "Apprentissage"
+    | "Contrat de professionnalisation"
+    | "Alternance — type non précisé";
   location: { label: string; commune: string | null; region: string };
   domain: string;
   education: string[];
@@ -53,13 +57,22 @@ export interface Offer {
   contentHash?: string;
   publishedAt: string | null;
   sourcePublishedAt?: string | null;
+  publicationEvidence?: {
+    kind: "relative";
+    text: string;
+    observedAt: string;
+  } | null;
   sourceUpdatedAt?: string | null;
   firstRetrievedAt: string;
   lastFetchedAt?: string;
   updatedAt: string;
   lastVerifiedAt: string | null;
   technicalReviewAt?: string | null;
-  automaticAnalysis?: { method: string; domain: string; locationProvenance: string };
+  automaticAnalysis?: {
+    method: string;
+    domain: string;
+    locationProvenance: string;
+  };
   status: OfferStatus;
   moderationStatus: ModerationStatus;
   expiresAt: string;

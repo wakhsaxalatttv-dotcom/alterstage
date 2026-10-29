@@ -1,6 +1,6 @@
 import { isBlockedSource } from "../shared/source-policy.js";
 import { isTrainingEmployer } from "../shared/employer-policy.js";
-import { isRecentPublication } from "../shared/freshness.js";
+import { hasRecentPublication } from "../shared/freshness.js";
 import { domains, contracts } from "../shared/catalog.js";
 import { regions } from "../src/domain.js";
 import { randomUUID } from "node:crypto";
@@ -296,7 +296,7 @@ export function deduplicate(offers) {
 export function nonComplianceReasons(offer, now = Date.now()) {
   const reasons = [];
   if (isBlockedSource(offer)) reasons.push("blocked_source_meteojob");
-  if (!isRecentPublication(offer.sourcePublishedAt || offer.publishedAt, now))
+  if (!hasRecentPublication(offer, now))
     reasons.push("publication_outside_45_days");
   if (!domains.includes(offer.domain)) reasons.push("non_technical_domain");
   if (!contracts.includes(offer.contract)) reasons.push("ineligible_contract");

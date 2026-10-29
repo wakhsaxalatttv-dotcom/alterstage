@@ -1,6 +1,10 @@
 import { isBlockedSource } from "../shared/source-policy.js";
 import { CompanyCatalogue } from "./company-catalogue.js";
-import { publicationCutoff, isRecentPublication } from "../shared/freshness.js";
+import {
+  publicationCutoff,
+  isRecentPublication,
+  publicationIndex,
+} from "../shared/freshness.js";
 import { DatabaseSync } from "node:sqlite";
 import { mkdirSync, readFileSync, existsSync, chmodSync } from "node:fs";
 import path from "node:path";
@@ -249,7 +253,7 @@ export class OfferStore {
         offer.domain,
         groupOf(offer.domain) || "",
         offer.contract,
-        offer.sourcePublishedAt || offer.publishedAt,
+        publicationIndex(offer),
         Math.min(
           Date.parse(offer.expiresAt) + 86400000,
           offer.sourceExpiresAt ? Date.parse(offer.sourceExpiresAt) : Infinity,

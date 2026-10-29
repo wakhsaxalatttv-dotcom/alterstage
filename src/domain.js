@@ -1,6 +1,6 @@
 import { isBlockedSource } from "../shared/source-policy.js";
 import { isTrainingEmployer } from "../shared/employer-policy.js";
-import { isRecentPublication } from "../shared/freshness.js";
+import { publicationIndex, hasRecentPublication } from "../shared/freshness.js";
 import { inScope, groupOf, contracts } from "../shared/catalog.js";
 export const regions = {
   "Auvergne-Rhône-Alpes": "01 03 07 15 26 38 42 43 63 69 73 74",
@@ -54,7 +54,7 @@ export function selectOffers(offers, filters, now = Date.now()) {
     .filter((o) => !filters.companyId || o.company.id === filters.companyId)
     .filter((o) => contracts.includes(o.contract))
     .filter((o) => !isTrainingEmployer(o.company?.name, o.company?.sector))
-    .filter((offer) => isRecentPublication(offer.publishedAt, now))
+    .filter((offer) => hasRecentPublication(offer, now))
     .filter((o) => !["expired", "withdrawn"].includes(o.status))
     .filter((o) => !o.expiresAt || Date.parse(o.expiresAt) + 86400000 > now)
     .filter((o) => !o.sourceExpiresAt || Date.parse(o.sourceExpiresAt) > now)
@@ -84,13 +84,15 @@ export function selectOffers(offers, filters, now = Date.now()) {
     .filter(
       (o) =>
         !filters.age ||
-        (o.publishedAt &&
-          now - Date.parse(o.publishedAt) <= Number(filters.age) * 86400000 &&
-          Date.parse(o.publishedAt) <= now),
+        (publicationIndex(o) &&
+          now - Date.parse(publicationIndex(o)) <=
+            Number(filters.age) * 86400000 &&
+          Date.parse(publicationIndex(o)) <= now),
     )
     .sort(
       (a, b) =>
-        (Date.parse(b.publishedAt) || 0) - (Date.parse(a.publishedAt) || 0),
+        (Date.parse(publicationIndex(b)) || 0) -
+        (Date.parse(publicationIndex(a)) || 0),
     );
 }
 export function freshness(o) {

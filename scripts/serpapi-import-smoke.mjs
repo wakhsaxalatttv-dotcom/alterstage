@@ -9,12 +9,12 @@ const token = randomBytes(32).toString("hex"),
   key = "test-only-serpapi-key";
 let calls = 0;
 const fakeJob = {
-  title: "Stage développement logiciel — exemple fictif",
+  title: "Alternance développement logiciel — exemple fictif",
   company_name: "Entreprise fictive",
   location: "Paris, France",
   source_link: "https://example.org/jobs/automatic",
   description: "Exemple fictif : Linux et Docker. contact@example.org",
-  detected_extensions: { posted_at: new Date().toISOString().slice(0, 10) },
+  extensions: ["il y a 3 jours", "Temps plein"],
 };
 const app = createApp({
   folder,
@@ -32,6 +32,7 @@ const app = createApp({
               ...fakeJob,
               source_link: "https://example.org/no-date",
               detected_extensions: undefined,
+              extensions: [],
             },
             { ...fakeJob, via: "Meteojob" },
           ],
@@ -79,6 +80,24 @@ try {
     !(await page.locator("body").innerText()).includes("contact@example.org"),
   );
   assert.equal(calls, 1);
+  const publicOffer = (await app.locals.store.query()).offers[0];
+  assert.equal(publicOffer.publishedAt, null);
+  assert.equal(publicOffer.contract, "Alternance — type non précisé");
+  await page.getByText(/Publication Google Jobs.*il y a 3 jours/).waitFor();
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    assert.ok(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+      `Carte relative déborde à ${width}px`,
+    );
+  }
+  await page.locator(".offer-card h3 button").first().click();
+  await page
+    .getByRole("dialog")
+    .getByText(/Date exacte non fournie/)
+    .waitFor();
   assert.equal((await app.locals.store.query()).total, 1);
   await page.goto(new URL("/administration/", base).href);
   await page.getByLabel("Code d’accès").fill(token);

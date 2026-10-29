@@ -53,7 +53,19 @@ export class SerpApiAutomation {
         "SELECT count(*) AS n FROM serpapi_auto_requests WHERE started_at>=?",
       )
       .get(today).n;
+    const reanalysisRow = this.store.db
+      .prepare(
+        "SELECT value FROM metadata WHERE key='serpapi-relative-label-reanalysis-v1'",
+      )
+      .get();
+    let reanalysis = null;
+    if (reanalysisRow?.value.startsWith("{")) {
+      try {
+        reanalysis = JSON.parse(reanalysisRow.value);
+      } catch {}
+    }
     return {
+      reanalysis,
       configured: this.probe.configured(),
       enabled: this.enabled,
       running: !!this.running,
@@ -76,6 +88,30 @@ export class SerpApiAutomation {
   }
   async execute() {
     if (!this.enabled) return { status: "disabled" };
+    const recoveryKey = "serpapi-relative-label-reanalysis-v1";
+    const recoveryClaim = this.store.transaction(
+      () =>
+        this.store.db
+          .prepare(
+            "INSERT OR IGNORE INTO metadata(key,value) VALUES(?,'running')",
+          )
+          .run(recoveryKey).changes,
+    );
+    if (recoveryClaim) {
+      const recovered = await this.inbox.reanalyzeSaved(this.resolveLocation);
+      this.store.db
+        .prepare("UPDATE metadata SET value=? WHERE key=?")
+        .run(JSON.stringify(recovered), recoveryKey);
+      this.store.recordRun({
+        sourceId: "serpapi-reanalysis",
+        startedAt: new Date(this.now()).toISOString(),
+        finishedAt: new Date(this.now()).toISOString(),
+        status: "success",
+        ...recovered,
+        invalid: recovered.excluded,
+        message: `Réanalyse des données déjà reçues, sans appel SerpApi : ${recovered.published} offre(s) admissible(s), dates relatives conservées comme telles.`,
+      });
+    }
     const time = this.now(),
       today = Date.parse(new Date(time).toISOString().slice(0, 10));
     const claim = this.store.transaction(() => {

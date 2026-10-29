@@ -1,7 +1,10 @@
 import { createHash } from "node:crypto";
 import { normalizeSubmission, nonComplianceReasons } from "../domain.js";
 import { searchText } from "../enrichment.js";
-import { isRecentPublication } from "../../shared/freshness.js";
+import {
+  hasRecentPublication,
+  publicationIndex,
+} from "../../shared/freshness.js";
 const domainRules = [
   ["Cybersécurité", /cyber|securite informatique|pentest|soc analyst/],
   [
@@ -71,7 +74,7 @@ export function analyzeSerpCandidate(candidate) {
   const title = searchText(candidate.title),
     description = searchText(candidate.description);
   const reasons = [];
-  if (!isRecentPublication(candidate.publishedAt))
+  if (!hasRecentPublication({ ...candidate, sourceId: "serpapi-google-jobs" }))
     reasons.push("publication_missing_or_outside_45_days");
   if (
     /commercial|marketing|recruteur|ressources humaines|comptable|business develop/.test(
@@ -90,14 +93,23 @@ export function analyzeSerpCandidate(candidate) {
       )?.[0];
   if (!domain) reasons.push("technical_domain_not_established");
   const contracts = [];
-  if (/\bstage\b|\bstagiaire\b|internship/.test(title)) contracts.push("Stage");
+  const sourceContract = searchText(candidate.contractText || candidate.title);
+  if (/\bstage\b|\bstagiaire\b|\bintern(?:ship)?\b/.test(sourceContract))
+    contracts.push("Stage");
   if (
-    /apprenti|apprentissage/.test(title) ||
+    /apprenti|apprentissage/.test(sourceContract) ||
     /contrat d.apprentissage/.test(description)
   )
     contracts.push("Apprentissage");
-  if (/contrat de professionnalisation/.test(title + " " + description))
+  if (
+    /contrat de professionnalisation/.test(sourceContract + " " + description)
+  )
     contracts.push("Contrat de professionnalisation");
+  if (
+    !contracts.length &&
+    /\balternan(?:ce|t|te|ts|tes)\b/.test(sourceContract)
+  )
+    contracts.push("Alternance — type non précisé");
   if (!contracts.length) reasons.push("contract_not_established");
   return { domain: domain || null, contracts, reasons };
 }
@@ -110,8 +122,11 @@ export function automaticSerpOffer(
   if (analysis.reasons.length || !location) return null;
   const expiresAt = new Date(
     Math.min(
-      Date.parse(candidate.publishedAt) + 46 * 86400000,
-      Date.parse(now) + 7 * 86400000,
+      Date.parse(
+        publicationIndex({ ...candidate, sourceId: "serpapi-google-jobs" }),
+      ) +
+        46 * 86400000,
+      Date.parse(candidate.lastRetrievedAt || now) + 7 * 86400000,
     ),
   )
     .toISOString()
@@ -154,8 +169,9 @@ export function automaticSerpOffer(
     sourcePolicyApproved: true,
     externalId: candidate.id,
     sourcePublishedAt: candidate.sourcePublishedAt || candidate.publishedAt,
+    publicationEvidence: candidate.publicationEvidence || null,
     firstRetrievedAt: candidate.firstRetrievedAt,
-    lastFetchedAt: now,
+    lastFetchedAt: candidate.lastRetrievedAt || now,
     updatedAt: now,
     acceptedContracts: analysis.contracts,
     automaticAnalysis: {
@@ -181,6 +197,7 @@ export function automaticSerpOffer(
         domain: offer.domain,
         contracts: offer.acceptedContracts,
         publishedAt: offer.sourcePublishedAt,
+        publicationEvidence: offer.publicationEvidence,
         sourceUrl: offer.sourceUrl,
         applicationUrl: offer.applicationUrl,
         expiresAt: offer.expiresAt,

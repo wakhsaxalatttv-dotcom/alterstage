@@ -217,8 +217,11 @@ function Review({ offer: o, review }) {
       </h3>
       <p>
         Publication source :{" "}
-        {o.publishedAt || "Non fournie — publication bloquée"} · Échéance
-        interne : {o.expiresAt}
+        {o.publishedAt ||
+          (o.publicationEvidence?.kind === "relative"
+            ? `Indication Google Jobs : ${o.publicationEvidence.text}, relevée le ${new Date(o.publicationEvidence.observedAt).toLocaleDateString("fr-FR")} ; date exacte non fournie`
+            : "Non fournie — publication bloquée")}{" "}
+        · Échéance interne : {o.expiresAt}
       </p>
       <p className="description">{o.description}</p>
       {o.company.description && (

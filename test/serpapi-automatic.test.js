@@ -60,7 +60,7 @@ test("automatic analysis does not infer publication dates, alternance subtypes o
   };
   const r = analyzeSerpCandidate(candidate);
   assert.ok(r.reasons.includes("publication_missing_or_outside_45_days"));
-  assert.ok(r.reasons.includes("contract_not_established"));
+  assert.deepEqual(r.contracts, ["Alternance — type non précisé"]);
   assert.equal(
     analyzeSerpCandidate({
       ...candidate,
@@ -140,13 +140,19 @@ test("absolute date extensions can be used, but relative labels and unknown loca
         {
           ...job(),
           source_link: "https://example.org/relative",
+          title: "Stage développeur logiciel — exemple fictif relatif",
           detected_extensions: { posted_at: "3 days ago" },
         },
       ],
-      () => assert.fail("No geocoding for undated offer"),
+      async () => location,
     );
-    assert.equal(relative.published, 0);
-    assert.equal(relative.deferred, 1);
+    assert.equal(relative.published, 1);
+    const relativeOffer = (await s.store.read()).find((o) =>
+      o.sourceUrl.endsWith("/relative"),
+    );
+    assert.equal(relativeOffer.publishedAt, null);
+    assert.equal(relativeOffer.sourcePublishedAt, null);
+    assert.equal(relativeOffer.publicationEvidence.text, "3 days ago");
     const unknown = await s.inbox.ingestAutomatically(
       [
         {

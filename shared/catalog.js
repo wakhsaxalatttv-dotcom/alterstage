@@ -30,6 +30,7 @@ export const contracts = [
   "Stage",
   "Apprentissage",
   "Contrat de professionnalisation",
+  "Alternance — type non précisé",
 ];
 export const educationLevels = [
   "CAP / BEP",

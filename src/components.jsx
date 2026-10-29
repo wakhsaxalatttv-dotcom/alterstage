@@ -121,7 +121,11 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
         </div>
       )}
       <div className="offer-meta">
-        <span>Publiée le {date(o.publishedAt)}</span>
+        <span>
+          {o.publicationEvidence?.kind === "relative"
+            ? `Publication Google Jobs : « ${o.publicationEvidence.text} » (relevé le ${date(o.publicationEvidence.observedAt)})`
+            : `Publiée le ${date(o.publishedAt)}`}
+        </span>
       </div>
       <div className="offer-bottom">
         <a href={o.sourceUrl} target="_blank" rel="noreferrer">

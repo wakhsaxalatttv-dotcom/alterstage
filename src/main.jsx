@@ -1,3 +1,4 @@
+import { publicationIndex } from "../shared/freshness.js";
 import { AppLogo } from "./AppLogo";
 import { ReportForm } from "./ReportForm";
 import React, { useEffect, useState, lazy, Suspense } from "react";
@@ -622,8 +623,8 @@ function App() {
                   {[...visible]
                     .sort(
                       (a, b) =>
-                        (Date.parse(b.publishedAt) || 0) -
-                        (Date.parse(a.publishedAt) || 0),
+                        (Date.parse(publicationIndex(b)) || 0) -
+                        (Date.parse(publicationIndex(a)) || 0),
                     )
                     .map((o) => (
                       <Offer
@@ -910,7 +911,11 @@ function App() {
                   </>
                 )}
                 <dt>Publication</dt>
-                <dd>{date(modal.offer.publishedAt)}</dd>
+                <dd>
+                  {modal.offer.publicationEvidence?.kind === "relative"
+                    ? `Google Jobs indique « ${modal.offer.publicationEvidence.text} », relevé le ${date(modal.offer.publicationEvidence.observedAt)}. Date exacte non fournie.`
+                    : date(modal.offer.publishedAt)}
+                </dd>
                 <dt>Source</dt>
                 <dd>{modal.offer.source}</dd>
               </dl>
