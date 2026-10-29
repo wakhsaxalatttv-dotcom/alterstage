@@ -1,3 +1,4 @@
+import { RapidApiProbe } from "./RapidApiProbe";
 import React, { useEffect, useState, useRef } from "react";
 import { RefreshCw, Database, ExternalLink } from "lucide-react";
 import { request } from "./api";
@@ -47,6 +48,7 @@ export function SourcePanel({ token, onChanged }) {
   }
   return (
     <section className="source-panel">
+      <RapidApiProbe token={token} />
       <h2>
         <Database size={20} />
         Sources et collecte autorisée

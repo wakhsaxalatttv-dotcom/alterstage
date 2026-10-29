@@ -134,3 +134,7 @@ La collecte France Travail parcourt maintenant 315 codes métiers techniques et 
 ### Contrôle automatique du catalogue
 
 Au démarrage et après chaque collecte, un audit retire des résultats les offres hors critères : publication hors des 45 jours, contrat non éligible, domaine non technique, lieu français non établi, école/université identifiée, source originale absente/invalide ou offre expirée/inactive. Les motifs et les décisions sont conservés dans l’historique privé, sans suppression physique des données. Les retraits ne sont pas annulés par une collecte. Les échéances locales expirées peuvent être renouvelées uniquement par une nouvelle donnée source. Voir [docs/COMPLIANCE.md](docs/COMPLIANCE.md).
+
+### Tester RapidAPI sans Shell
+
+Après ajout de `RAPIDAPI_LINKEDIN_KEY` dans Render et déploiement, ouvrir l’administration, section Sources, puis **Tester RapidAPI**. Le bouton réalise un appel avec la clé côté serveur et fournit un diagnostic et une structure anonymisée, sans commande Shell ni publication d’offre. Le format et les droits de réutilisation doivent encore être validés avant un import. Voir [docs/RAPIDAPI_LINKEDIN.md](docs/RAPIDAPI_LINKEDIN.md).

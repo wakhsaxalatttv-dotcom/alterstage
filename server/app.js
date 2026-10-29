@@ -1,3 +1,4 @@
+import { createRapidApiProbe } from "./ingestion/rapidapi-linkedin.js";
 import { administrationConfiguration } from "./admin-config.js";
 import { Reports } from "./reports.js";
 import express from "express";
@@ -11,6 +12,7 @@ export function createApp({
   folder = process.env.DATA_DIR || path.resolve(".local"),
   adminToken = process.env.ADMIN_TOKEN || "",
   pipelineOptions = {},
+  rapidApiOptions = {},
 } = {}) {
   const app = express(),
     store = new OfferStore(folder),
@@ -22,6 +24,7 @@ export function createApp({
     reportLimits = new Map();
   app.locals.reports = reports;
   app.locals.pipeline = new IngestionPipeline(store, pipelineOptions);
+  const rapidApiProbe = createRapidApiProbe(rapidApiOptions);
   app.disable("x-powered-by");
   if (process.env.RENDER === "true") app.set("trust proxy", 1);
   app.use(compression({ threshold: 1024 }));
@@ -164,6 +167,37 @@ export function createApp({
   app.post("/api/admin/submissions/:id/review", admin, async (req, res) =>
     res.json(await store.review(req.params.id, req.body || {})),
   );
+  app.get("/api/admin/rapidapi-linkedin", admin, (_req, res) => {
+    const latest = store
+      .runs()
+      .find((r) => r.sourceId === "rapidapi-linkedin-test");
+    res.json({
+      configured: rapidApiProbe.configured(),
+      latest: latest?.diagnostic || null,
+    });
+  });
+  app.post("/api/admin/rapidapi-linkedin/test", admin, async (_req, res) => {
+    const startedAt = new Date().toISOString();
+    const result = await rapidApiProbe.run();
+    if (result.status === "not_configured")
+      return res.status(503).json({ message: result.message });
+    if (result.status === "limited")
+      return res.status(429).json({ message: result.message });
+    store.recordRun({
+      sourceId: "rapidapi-linkedin-test",
+      startedAt,
+      finishedAt: new Date().toISOString(),
+      status: result.status,
+      created: 0,
+      updated: 0,
+      unchanged: 0,
+      duplicate: 0,
+      invalid: 0,
+      message: result.message,
+      diagnostic: result,
+    });
+    res.json(result);
+  });
   app.get("/api/admin/sources", admin, async (_req, res) =>
     res.json(await app.locals.pipeline.status()),
   );

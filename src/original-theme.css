@@ -104,3 +104,36 @@ body,
     background-image: none;
   }
 }
+
+.rapidapi-probe {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.rapidapi-result {
+  display: block;
+  margin-top: 16px;
+}
+.rapidapi-result p {
+  margin: 0 0 12px;
+}
+.rapidapi-result summary {
+  cursor: pointer;
+}
+.rapidapi-result pre {
+  max-height: 360px;
+  max-width: 100%;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font:
+    12px/1.6 ui-monospace,
+    monospace;
+}
+@media (max-width: 700px) {
+  .rapidapi-probe {
+    padding: 16px;
+  }
+}
