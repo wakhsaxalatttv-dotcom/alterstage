@@ -170,7 +170,7 @@ export function createFranceTravailClient({
         grant_type: "client_credentials",
         client_id: env.FRANCE_TRAVAIL_CLIENT_ID.trim(),
         client_secret: env.FRANCE_TRAVAIL_CLIENT_SECRET.trim(),
-        scope: "api_offresdemploiv2 o2dsoffre",
+        scope: `application_${env.FRANCE_TRAVAIL_CLIENT_ID.trim()} api_offresdemploiv2 o2dsoffre`,
       }),
     });
     if (!response.ok) throw await oauthFailure(response);

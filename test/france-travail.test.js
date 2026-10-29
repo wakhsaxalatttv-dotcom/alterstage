@@ -154,7 +154,7 @@ test("OAuth is server-side, cached in memory, and pagination deduplicates withou
         );
         assert.equal(
           options.body.get("scope"),
-          "api_offresdemploiv2 o2dsoffre",
+          `application_${credentials.FRANCE_TRAVAIL_CLIENT_ID} api_offresdemploiv2 o2dsoffre`,
         );
         return json({ access_token: "test-only-access", expires_in: 3600 });
       }
@@ -468,4 +468,32 @@ test("OAuth diagnostics distinguish known causes and never echo response descrip
       error.message.includes("HTTP 503") &&
       !error.message.includes("private upstream"),
   );
+});
+test("OAuth application scope uses the exact trimmed client_id and never the secret", async () => {
+  const env = {
+    ...credentials,
+    FRANCE_TRAVAIL_CLIENT_ID: "  test-only-client\n",
+  };
+  let tested = false;
+  const client = createFranceTravailClient({
+    env,
+    wait: async () => {},
+    fetcher: async (url, options) => {
+      if (String(url) !== FT_TOKEN_URL)
+        return new Response(null, { status: 204 });
+      tested = true;
+      assert.equal(options.body.get("client_id"), "test-only-client");
+      assert.deepEqual(options.body.get("scope").split(" "), [
+        "application_test-only-client",
+        "api_offresdemploiv2",
+        "o2dsoffre",
+      ]);
+      assert.ok(
+        !options.body.get("scope").includes(env.FRANCE_TRAVAIL_CLIENT_SECRET),
+      );
+      return json({ access_token: "test-only-token", expires_in: 3600 });
+    },
+  });
+  await client.collect();
+  assert.equal(tested, true);
 });

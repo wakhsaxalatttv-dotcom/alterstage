@@ -8,7 +8,7 @@ Dans **Environment**, enregistrer les variables privées `FRANCE_TRAVAIL_CLIENT_
 
 Le serveur lance une collecte au démarrage et, par défaut, toutes les 180 minutes lorsqu’une API est configurée. Si `INGEST_INTERVAL_MINUTES=0` existe déjà, il désactive les répétitions : le remplacer par `180` pour des mises à jour périodiques. Minimum 5 minutes. Ne pas ajouter France Travail dans `SOURCES_FILE` : ce connecteur intégré utilise des destinations fixes et s’ajoute aux sources personnalisées.
 
-L’application doit être inscrite et abonnée à l’API **Offres d’emploi** dans le [catalogue France Travail](https://francetravail.io/produits-partages/catalogue/offres-emploi). L’accès OAuth demande `api_offresdemploiv2 o2dsoffre`. Vérifier les droits effectifs, les quotas et les conditions de réutilisation acceptées dans l’espace partenaire. Conserver l’attribution France Travail, les dates et le lien original ; ne pas supprimer les obligations particulières des partenaires diffusant leurs offres via l’API. Les conditions de l’API priment ; aucune licence commerciale supplémentaire n’est supposée.
+L’application doit être inscrite et abonnée à l’API **Offres d’emploi** dans le [catalogue France Travail](https://francetravail.io/produits-partages/catalogue/offres-emploi). L’accès OAuth demande `application_<client_id> api_offresdemploiv2 o2dsoffre` : le préfixe d’application est construit automatiquement avec l’identifiant client serveur, sans variable supplémentaire. Vérifier les droits effectifs, les quotas et les conditions de réutilisation acceptées dans l’espace partenaire. Conserver l’attribution France Travail, les dates et le lien original ; ne pas supprimer les obligations particulières des partenaires diffusant leurs offres via l’API. Les conditions de l’API priment ; aucune licence commerciale supplémentaire n’est supposée.
 
 Destinations HTTPS utilisées :
 
@@ -65,3 +65,9 @@ La page privée `/administration/`, section Sources, permet également de lancer
 ### Diagnostic OAuth précis
 
 Les erreurs d’authentification indiquent désormais le statut HTTP et, si fourni, un code standard reconnu uniquement. `invalid_client` oriente vers le couple d’identifiants de la même application ; `invalid_scope` ou `unauthorized_client` vers les droits/abonnements API. Les champs `error_description`, réponses arbitraires, jetons, secrets et URL de redirection ne sont jamais repris dans les logs. Une erreur serveur HTTP 5xx est distinguée d’un rejet des identifiants. Une présence de variables ne prouve jamais la validité des clés.
+
+### Correction du scope d’application
+
+La requête inclut désormais le scope `application_<client_id>`, qui manquait dans la première implémentation. La valeur utilise exactement le même identifiant nettoyé que le champ OAuth `client_id`, sans ajouter le secret au scope ni aux logs. Aucun changement de clé ou de nom de variable n’est nécessaire pour appliquer cette correction.
+
+Le format a été contrôlé dans le [client France Travail utilisé par La Bonne Alternance](https://github.com/mission-apprentissage/labonnealternance/blob/910832b066380101b119eb336430cb12ed4efc33/server/src/common/apis/france-travail/france-travail.client.ts). La correction se vérifie avec les réponses fictives en test ; son résultat réel reste à confirmer dans Render après déploiement.
