@@ -72,6 +72,7 @@ export interface Offer {
     method: string;
     domain: string;
     locationProvenance: string;
+    countryBasis?: string;
   };
   status: OfferStatus;
   moderationStatus: ModerationStatus;

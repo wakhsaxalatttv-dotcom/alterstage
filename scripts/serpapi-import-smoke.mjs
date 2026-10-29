@@ -129,6 +129,12 @@ try {
   );
   assert.ok(!(await page.locator("body").innerText()).includes(key));
   assert.equal(calls, 1);
+  await page
+    .getByText("Pourquoi ces annonces ne sont pas publiées", { exact: true })
+    .click();
+  await page
+    .getByText("Lieu fourni : Paris, France", { exact: true })
+    .waitFor();
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     assert.ok(

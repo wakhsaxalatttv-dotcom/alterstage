@@ -55,7 +55,7 @@ export class SerpApiAutomation {
       .get(today).n;
     const reanalysisRow = this.store.db
       .prepare(
-        "SELECT value FROM metadata WHERE key='serpapi-relative-label-reanalysis-v1'",
+        "SELECT value FROM metadata WHERE key='serpapi-geographic-reanalysis-v2'",
       )
       .get();
     let reanalysis = null;
@@ -64,8 +64,26 @@ export class SerpApiAutomation {
         reanalysis = JSON.parse(reanalysisRow.value);
       } catch {}
     }
+    const lastRequest = this.store.db
+      .prepare("SELECT max(started_at) AS t FROM serpapi_auto_requests")
+      .get().t;
+    const hourly = this.store.db
+      .prepare(
+        "SELECT started_at FROM serpapi_auto_requests WHERE started_at>? ORDER BY started_at",
+      )
+      .all(time - HOUR);
+    const latestState = state ? JSON.parse(state.value) : null;
+    const nextEligibleAt = Math.max(
+      time,
+      lastRequest === null ? time : lastRequest + 60000,
+      used >= this.dailyLimit ? today + DAY : time,
+      hourly.length >= 3 ? hourly[0].started_at + HOUR : time,
+      latestState?.pauseUntil || 0,
+    );
     return {
+      nextEligibleAt,
       reanalysis,
+      diagnostics: this.inbox.diagnostics(),
       configured: this.probe.configured(),
       enabled: this.enabled,
       running: !!this.running,
@@ -88,7 +106,7 @@ export class SerpApiAutomation {
   }
   async execute() {
     if (!this.enabled) return { status: "disabled" };
-    const recoveryKey = "serpapi-relative-label-reanalysis-v1";
+    const recoveryKey = "serpapi-geographic-reanalysis-v2";
     const recoveryClaim = this.store.transaction(
       () =>
         this.store.db
@@ -98,6 +116,28 @@ export class SerpApiAutomation {
           .run(recoveryKey).changes,
     );
     if (recoveryClaim) {
+      this.store.transaction(() => {
+        const previous = this.store.db
+          .prepare("SELECT value FROM metadata WHERE key='serpapi-auto-state'")
+          .get();
+        const state = previous ? JSON.parse(previous.value) : null;
+        if (
+          state?.status === "success" &&
+          state.published === 0 &&
+          SERPAPI_SEARCHES.some((s) => s.query === state.query)
+        ) {
+          this.store.db
+            .prepare(
+              "INSERT OR REPLACE INTO metadata(key,value) VALUES('serpapi-corrective-retry-v2',?)",
+            )
+            .run(state.query);
+          this.store.db
+            .prepare(
+              "UPDATE serpapi_schedule SET last_success=NULL WHERE query=?",
+            )
+            .run(state.query);
+        }
+      });
       const recovered = await this.inbox.reanalyzeSaved(this.resolveLocation);
       this.store.db
         .prepare("UPDATE metadata SET value=? WHERE key=?")
@@ -139,13 +179,32 @@ export class SerpApiAutomation {
       const last = this.store.db
         .prepare("SELECT max(started_at) AS t FROM serpapi_auto_requests")
         .get().t;
-      if (last !== null && time - last < 20 * 60000) return null;
-      const search = this.store.db
+      if (last !== null && time - last < 60000) return null;
+      const preferred = this.store.db
         .prepare(
-          "SELECT * FROM serpapi_schedule WHERE last_success IS NULL OR last_success<? ORDER BY last_attempt IS NOT NULL,last_attempt,id LIMIT 1",
+          "SELECT value FROM metadata WHERE key='serpapi-corrective-retry-v2'",
         )
-        .get(time - this.refreshDays * DAY);
+        .get()?.value;
+      const search =
+        (preferred
+          ? this.store.db
+              .prepare(
+                "SELECT * FROM serpapi_schedule WHERE query=? AND last_success IS NULL",
+              )
+              .get(preferred)
+          : null) ||
+        this.store.db
+          .prepare(
+            "SELECT * FROM serpapi_schedule WHERE last_success IS NULL OR last_success<? ORDER BY last_attempt IS NOT NULL,last_attempt,id LIMIT 1",
+          )
+          .get(time - this.refreshDays * DAY);
       if (!search) return null;
+      if (preferred && search.query === preferred)
+        this.store.db
+          .prepare(
+            "DELETE FROM metadata WHERE key='serpapi-corrective-retry-v2'",
+          )
+          .run();
       const row = this.store.db
         .prepare(
           "INSERT INTO serpapi_auto_requests(started_at,query_id,status) VALUES(?,?,'running')",

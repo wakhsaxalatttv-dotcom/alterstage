@@ -27,6 +27,7 @@ export function parseSerpCandidate(job, now = new Date().toISOString()) {
   const contractText = plainText(
     [
       title,
+      job.job_title,
       job.detected_extensions?.schedule_type,
       ...(Array.isArray(job.extensions) ? job.extensions : []),
     ]
@@ -38,9 +39,6 @@ export function parseSerpCandidate(job, now = new Date().toISOString()) {
     !title ||
     !companyName ||
     isTrainingEmployer(companyName) ||
-    !/\b(stage|stagiaire|intern(?:ship)?|alternance|alternant\w*|apprentissage|apprentice\w*)\b/i.test(
-      contractText,
-    ) ||
     /\b(CDI|freelance)\b/i.test(contractText)
   )
     return null;
@@ -137,12 +135,6 @@ export function serpExclusionReason(job) {
     ...(Array.isArray(job.extensions) ? job.extensions : []),
   ].join(" ");
   if (/\b(CDI|freelance)\b/i.test(contractText)) return "ineligible_contract";
-  if (
-    !/\b(stage|stagiaire|intern(?:ship)?|alternance|alternant\w*|apprentissage|apprentice\w*)\b/i.test(
-      contractText,
-    )
-  )
-    return "contract_not_established";
   if (!plainText(job.description)) return "source_description_missing";
   if (
     !originalLink(job.source_link) &&
@@ -276,7 +268,18 @@ export class SerpApiInbox {
       let location = null;
       if (!analysis.reasons.length) {
         try {
-          location = await resolveLocation(candidate.location);
+          if (typeof resolveLocation.inspect === "function") {
+            const inspected = await resolveLocation.inspect(
+              candidate.location,
+              { countryContext: "FR" },
+            );
+            location = inspected.location;
+            if (!location && inspected.reason)
+              analysis.reasons.push(inspected.reason);
+          } else
+            location = await resolveLocation(candidate.location, {
+              countryContext: "FR",
+            });
         } catch {
           /* A geocoding failure never authorizes publication. */
         }
@@ -330,6 +333,20 @@ export class SerpApiInbox {
       if (!offer) {
         report.deferred++;
         reason("normalization_failed");
+        this.db
+          .prepare(
+            "UPDATE serpapi_candidates SET payload=? WHERE id=? AND status='pending'",
+          )
+          .run(
+            JSON.stringify({
+              ...candidate,
+              analysis: {
+                ...candidate.analysis,
+                requiresReview: ["normalization_failed"],
+              },
+            }),
+            candidate.id,
+          );
         continue;
       }
       const result = await this.store.ingest(offer);
@@ -392,6 +409,7 @@ export class SerpApiInbox {
                 candidate.sourcePublishedAt ||
                 candidate.publishedAt ||
                 undefined,
+              schedule_type: candidate.contractText || undefined,
             },
           },
         ],
@@ -401,6 +419,27 @@ export class SerpApiInbox {
       for (const key of Object.keys(total)) total[key] += report[key] || 0;
     }
     return total;
+  }
+  diagnostics() {
+    return this.db
+      .prepare(
+        "SELECT payload FROM serpapi_candidates WHERE status='pending' ORDER BY retrieved_at DESC LIMIT 10",
+      )
+      .all()
+      .map((row) => {
+        const c = JSON.parse(row.payload);
+        return {
+          title: plainText(c.title, 180),
+          companyName: plainText(c.companyName, 120),
+          location: plainText(c.location, 200),
+          publicationText: plainText(c.publicationText, 500),
+          contractText: plainText(c.contractText, 500),
+          observedAt: c.lastRetrievedAt || c.firstRetrievedAt,
+          reasons: (c.analysis?.requiresReview || [])
+            .filter((v) => typeof v === "string")
+            .slice(0, 10),
+        };
+      });
   }
   reject(id) {
     if (

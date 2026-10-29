@@ -93,21 +93,46 @@ export function analyzeSerpCandidate(candidate) {
       )?.[0];
   if (!domain) reasons.push("technical_domain_not_established");
   const contracts = [];
+  const contractDescription = description
+    .split(/[.!?;]+/)
+    .filter(
+      (clause) =>
+        !/\b(?:pas|aucun|aucune|sans|hors|ni)\b.{0,50}\b(?:stage|apprentissage|alternance|professionnalisation)\b/.test(
+          clause,
+        ),
+    )
+    .join(". ");
   const sourceContract = searchText(candidate.contractText || candidate.title);
-  if (/\bstage\b|\bstagiaire\b|\bintern(?:ship)?\b/.test(sourceContract))
+  if (
+    /\bstage\b|\bstagiaire\b|\bintern(?:ship)?\b/.test(sourceContract) ||
+    /ce stage|offre de stage|propos(?:ons|e) un stage|(?:recherchons|recrutons) un stagiaire|duree du stage|stage conventionne|(?:type de contrat|contrat)\s*:\s*stage/.test(
+      contractDescription,
+    )
+  )
     contracts.push("Stage");
   if (
     /apprenti|apprentissage/.test(sourceContract) ||
-    /contrat d.apprentissage/.test(description)
+    /contrat d.apprentissage/.test(contractDescription)
   )
     contracts.push("Apprentissage");
   if (
-    /contrat de professionnalisation/.test(sourceContract + " " + description)
+    /contrat de professionnalisation/.test(
+      sourceContract + " " + contractDescription,
+    )
   )
     contracts.push("Contrat de professionnalisation");
   if (
     !contracts.length &&
-    /\balternan(?:ce|t|te|ts|tes)\b/.test(sourceContract)
+    (/\balternan(?:ce|t|te|ts|tes)\b/.test(sourceContract) ||
+      /\b(?:poste|offre|contrat|emploi|mission)\b[^.!?;]{0,90}\b(?:en alternance|d.alternance)\b/.test(
+        contractDescription,
+      ) ||
+      /\b(?:type de contrat|contrat)\s*:\s*alternance\b/.test(
+        contractDescription,
+      ) ||
+      /\b(?:recrutons|recherchons|proposons|offrons)\b[^.!?;]{0,90}\b(?:alternant(?:e)?|en alternance)\b/.test(
+        contractDescription,
+      ))
   )
     contracts.push("Alternance — type non précisé");
   if (!contracts.length) reasons.push("contract_not_established");
@@ -178,6 +203,7 @@ export function automaticSerpOffer(
       method: "explicit-source-fields-and-keywords",
       domain: analysis.domain,
       locationProvenance: location.provenance,
+      ...(location.countryBasis ? { countryBasis: location.countryBasis } : {}),
     },
     location: {
       label: location.city,
