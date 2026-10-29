@@ -283,7 +283,11 @@ test("France Travail refreshes an expired bearer once and honors a bounded quota
 });
 test("France Travail reports page caps and does not infer an exhaustive market count", async () => {
   const client = createFranceTravailClient({
-    env: { ...credentials, FRANCE_TRAVAIL_MAX_PAGES: "1" },
+    env: {
+      ...credentials,
+      FRANCE_TRAVAIL_MAX_PAGES: "1",
+      FRANCE_TRAVAIL_MAX_REQUESTS: "1",
+    },
     wait: async () => {},
     fetcher: async (url) =>
       String(url) === FT_TOKEN_URL
@@ -335,5 +339,87 @@ test("France Travail source is automatically merged with custom feeds and can be
       if (previous[key] === undefined) delete process.env[key];
       else process.env[key] = previous[key];
     await rm(folder, { recursive: true, force: true });
+  }
+});
+test("Broad technical discovery has no keyword gate and splits saturated periods without losing boundary records", async () => {
+  const leaves = new Set(),
+    queried = new Set();
+  const client = createFranceTravailClient({
+    env: credentials,
+    now: () => now,
+    wait: async () => {},
+    fetcher: async (url) => {
+      if (String(url) === FT_TOKEN_URL)
+        return json({ access_token: "test", expires_in: 3600 });
+      const query = new URL(url).searchParams;
+      assert.equal(query.has("motsCles"), false);
+      const rome = query.get("romeCode");
+      queried.add(rome);
+      assert.ok(query.has("minCreationDate") && query.has("maxCreationDate"));
+      if (rome !== "H1503") return new Response(null, { status: 204 });
+      const min = Date.parse(query.get("minCreationDate")),
+        max = Date.parse(query.get("maxCreationDate"));
+      const id = `fiction-${min}-${max}`;
+      const job = fixture({
+        id,
+        romeCode: rome,
+        intitule: "Exemple fictif — technicien de laboratoire",
+        dateCreation: new Date(
+          Math.floor((min + max) / 2000) * 1000,
+        ).toISOString(),
+      });
+      if (max - min > 20 * 864e5)
+        return json({ resultats: [job] }, 206, {
+          "content-range": "offres 0-149/999",
+        });
+      leaves.add(id);
+      return json({ resultats: [job] });
+    },
+  });
+  const data = JSON.parse(await client.collect());
+  assert.equal(data.collection.truncated, false);
+  assert.equal(data.collection.completedRomeCodes, 315);
+  assert.equal(queried.size, 315);
+  assert.ok(leaves.size >= 4);
+  const returned = new Set(data.resultats.map((j) => j.id));
+  for (const id of leaves) assert.ok(returned.has(id));
+});
+test("ROME 4 specializations and previously omitted technical families are eligible", () => {
+  const raws = [
+    fixture({ romeCode: "I1602" }),
+    fixture({ romeCode: "H2903" }),
+    fixture({ romeCode: "F1106" }),
+    fixture({ romeCode: "H2702" }),
+  ];
+  const records = parseFranceTravail({ resultats: raws }, now);
+  assert.equal(records.length, 4);
+  assert.equal(records[0].domain, "Aéronautique, spatial & naval");
+  assert.equal(records[1].domain, "Mécanique & productique");
+  assert.equal(records[2].domain, "Bâtiment, génie civil & travaux publics");
+  assert.equal(records[3].domain, "Énergie & environnement");
+});
+test("Incomplete FT coverage stays partial in the persisted ingestion report while eligible offers publish unverified", async () => {
+  const directory = await mkdtemp("/tmp/ft-partial-");
+  const store = new OfferStore(directory);
+  try {
+    const coverage = {
+      truncated: true,
+      completedRomeCodes: 1,
+      totalRomeCodes: 315,
+      limitations: ["request_budget"],
+    };
+    const pipeline = new IngestionPipeline(store, {
+      sources: async () => [franceTravailSource],
+      fetcher: async () =>
+        JSON.stringify({ resultats: [fixture()], collection: coverage }),
+    });
+    const result = await pipeline.run();
+    assert.equal(result.reports[0].status, "partial");
+    assert.equal(result.reports[0].created, 1);
+    assert.deepEqual(store.runs()[0].coverage, coverage);
+    assert.equal((await store.query()).offers[0].lastVerifiedAt, null);
+  } finally {
+    store.close();
+    await rm(directory, { recursive: true, force: true });
   }
 });

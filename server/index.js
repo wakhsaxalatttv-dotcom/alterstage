@@ -24,7 +24,7 @@ const run = () =>
       for (const report of result.reports)
         if (report.sourceId === "france-travail")
           console.info(
-            `[France Travail] ${report.status} : ${report.created} nouvelle(s), ${report.updated} modifiée(s), ${report.invalid} invalide(s). ${report.message || ""}`,
+            `[France Travail] ${report.status} : ${report.created} nouvelle(s), ${report.updated} modifiée(s), ${report.invalid} invalide(s). ${report.coverage ? `Métiers parcourus : ${report.coverage.completedRomeCodes}/${report.coverage.totalRomeCodes}. ` : ""}${report.message || ""}`,
           );
     })
     .catch(() =>

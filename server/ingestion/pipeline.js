@@ -254,9 +254,10 @@ export class IngestionPipeline {
         try {
           const records = parseFeed(source, await this.fetcher(source));
           if (records.exclusions) report.exclusions = records.exclusions;
+          if (records.collection) report.coverage = records.collection;
           if (records.collection?.truncated)
             report.message =
-              "Collecte plafonnée : d’autres résultats peuvent exister. Augmenter FRANCE_TRAVAIL_MAX_PAGES côté serveur si le quota le permet.";
+              "Collecte partielle : quota, budget de requêtes ou pagination saturée. Consulter la couverture des métiers ; aucune exhaustivité n’est annoncée.";
           for (const record of records) {
             let offer;
             try {
@@ -268,7 +269,10 @@ export class IngestionPipeline {
             const result = await this.store.ingest(offer);
             report[result]++;
           }
-          report.status = report.invalid ? "partial" : "success";
+          report.status =
+            report.invalid || records.collection?.truncated
+              ? "partial"
+              : "success";
         } catch (error) {
           report.status = "error";
           report.code =

@@ -135,6 +135,15 @@ export function SourcePanel({ token, onChanged }) {
                       {r.unchanged} inchangée(s), {r.duplicate} doublon(s),{" "}
                       {r.invalid} invalide(s)
                     </p>
+                    {r.coverage && (
+                      <p>
+                        Parcours des métiers : {r.coverage.completedRomeCodes} /{" "}
+                        {r.coverage.totalRomeCodes}.{" "}
+                        {r.coverage.truncated
+                          ? "Parcours incomplet — d’autres offres peuvent rester à collecter."
+                          : "Parcours terminé sur la période recherchée."}
+                      </p>
+                    )}
                     {r.message && <p>{r.message}</p>}
                   </article>
                 ))}

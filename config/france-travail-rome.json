@@ -1,0 +1,1266 @@
+{
+  "reference": "ROME v4.60, référentiel utilisé par La Bonne Alternance",
+  "source": "https://github.com/mission-apprentissage/labonnealternance/blob/910832b066380101b119eb336430cb12ed4efc33/server/static/referentiel/unix_referentiel_code_rome_v460_utf8.csv",
+  "metiers": [
+    {
+      "code": "F1103",
+      "parent": "F1103"
+    },
+    {
+      "code": "F1104",
+      "parent": "F1104"
+    },
+    {
+      "code": "F1105",
+      "parent": "F1105"
+    },
+    {
+      "code": "F1106",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1107",
+      "parent": "F1107"
+    },
+    {
+      "code": "F1109",
+      "parent": "F1107"
+    },
+    {
+      "code": "F1110",
+      "parent": "F1104"
+    },
+    {
+      "code": "F1111",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1112",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1113",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1114",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1115",
+      "parent": "F1105"
+    },
+    {
+      "code": "F1116",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1117",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1118",
+      "parent": "F1105"
+    },
+    {
+      "code": "F1119",
+      "parent": "F1105"
+    },
+    {
+      "code": "F1122",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1123",
+      "parent": "F1105"
+    },
+    {
+      "code": "F1124",
+      "parent": "F1105"
+    },
+    {
+      "code": "F1125",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1126",
+      "parent": "F1104"
+    },
+    {
+      "code": "F1128",
+      "parent": "F1105"
+    },
+    {
+      "code": "F1129",
+      "parent": "F1105"
+    },
+    {
+      "code": "F1130",
+      "parent": "F1103"
+    },
+    {
+      "code": "F1131",
+      "parent": "F1107"
+    },
+    {
+      "code": "F1132",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1133",
+      "parent": "F1107"
+    },
+    {
+      "code": "F1134",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1135",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1136",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1137",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1138",
+      "parent": "F1105"
+    },
+    {
+      "code": "F1141",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1142",
+      "parent": "F1106"
+    },
+    {
+      "code": "F1143",
+      "parent": "F1105"
+    },
+    {
+      "code": "F1201",
+      "parent": "F1201"
+    },
+    {
+      "code": "F1202",
+      "parent": "F1202"
+    },
+    {
+      "code": "F1205",
+      "parent": "F1201"
+    },
+    {
+      "code": "F1206",
+      "parent": "F1202"
+    },
+    {
+      "code": "F1207",
+      "parent": "F1202"
+    },
+    {
+      "code": "F1208",
+      "parent": "F1201"
+    },
+    {
+      "code": "F1209",
+      "parent": "F1202"
+    },
+    {
+      "code": "F1210",
+      "parent": "F1201"
+    },
+    {
+      "code": "F1602",
+      "parent": "F1602"
+    },
+    {
+      "code": "F1603",
+      "parent": "F1603"
+    },
+    {
+      "code": "F1605",
+      "parent": "F1605"
+    },
+    {
+      "code": "F1620",
+      "parent": "F1603"
+    },
+    {
+      "code": "F1621",
+      "parent": "F1603"
+    },
+    {
+      "code": "F1622",
+      "parent": "F1605"
+    },
+    {
+      "code": "F1623",
+      "parent": "F1605"
+    },
+    {
+      "code": "F1627",
+      "parent": "F1603"
+    },
+    {
+      "code": "F1628",
+      "parent": "F1602"
+    },
+    {
+      "code": "F1629",
+      "parent": "F1602"
+    },
+    {
+      "code": "H1202",
+      "parent": "H1202"
+    },
+    {
+      "code": "H1203",
+      "parent": "H1203"
+    },
+    {
+      "code": "H1206",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1207",
+      "parent": "H1207"
+    },
+    {
+      "code": "H1208",
+      "parent": "H1208"
+    },
+    {
+      "code": "H1209",
+      "parent": "H1209"
+    },
+    {
+      "code": "H1210",
+      "parent": "H1210"
+    },
+    {
+      "code": "H1211",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1212",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1213",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1214",
+      "parent": "H1210"
+    },
+    {
+      "code": "H1215",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1216",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1217",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1218",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1219",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1220",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1221",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1222",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1223",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1224",
+      "parent": "H1210"
+    },
+    {
+      "code": "H1225",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1226",
+      "parent": "H1207"
+    },
+    {
+      "code": "H1227",
+      "parent": "H1202"
+    },
+    {
+      "code": "H1228",
+      "parent": "H1202"
+    },
+    {
+      "code": "H1230",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1234",
+      "parent": "H1207"
+    },
+    {
+      "code": "H1235",
+      "parent": "H1203"
+    },
+    {
+      "code": "H1236",
+      "parent": "H1202"
+    },
+    {
+      "code": "H1237",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1238",
+      "parent": "H1203"
+    },
+    {
+      "code": "H1239",
+      "parent": "H1202"
+    },
+    {
+      "code": "H1241",
+      "parent": "H1206"
+    },
+    {
+      "code": "H1401",
+      "parent": "H1401"
+    },
+    {
+      "code": "H1402",
+      "parent": "H1402"
+    },
+    {
+      "code": "H1405",
+      "parent": "H1401"
+    },
+    {
+      "code": "H1406",
+      "parent": "H1401"
+    },
+    {
+      "code": "H1501",
+      "parent": "H1501"
+    },
+    {
+      "code": "H1502",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1503",
+      "parent": "H1503"
+    },
+    {
+      "code": "H1504",
+      "parent": "H1504"
+    },
+    {
+      "code": "H1505",
+      "parent": "H1505"
+    },
+    {
+      "code": "H1506",
+      "parent": "H1506"
+    },
+    {
+      "code": "H1507",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1508",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1509",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1510",
+      "parent": "H1501"
+    },
+    {
+      "code": "H1511",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1512",
+      "parent": "H1501"
+    },
+    {
+      "code": "H1513",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1514",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1515",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1516",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1517",
+      "parent": "H1501"
+    },
+    {
+      "code": "H1518",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1519",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1520",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1521",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1522",
+      "parent": "H1506"
+    },
+    {
+      "code": "H1523",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1524",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1525",
+      "parent": "H1503"
+    },
+    {
+      "code": "H1526",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1527",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1528",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1529",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1530",
+      "parent": "H1503"
+    },
+    {
+      "code": "H1531",
+      "parent": "H1503"
+    },
+    {
+      "code": "H1532",
+      "parent": "H1502"
+    },
+    {
+      "code": "H1533",
+      "parent": "H1501"
+    },
+    {
+      "code": "H1534",
+      "parent": "H1501"
+    },
+    {
+      "code": "H2301",
+      "parent": "H2301"
+    },
+    {
+      "code": "H2302",
+      "parent": "H2301"
+    },
+    {
+      "code": "H2303",
+      "parent": "H2301"
+    },
+    {
+      "code": "H2304",
+      "parent": "H2301"
+    },
+    {
+      "code": "H2501",
+      "parent": "H2501"
+    },
+    {
+      "code": "H2502",
+      "parent": "H2502"
+    },
+    {
+      "code": "H2503",
+      "parent": "H2503"
+    },
+    {
+      "code": "H2504",
+      "parent": "H2504"
+    },
+    {
+      "code": "H2506",
+      "parent": "H2504"
+    },
+    {
+      "code": "H2507",
+      "parent": "H2502"
+    },
+    {
+      "code": "H2508",
+      "parent": "H2502"
+    },
+    {
+      "code": "H2509",
+      "parent": "H2502"
+    },
+    {
+      "code": "H2510",
+      "parent": "H2502"
+    },
+    {
+      "code": "H2701",
+      "parent": "H2701"
+    },
+    {
+      "code": "H2702",
+      "parent": "H2701"
+    },
+    {
+      "code": "H2703",
+      "parent": "H2701"
+    },
+    {
+      "code": "H2704",
+      "parent": "H2701"
+    },
+    {
+      "code": "H2705",
+      "parent": "H2701"
+    },
+    {
+      "code": "H2706",
+      "parent": "H2701"
+    },
+    {
+      "code": "H2707",
+      "parent": "H2701"
+    },
+    {
+      "code": "H2708",
+      "parent": "H2701"
+    },
+    {
+      "code": "H2709",
+      "parent": "H2701"
+    },
+    {
+      "code": "H2710",
+      "parent": "H2701"
+    },
+    {
+      "code": "H2901",
+      "parent": "H2901"
+    },
+    {
+      "code": "H2902",
+      "parent": "H2902"
+    },
+    {
+      "code": "H2903",
+      "parent": "H2903"
+    },
+    {
+      "code": "H2909",
+      "parent": "H2909"
+    },
+    {
+      "code": "H2912",
+      "parent": "H2912"
+    },
+    {
+      "code": "H2913",
+      "parent": "H2913"
+    },
+    {
+      "code": "H2915",
+      "parent": "H2913"
+    },
+    {
+      "code": "H2916",
+      "parent": "H2913"
+    },
+    {
+      "code": "H2917",
+      "parent": "H2913"
+    },
+    {
+      "code": "H2918",
+      "parent": "H2903"
+    },
+    {
+      "code": "I1101",
+      "parent": "I1101"
+    },
+    {
+      "code": "I1102",
+      "parent": "I1102"
+    },
+    {
+      "code": "I1104",
+      "parent": "I1101"
+    },
+    {
+      "code": "I1105",
+      "parent": "I1101"
+    },
+    {
+      "code": "I1106",
+      "parent": "I1101"
+    },
+    {
+      "code": "I1301",
+      "parent": "I1301"
+    },
+    {
+      "code": "I1302",
+      "parent": "I1302"
+    },
+    {
+      "code": "I1303",
+      "parent": "I1303"
+    },
+    {
+      "code": "I1304",
+      "parent": "I1304"
+    },
+    {
+      "code": "I1305",
+      "parent": "I1305"
+    },
+    {
+      "code": "I1306",
+      "parent": "I1306"
+    },
+    {
+      "code": "I1307",
+      "parent": "I1307"
+    },
+    {
+      "code": "I1309",
+      "parent": "I1309"
+    },
+    {
+      "code": "I1310",
+      "parent": "I1310"
+    },
+    {
+      "code": "I1311",
+      "parent": "I1307"
+    },
+    {
+      "code": "I1312",
+      "parent": "I1307"
+    },
+    {
+      "code": "I1313",
+      "parent": "I1302"
+    },
+    {
+      "code": "I1314",
+      "parent": "I1307"
+    },
+    {
+      "code": "I1315",
+      "parent": "I1307"
+    },
+    {
+      "code": "I1316",
+      "parent": "I1306"
+    },
+    {
+      "code": "I1317",
+      "parent": "I1307"
+    },
+    {
+      "code": "I1318",
+      "parent": "I1302"
+    },
+    {
+      "code": "I1319",
+      "parent": "I1307"
+    },
+    {
+      "code": "I1320",
+      "parent": "I1307"
+    },
+    {
+      "code": "I1321",
+      "parent": "I1304"
+    },
+    {
+      "code": "I1322",
+      "parent": "I1303"
+    },
+    {
+      "code": "I1323",
+      "parent": "I1304"
+    },
+    {
+      "code": "I1324",
+      "parent": "I1304"
+    },
+    {
+      "code": "I1325",
+      "parent": "I1306"
+    },
+    {
+      "code": "I1326",
+      "parent": "I1304"
+    },
+    {
+      "code": "I1327",
+      "parent": "I1305"
+    },
+    {
+      "code": "I1328",
+      "parent": "I1302"
+    },
+    {
+      "code": "I1329",
+      "parent": "I1305"
+    },
+    {
+      "code": "I1330",
+      "parent": "I1307"
+    },
+    {
+      "code": "I1331",
+      "parent": "I1304"
+    },
+    {
+      "code": "I1332",
+      "parent": "I1304"
+    },
+    {
+      "code": "I1333",
+      "parent": "I1304"
+    },
+    {
+      "code": "I1334",
+      "parent": "I1305"
+    },
+    {
+      "code": "I1335",
+      "parent": "I1304"
+    },
+    {
+      "code": "I1401",
+      "parent": "I1401"
+    },
+    {
+      "code": "I1403",
+      "parent": "I1401"
+    },
+    {
+      "code": "I1404",
+      "parent": "I1401"
+    },
+    {
+      "code": "I1405",
+      "parent": "I1401"
+    },
+    {
+      "code": "I1406",
+      "parent": "I1401"
+    },
+    {
+      "code": "I1409",
+      "parent": "I1401"
+    },
+    {
+      "code": "I1602",
+      "parent": "I1602"
+    },
+    {
+      "code": "I1603",
+      "parent": "I1603"
+    },
+    {
+      "code": "I1616",
+      "parent": "I1603"
+    },
+    {
+      "code": "I1620",
+      "parent": "I1603"
+    },
+    {
+      "code": "K1724",
+      "parent": "I1603"
+    },
+    {
+      "code": "K2301",
+      "parent": "K2301"
+    },
+    {
+      "code": "K2302",
+      "parent": "K2302"
+    },
+    {
+      "code": "K2306",
+      "parent": "K2306"
+    },
+    {
+      "code": "K2311",
+      "parent": "K2306"
+    },
+    {
+      "code": "K2312",
+      "parent": "K2302"
+    },
+    {
+      "code": "K2313",
+      "parent": "K2301"
+    },
+    {
+      "code": "K2314",
+      "parent": "K2301"
+    },
+    {
+      "code": "K2315",
+      "parent": "K2302"
+    },
+    {
+      "code": "K2316",
+      "parent": "K2306"
+    },
+    {
+      "code": "K2317",
+      "parent": "K2306"
+    },
+    {
+      "code": "K2320",
+      "parent": "K2306"
+    },
+    {
+      "code": "K2321",
+      "parent": "K2301"
+    },
+    {
+      "code": "K2322",
+      "parent": "K2306"
+    },
+    {
+      "code": "K2323",
+      "parent": "K2302"
+    },
+    {
+      "code": "M1801",
+      "parent": "M1801"
+    },
+    {
+      "code": "M1802",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1803",
+      "parent": "M1803"
+    },
+    {
+      "code": "M1804",
+      "parent": "M1804"
+    },
+    {
+      "code": "M1805",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1806",
+      "parent": "M1806"
+    },
+    {
+      "code": "M1807",
+      "parent": "M1807"
+    },
+    {
+      "code": "M1808",
+      "parent": "M1808"
+    },
+    {
+      "code": "M1809",
+      "parent": "M1809"
+    },
+    {
+      "code": "M1810",
+      "parent": "M1810"
+    },
+    {
+      "code": "M1811",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1812",
+      "parent": "M1803"
+    },
+    {
+      "code": "M1813",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1814",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1815",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1816",
+      "parent": "M1810"
+    },
+    {
+      "code": "M1817",
+      "parent": "M1801"
+    },
+    {
+      "code": "M1818",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1819",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1820",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1821",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1822",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1823",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1824",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1825",
+      "parent": "M1803"
+    },
+    {
+      "code": "M1826",
+      "parent": "M1803"
+    },
+    {
+      "code": "M1827",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1828",
+      "parent": "M1806"
+    },
+    {
+      "code": "M1829",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1830",
+      "parent": "M1801"
+    },
+    {
+      "code": "M1831",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1832",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1833",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1834",
+      "parent": "M1801"
+    },
+    {
+      "code": "M1835",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1836",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1837",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1838",
+      "parent": "M1806"
+    },
+    {
+      "code": "M1839",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1840",
+      "parent": "M1803"
+    },
+    {
+      "code": "M1841",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1842",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1843",
+      "parent": "M1801"
+    },
+    {
+      "code": "M1844",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1845",
+      "parent": "M1806"
+    },
+    {
+      "code": "M1846",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1847",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1848",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1849",
+      "parent": "M1801"
+    },
+    {
+      "code": "M1850",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1851",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1852",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1853",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1854",
+      "parent": "M1801"
+    },
+    {
+      "code": "M1855",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1856",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1857",
+      "parent": "M1801"
+    },
+    {
+      "code": "M1858",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1859",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1860",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1861",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1862",
+      "parent": "M1803"
+    },
+    {
+      "code": "M1863",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1864",
+      "parent": "M1806"
+    },
+    {
+      "code": "M1865",
+      "parent": "M1806"
+    },
+    {
+      "code": "M1866",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1867",
+      "parent": "M1803"
+    },
+    {
+      "code": "M1868",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1869",
+      "parent": "M1810"
+    },
+    {
+      "code": "M1870",
+      "parent": "M1803"
+    },
+    {
+      "code": "M1871",
+      "parent": "M1806"
+    },
+    {
+      "code": "M1872",
+      "parent": "M1806"
+    },
+    {
+      "code": "M1873",
+      "parent": "M1806"
+    },
+    {
+      "code": "M1874",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1875",
+      "parent": "M1806"
+    },
+    {
+      "code": "M1876",
+      "parent": "M1810"
+    },
+    {
+      "code": "M1877",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1878",
+      "parent": "M1803"
+    },
+    {
+      "code": "M1879",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1880",
+      "parent": "M1806"
+    },
+    {
+      "code": "M1881",
+      "parent": "M1806"
+    },
+    {
+      "code": "M1882",
+      "parent": "M1802"
+    },
+    {
+      "code": "M1883",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1884",
+      "parent": "M1810"
+    },
+    {
+      "code": "M1885",
+      "parent": "M1803"
+    },
+    {
+      "code": "M1886",
+      "parent": "M1803"
+    },
+    {
+      "code": "M1887",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1888",
+      "parent": "M1809"
+    },
+    {
+      "code": "M1889",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1890",
+      "parent": "M1809"
+    },
+    {
+      "code": "M1891",
+      "parent": "M1809"
+    },
+    {
+      "code": "M1892",
+      "parent": "M1805"
+    },
+    {
+      "code": "M1893",
+      "parent": "M1809"
+    },
+    {
+      "code": "M1894",
+      "parent": "M1801"
+    }
+  ]
+}

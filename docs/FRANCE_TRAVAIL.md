@@ -19,7 +19,9 @@ Autoriser ces domaines dans le réseau du serveur si la sortie Internet est filt
 
 ## Sélection et fiabilité
 
-La recherche parcourt les codes ROME techniques déjà utilisés par LBA, par groupes de trois, avec les mots-clés `alternance`, `apprentissage` et `stage`. La sélection finale ne se fonde pas sur le mot-clé : elle exige un contrat structuré d’apprentissage, de professionnalisation, ou un type libellé stage. Un CDD ordinaire mentionnant le mot « alternance » est exclu. Le périmètre est volontairement non exhaustif.
+La recherche parcourt 315 codes métiers techniques du référentiel ROME v4.60, un code à la fois, sur les publications des 45 derniers jours. Le référentiel code/parent et sa provenance figée sont conservés dans `config/france-travail-rome.json`, avec les correspondances de domaines dans `server/ingestion/france-travail-domains.js`. Il couvre les métiers informatiques, réseaux, maintenance, mécanique, construction, énergie, chimie et matériaux et leurs spécialisations. Il ne prétend pas couvrir les métiers hors de ce périmètre.
+
+Aucun mot-clé de titre n’est exigé : une offre dont le titre ne mentionne pas « alternance » peut être retenue. La sélection exige un contrat structuré d’apprentissage, de professionnalisation, ou un type libellé stage. Un CDD ordinaire mentionnant le mot « alternance » est exclu.
 
 Sont exclus : publication absente, future ou datant de plus de 45 jours ; domaines hors périmètre ; employeur anonyme ; lieu/région non établi ; annonce sans URL originale, titre ou description ; écoles/organismes de formation identifiés par leur nom ou leur code NAF 85. Ces règles prudentes peuvent écarter des annonces incomplètes. Elles ne constituent pas une certification de l’entreprise.
 
@@ -33,7 +35,13 @@ Les annonces éligibles suivent la politique de publication API autorisée du ca
 
 ## Pagination et limites
 
-150 résultats par page, `FRANCE_TRAVAIL_MAX_PAGES=3` par recherche par défaut (1–10). Les identifiants sont dédoublonnés entre recherches. Une pagination plafonnée est signalée dans le compte rendu privé. Le nombre total du marché n’est jamais revendiqué. Les requêtes sont séquentielles et espacées ; un 429 déclenche une seule reprise courte, puis une erreur explicite si le quota reste atteint. Un échec de collecte ne vide pas le catalogue existant ; les dates limites continuent à s’appliquer.
+150 résultats par page, `FRANCE_TRAVAIL_MAX_PAGES=10` par fenêtre (1–10). Lorsqu’une fenêtre contient davantage de résultats, elle est automatiquement divisée en deux périodes, jusqu’à la seconde si nécessaire, et toutes les pages des sous-périodes sont parcourues. Les frontières temporelles se recouvrent pour ne pas perdre les offres au point de découpe ; leurs identifiants sont dédoublonnés. Un ancien réglage à trois pages déclenche ce même découpage et ne limite donc plus la collecte à trois pages au total.
+
+Le budget `FRANCE_TRAVAIL_MAX_REQUESTS` vaut 1000 requêtes de recherche par exécution (1–5000). Les reprises OAuth/429 comptent aussi dans ce budget. Les requêtes sont séquentielles et espacées de 200 ms au minimum ; un 429 déclenche une seule reprise courte. Les offres non éligibles sont éliminées à chaque page pour limiter la mémoire du serveur.
+
+La couverture de métiers, la période recherchée et les limites sont conservées dans le compte rendu privé. Une seconde contenant plus de résultats que le plafond API, une pagination incohérente, un quota, un budget atteint ou une interruption réseau ne sont jamais présentés comme un parcours complet. Lorsqu’une interruption de quota/réseau survient après des réponses exploitables, les offres éligibles déjà reçues sont conservées et l’exécution est explicitement partielle. Les dates limites et les retraits administrateur restent appliqués. Le compteur de lignes examinées et d’exclusions porte sur des observations de réponses, potentiellement répétées aux frontières ; il ne représente pas un total unique du marché.
+
+Même un parcours terminé concerne une période et un périmètre donnés, pas une garantie d’exhaustivité du marché mouvant ni de disponibilité individuelle en direct.
 
 Le planificateur ne tourne que tant que le processus serveur tourne. Une instance Render gratuite en veille ne garantit pas une collecte régulière. Un disque persistant `DATA_DIR` reste nécessaire pour conserver le catalogue et les décisions.
 

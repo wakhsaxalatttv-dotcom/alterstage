@@ -1,8 +1,11 @@
 import { createHash } from "node:crypto";
 import { dispatcher } from "./http.js";
-import { romeDomains } from "./lba.js";
+import { franceTravailDomains } from "./france-travail-domains.js";
 import { regions } from "../../src/domain.js";
-import { isRecentPublication } from "../../shared/freshness.js";
+import {
+  publicationCutoff,
+  isRecentPublication,
+} from "../../shared/freshness.js";
 import { plainText } from "../enrichment.js";
 import { safeUrl } from "../domain.js";
 export const FT_SEARCH_URL =
@@ -137,97 +140,160 @@ export function createFranceTravailClient({
   }
   return {
     async collect() {
-      const records = new Map(),
-        romes = Object.keys(romeDomains);
-      let truncated = false,
-        requests = 0;
+      const records = new Map();
+      const romes = Object.keys(franceTravailDomains);
+      const until = Math.floor(now() / 1000) * 1000;
+      const since = Date.parse(publicationCutoff(until));
       const maxPages = Math.min(
         10,
-        Math.max(1, Math.floor(Number(env.FRANCE_TRAVAIL_MAX_PAGES)) || 3),
+        Math.max(1, Math.floor(Number(env.FRANCE_TRAVAIL_MAX_PAGES)) || 10),
       );
-      for (let i = 0; i < romes.length; i += 3) {
-        for (const keyword of ["alternance", "apprentissage", "stage"]) {
-          for (let page = 0; page < maxPages; page++) {
-            const url = new URL(FT_SEARCH_URL);
-            url.search = new URLSearchParams({
-              romeCode: romes.slice(i, i + 3).join(","),
-              motsCles: keyword,
-              range: `${page * 150}-${page * 150 + 149}`,
-              sort: "1",
-            });
-            await wait(200);
-            let response = await request(url.href, {
-              headers: {
-                Accept: "application/json",
-                Authorization: `Bearer ${await token()}`,
-              },
-            });
-            requests++;
-            if (response.status === 401) {
-              cachedToken = null;
-              response = await request(url.href, {
-                headers: {
-                  Accept: "application/json",
-                  Authorization: `Bearer ${await token()}`,
-                },
-              });
-            }
-            if (response.status === 204) break;
-            if (response.status === 429) {
-              const delay = Math.min(
+      const maxRequests = Math.min(
+        5000,
+        Math.max(
+          1,
+          Math.floor(Number(env.FRANCE_TRAVAIL_MAX_REQUESTS)) || 1000,
+        ),
+      );
+      let requests = 0,
+        partitions = 0,
+        completedRomeCodes = 0,
+        examined = 0;
+      const filteredExclusions = {};
+      const limitations = new Set();
+      async function pageRequest(url) {
+        if (requests >= maxRequests)
+          throw failure(
+            "request_budget",
+            "France Travail : budget de requêtes atteint.",
+          );
+        requests++;
+        await wait(200);
+        return request(url, {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${await token()}`,
+          },
+        });
+      }
+      async function scan(rome, min, max) {
+        partitions++;
+        for (let page = 0; page < maxPages; page++) {
+          const url = new URL(FT_SEARCH_URL);
+          url.search = new URLSearchParams({
+            romeCode: rome,
+            minCreationDate: new Date(min).toISOString().replace(".000Z", "Z"),
+            maxCreationDate: new Date(max).toISOString().replace(".000Z", "Z"),
+            range: `${page * 150}-${page * 150 + 149}`,
+            sort: "1",
+          });
+          let response = await pageRequest(url.href);
+          if (response.status === 401) {
+            cachedToken = null;
+            response = await pageRequest(url.href);
+          }
+          if (response.status === 429) {
+            await wait(
+              Math.min(
                 10000,
                 Math.max(
                   1000,
                   Number(response.headers.get("retry-after")) * 1000 || 2000,
                 ),
-              );
-              await wait(delay);
-              response = await request(url.href, {
-                headers: {
-                  Accept: "application/json",
-                  Authorization: `Bearer ${await token()}`,
-                },
-              });
+              ),
+            );
+            response = await pageRequest(url.href);
+          }
+          if (response.status === 204) return true;
+          if (!response.ok) {
+            const code =
+              response.status === 429
+                ? "rate_limited"
+                : response.status === 403
+                  ? "access_denied"
+                  : "api_error";
+            throw failure(
+              code,
+              response.status === 429
+                ? "France Travail : quota atteint. Réessayer la collecte plus tard."
+                : response.status === 403
+                  ? "France Travail : accès à l’API Offres d’emploi non autorisé pour cette application."
+                  : "France Travail : recherche indisponible. Vérifier les droits et les paramètres API.",
+            );
+          }
+          const data = await jsonResponse(response);
+          if (!Array.isArray(data.resultats))
+            throw failure(
+              "invalid_response",
+              "France Travail : liste des offres absente.",
+            );
+          examined += data.resultats.length;
+          const eligible = parseFranceTravail(
+            { resultats: data.resultats },
+            until,
+          );
+          for (const [reason, count] of Object.entries(eligible.exclusions))
+            filteredExclusions[reason] =
+              (filteredExclusions[reason] || 0) + count;
+          const acceptedIds = new Set(
+            eligible.map((offer) => offer.externalId),
+          );
+          for (const offer of data.resultats)
+            if (typeof offer?.id === "string" && acceptedIds.has(offer.id))
+              records.set(offer.id, offer);
+          const range = response.headers
+            .get("content-range")
+            ?.match(/(\d+)\s*-\s*(\d+)\s*\/\s*(\d+|\*)/);
+          const total = range && range[3] !== "*" ? Number(range[3]) : null;
+          const more = range
+            ? range[3] === "*" || Number(range[2]) + 1 < total
+            : response.status === 206 && data.resultats.length >= 150;
+          if (!more) return true;
+          // Partition a crowded time window rather than silently losing records past the API range cap.
+          if ((page === 0 && total > maxPages * 150) || page + 1 === maxPages) {
+            const midpoint = Math.floor((min + max) / 2000) * 1000;
+            if (midpoint <= min || midpoint >= max) {
+              limitations.add("saturated_second");
+              return false;
             }
-            if (response.status === 204) break;
-            if (!response.ok) {
-              const code =
-                response.status === 429
-                  ? "rate_limited"
-                  : response.status === 403
-                    ? "access_denied"
-                    : "api_error";
-              throw failure(
-                code,
-                response.status === 429
-                  ? "France Travail : quota atteint. Réessayer la collecte plus tard."
-                  : response.status === 403
-                    ? "France Travail : accès à l’API Offres d’emploi non autorisé pour cette application."
-                    : "France Travail : recherche indisponible. Vérifier les droits et les paramètres API.",
-              );
-            }
-            const data = await jsonResponse(response);
-            if (!Array.isArray(data.resultats))
-              throw failure(
-                "invalid_response",
-                "France Travail : liste des offres absente.",
-              );
-            for (const offer of data.resultats)
-              if (typeof offer?.id === "string") records.set(offer.id, offer);
-            const range = response.headers
-              .get("content-range")
-              ?.match(/(\d+)\s*-\s*(\d+)\s*\/\s*(\d+|\*)/);
-            const more = range
-              ? range[3] === "*" || Number(range[2]) + 1 < Number(range[3])
-              : response.status === 206 && data.resultats.length >= 150;
-            if (!more || !data.resultats.length) break;
-            if (page + 1 === maxPages) truncated = true;
+            const left = await scan(rome, min, midpoint);
+            const right = await scan(rome, midpoint, max);
+            return left && right;
+          }
+          if (!data.resultats.length) {
+            limitations.add("inconsistent_pagination");
+            return false;
           }
         }
+        return false;
+      }
+      try {
+        for (const rome of romes)
+          if (await scan(rome, since, until)) completedRomeCodes++;
+      } catch (error) {
+        // Keep fetched records on a quota/network interruption, but never report a completed collection.
+        if (
+          !(error instanceof FranceTravailError) ||
+          !records.size ||
+          !["request_budget", "rate_limited", "network"].includes(error.code)
+        )
+          throw error;
+        limitations.add(error.code);
       }
       return JSON.stringify({
         resultats: [...records.values()],
-        collection: { truncated, requests },
+        collection: {
+          truncated: limitations.size > 0 || completedRomeCodes < romes.length,
+          requests,
+          partitions,
+          completedRomeCodes,
+          totalRomeCodes: romes.length,
+          examined,
+          filteredExclusions,
+          since: new Date(since).toISOString(),
+          until: new Date(until).toISOString(),
+          limitations: [...limitations],
+        },
       });
     },
   };
@@ -280,7 +346,7 @@ export function parseFranceTravail(body, now = Date.now()) {
       exclusions.contract++;
       continue;
     }
-    const domain = romeDomains[offer.romeCode];
+    const domain = franceTravailDomains[offer.romeCode];
     if (!domain) {
       exclusions.outOfScope++;
       continue;

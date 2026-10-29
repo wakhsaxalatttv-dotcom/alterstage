@@ -128,3 +128,5 @@ La palette d’origine est rétablie : vert `#176B50`, fond crème `#FCFCF9`, en
 ### Activer France Travail
 
 Les variables Render doivent être nommées `FRANCE_TRAVAIL_CLIENT_ID` et `FRANCE_TRAVAIL_CLIENT_SECRET`. Après déploiement, la collecte démarre automatiquement si elles sont présentes. Les logs privés indiquent son résultat, sans secret. L’application doit avoir accès à l’API Offres d’emploi. Si `INGEST_INTERVAL_MINUTES=0` est défini, le remplacer par `180` pour une collecte périodique. Détails et limites dans [docs/FRANCE_TRAVAIL.md](docs/FRANCE_TRAVAIL.md). La connexion réelle ne peut être annoncée qu’après une collecte réussie sur Render.
+
+La collecte France Travail parcourt maintenant 315 codes métiers techniques et leurs spécialisations, sans imposer de mots-clés dans les titres. La pagination est complétée par un découpage automatique des périodes trop remplies. Le compte rendu privé affiche les métiers parcourus et signale toute collecte partielle (quota, budget ou réseau) ; aucune exhaustivité ne peut être annoncée avant une collecte réelle réussie sur Render.
