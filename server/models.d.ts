@@ -94,11 +94,16 @@ export interface Offer {
   submittedAt: string;
   reuse?: { licenseUrl: string; authorizationRef: string | null };
   detailsComplete?: boolean;
+  editorialSummary?: boolean;
+  sourceConsultedAt?: string;
 }
 export interface SourceDefinition {
   id: string;
   name: string;
-  kind: "json" | "rss" | "lba";
+  kind: "json" | "rss" | "lba" | "france-travail";
+  includeFranceTravail?: boolean;
+  includeOlderActive?: boolean;
+  publishUnverified?: boolean;
   url: string;
   allowedHosts: string[];
   enabled: boolean;

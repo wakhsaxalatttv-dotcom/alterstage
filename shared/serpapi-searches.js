@@ -23,7 +23,7 @@ const terms = {
   "Qualité, sécurité & métrologie": "qualité sécurité métrologie",
   "Autres métiers techniques": "technique industriel",
 };
-export const SERPAPI_SEARCHES = domains.flatMap((domain) =>
+export const SECTOR_SEARCHES = domains.flatMap((domain) =>
   ["stage", "alternance"].map((contract) => ({
     id: `${contract}:${domain}`,
     domain,
@@ -31,3 +31,21 @@ export const SERPAPI_SEARCHES = domains.flatMap((domain) =>
     query: `${contract} ${terms[domain] || domain}`,
   })),
 );
+
+export const SERPAPI_SEARCHES = [
+  ...["stage", "alternance"].map((contract) => ({
+    id: `general:${contract}`,
+    domain: "Tous les secteurs",
+    contract,
+    query: contract,
+  })),
+  ...["PME", "TPE", "start-up", "association"].flatMap((kind) =>
+    ["stage", "alternance"].map((contract) => ({
+      id: `local:${kind}:${contract}`,
+      domain: "PME et structures locales",
+      contract,
+      query: `${contract} ${kind}`,
+    })),
+  ),
+  ...SECTOR_SEARCHES,
+];

@@ -63,11 +63,11 @@ export function VerifiedBadge({ offer }) {
   return (
     <span
       className="verified-badge"
-      title={`Source et périmètre technique contrôlés le ${new Date(offer.lastVerifiedAt).toLocaleDateString("fr-FR")}. Ce contrôle ne garantit pas l’ouverture future du recrutement.`}
+      title={`Source et critères du poste contrôlés le ${new Date(offer.lastVerifiedAt).toLocaleDateString("fr-FR")}. Ce contrôle ne garantit pas l’ouverture future du recrutement.`}
     >
       <ShieldCheck size={13} />
       Offre vérifiée
-      {offer.technicalReviewAt ? " · périmètre technique relu" : ""}
+      {offer.technicalReviewAt ? " · critères relus" : ""}
     </span>
   );
 }

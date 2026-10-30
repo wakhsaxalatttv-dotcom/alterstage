@@ -1,6 +1,6 @@
 import reference from "../../config/france-travail-rome.json" with { type: "json" };
 import { romeDomains } from "./lba.js";
-// Explicit ROME mappings keep commercial/training roles out of the technical catalogue.
+// Keep established specializations while covering every official ROME family.
 const parentDomains = {
   ...romeDomains,
   M1804: "Télécommunications",
@@ -54,6 +54,6 @@ export const franceTravailDomains = Object.fromEntries(
     .filter(({ code, parent }) => parentDomains[code] || parentDomains[parent])
     .map(({ code, parent }) => [
       code,
-      parentDomains[code] || parentDomains[parent],
+      parentDomains[parent] || parentDomains[code],
     ]),
 );

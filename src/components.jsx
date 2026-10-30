@@ -120,6 +120,12 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
           ))}
         </div>
       )}
+      {o.editorialSummary && (
+        <p className="muted">
+          Synthèse employeur consultée le {date(o.sourceConsultedAt)} ;
+          disponibilité non revérifiée.
+        </p>
+      )}
       <div className="offer-meta">
         <span>
           {o.publicationEvidence?.kind === "relative"

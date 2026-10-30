@@ -1,3 +1,4 @@
+import { isNonProductionOffer } from "../shared/production-policy.js";
 import { isBlockedSource } from "../shared/source-policy.js";
 import { isTrainingEmployer } from "../shared/employer-policy.js";
 import { hasRecentPublication } from "../shared/freshness.js";
@@ -73,12 +74,16 @@ export function normalizeSubmission(
     throw new ValidationError(
       "Les annonces provenant de Meteojob sont exclues.",
     );
+  if (isNonProductionOffer(body))
+    throw new ValidationError(
+      "Les annonces de recette ou de démonstration ne sont pas publiables.",
+    );
   if (body.websiteTrap) throw new ValidationError("Dépôt refusé.");
   if (body.consent !== true)
     throw new ValidationError("Confirmez votre autorisation de publication.");
   if (!domains.includes(body.domain) || !contracts.includes(body.contract))
     throw new ValidationError(
-      "Seuls les stages et alternances techniques ou informatiques sont acceptés.",
+      "Choisissez un domaine et un contrat de stage ou d’alternance.",
     );
   if (!Object.hasOwn(regions, body.region))
     throw new ValidationError("Choisissez une région française.");
@@ -295,6 +300,7 @@ export function deduplicate(offers) {
 }
 export function nonComplianceReasons(offer, now = Date.now()) {
   const reasons = [];
+  if (isNonProductionOffer(offer)) reasons.push("non_production_source");
   if (isBlockedSource(offer)) reasons.push("blocked_source_meteojob");
   if (!hasRecentPublication(offer, now))
     reasons.push("publication_outside_45_days");

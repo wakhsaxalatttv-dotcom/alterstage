@@ -24,6 +24,37 @@ export const domainGroups = {
     "Qualité, sécurité & métrologie",
     "Autres métiers techniques",
   ],
+  "Commerce & communication": [
+    "Commerce & vente",
+    "Marketing & communication",
+    "Achats & relation client",
+  ],
+  "Gestion & services": [
+    "Ressources humaines",
+    "Comptabilité, finance & audit",
+    "Banque, assurance & immobilier",
+    "Droit & administration",
+    "Assistanat & gestion",
+    "Conseil & gestion de projet",
+  ],
+  "Santé & vie sociale": [
+    "Santé & médico-social",
+    "Social, éducation & animation",
+    "Sport & bien-être",
+    "Sécurité & services aux particuliers",
+  ],
+  "Mobilité & accueil": [
+    "Transport & logistique",
+    "Hôtellerie, restauration & tourisme",
+    "Culture, arts & audiovisuel",
+    "Journalisme & édition",
+  ],
+  "Production & vivant": [
+    "Agriculture, paysage & environnement",
+    "Artisanat, mode & métiers d’art",
+    "Agroalimentaire & métiers de bouche",
+  ],
+  "Autres secteurs": ["Autres domaines"],
 };
 export const domains = Object.values(domainGroups).flat();
 export const contracts = [

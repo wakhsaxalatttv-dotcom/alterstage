@@ -6,6 +6,9 @@ const normalized = (value) =>
 export function isTrainingEmployer(name = "", sector = "", naf = "") {
   return (
     /^85/.test(String(naf)) ||
+    /\b(iscod|studi|openclassrooms|ifcv|isifa|esicad|igefi|groupe alternance|bloom alternance|bretagne alternance|rh alternance)\b/i.test(
+      normalized(name),
+    ) ||
     /\b(cfa|ecole|campus|universite|university|lycee|centre de formation|organisme de formation|institut de formation)\b/i.test(
       normalized(name),
     ) ||

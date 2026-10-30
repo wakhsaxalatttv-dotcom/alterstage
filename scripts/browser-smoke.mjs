@@ -277,7 +277,7 @@ try {
     .click();
   await page
     .getByRole("dialog")
-    .getByText("Offre vérifiée · périmètre technique relu", { exact: true })
+    .getByText("Offre vérifiée · critères relus", { exact: true })
     .waitFor();
   await page.keyboard.press("Escape");
   await page.screenshot({

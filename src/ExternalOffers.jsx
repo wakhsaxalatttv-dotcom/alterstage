@@ -4,13 +4,19 @@ import React, { useState, useEffect } from "react";
 import { ExternalLink, MapPin } from "lucide-react";
 import { Dialog, Filter } from "./components";
 import { selectOffers, defaultFilters, regions } from "./domain";
-import { educationLevels } from "../shared/catalog";
+import {
+  educationLevels,
+  contracts,
+  domains as allDomains,
+} from "../shared/catalog";
 import { request } from "./api";
+import { Pagination } from "./CatalogueParts";
 import { ReportForm } from "./ReportForm";
 const date = (value) =>
   value ? new Date(value).toLocaleDateString("fr-FR") : "Non fournie";
 export function ExternalOffers() {
   const [selected, setSelected] = useState(null);
+  const [page, setPage] = useState(1);
   const [data, setData] = useState({ offers: [], loading: true, error: "" });
   const [reporting, setReporting] = useState(false),
     [reported, setReported] = useState(false),
@@ -35,8 +41,11 @@ export function ExternalOffers() {
     setReported(false);
   };
   const [filters, setFilters] = useState(defaultFilters);
-  const change = (key, value) =>
+  const change = (key, value) => {
+    setPage(1);
     setFilters((previous) => ({ ...previous, [key]: value }));
+  };
+  useEffect(() => setPage(1), [filters]);
   const offers = selectOffers(externalOffers, filters);
   const domains = [
     ...new Set(externalOffers.map((offer) => offer.domain)),
@@ -52,17 +61,17 @@ export function ExternalOffers() {
     >
       <div className="external-heading">
         <div>
-          <p className="eyebrow">DIRECTEMENT CHEZ L’EMPLOYEUR</p>
-          <h2 id="external-title">Sélection des entreprises</h2>
+          <p className="eyebrow">TOUS SECTEURS · TOUTES ENTREPRISES</p>
+          <h2 id="external-title">Stages et alternances repérés</h2>
         </div>
         <span role="status">
           {offers.length} lien{offers.length > 1 ? "s" : ""} avec vos filtres
         </span>
       </div>
       <p>
-        Annonces issues des sites d’entreprises. Retrouvez les missions dans la
-        fiche détaillée et candidatez sur le site officiel, où la disponibilité
-        reste à confirmer.
+        Annonces employeurs et offres reçues des sources connectées : stages et
+        alternances, PME, associations et grands groupes. Consultez la fiche et
+        le lien d’origine pour les conditions de candidature.
       </p>
       <div
         className="domain-shortcuts"
@@ -90,6 +99,13 @@ export function ExternalOffers() {
         ))}
       </div>
       <div className="reference-filters">
+        <Filter
+          label="Contrat"
+          value={filters.contract}
+          onChange={(value) => change("contract", value)}
+          options={contracts}
+          placeholder="Stages et alternances"
+        />
         <label className="field">
           Métier, entreprise ou domaine
           <input
@@ -110,7 +126,7 @@ export function ExternalOffers() {
           label="Domaine"
           value={filters.domain}
           onChange={(value) => change("domain", value)}
-          options={domains}
+          options={allDomains}
           placeholder="Tous les domaines"
         />
         <Filter
@@ -164,7 +180,7 @@ export function ExternalOffers() {
         </p>
       )}
       <div className="external-grid">
-        {offers.map((offer) => (
+        {offers.slice((page - 1) * 20, page * 20).map((offer) => (
           <AnimatedCard className="external-card" key={offer.id}>
             <div className="external-company-heading">
               <CompanyLogo
@@ -186,9 +202,15 @@ export function ExternalOffers() {
                 <span key={level}>{level}</span>
               ))}
             </div>
-            <p className="external-summary">{offer.summary}</p>
+            <p className="external-summary">
+              {offer.summary?.length > 260
+                ? offer.summary.slice(0, 260) + "…"
+                : offer.summary}
+            </p>
             <p className="external-date">
-              Publication source : {date(offer.publishedAt)}
+              {offer.publicationEvidence?.kind === "relative"
+                ? `Publication Google Jobs : ${offer.publicationEvidence.text} (relevé le ${date(offer.publicationEvidence.observedAt)})`
+                : `Publication source : ${date(offer.publishedAt)}`}
             </p>
             <div className="external-actions">
               <button className="secondary" onClick={() => open(offer)}>
@@ -199,12 +221,18 @@ export function ExternalOffers() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Annonce officielle <ExternalLink size={15} />
+                Ouvrir la source <ExternalLink size={15} />
               </a>
             </div>
           </AnimatedCard>
         ))}
       </div>
+      <Pagination
+        page={Math.min(page, Math.max(1, Math.ceil(offers.length / 20)))}
+        pages={Math.max(1, Math.ceil(offers.length / 20))}
+        total={offers.length}
+        onChange={setPage}
+      />
       {selected && (
         <Dialog title={selected.title} close={() => setSelected(null)}>
           <p>
@@ -212,33 +240,45 @@ export function ExternalOffers() {
             · {selected.location.region}
           </p>
           <p className="local-note">
-            Synthèse éditoriale d’après l’annonce officielle. Consultez la
-            source pour les conditions de candidature.
+            {selected.sourceKind === "market"
+              ? "Description transmise par la source ; consultez le lien original pour candidater."
+              : "Synthèse éditoriale d’après l’annonce employeur, sans nouveau contrôle de disponibilité."}
           </p>
-          <h3>Le contexte du stage</h3>
+          <h3>Description du poste</h3>
           <p>{selected.summary}</p>
-          <h3>Les missions</h3>
-          <ul>
-            {selected.missions.map((mission) => (
-              <li key={mission}>{mission}</li>
-            ))}
-          </ul>
-          <h3>Profil et compétences</h3>
-          <p>{selected.profile}</p>
+          {selected.missions.length > 0 && (
+            <>
+              <h3>Les missions</h3>
+              <ul>
+                {selected.missions.map((mission) => (
+                  <li key={mission}>{mission}</li>
+                ))}
+              </ul>
+            </>
+          )}
+          {selected.profile && (
+            <>
+              <h3>Profil et compétences</h3>
+              <p>{selected.profile}</p>
+            </>
+          )}
           <div className="tags">
             {selected.technologies.map((tech) => (
               <span key={tech}>{tech}</span>
             ))}
           </div>
           <h3>L’entreprise</h3>
-          <p>{selected.companySummary}</p>
+          <p>
+            {selected.companySummary ||
+              "Présentation non fournie par la source."}
+          </p>
           {selected.companyWebsite && (
             <a
               href={selected.companyWebsite}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Site officiel du groupe <ExternalLink size={14} />
+              Site de l’entreprise <ExternalLink size={14} />
             </a>
           )}
           <h3>Conditions et provenance</h3>
@@ -256,11 +296,15 @@ export function ExternalOffers() {
               {selected.compensation || "Non précisée dans cette synthèse"}
             </dd>
             <dt>Publication affichée par la source</dt>
-            <dd>{date(selected.publishedAt)}</dd>
+            <dd>
+              {selected.publicationEvidence?.kind === "relative"
+                ? `${selected.publicationEvidence.text}, relevé le ${date(selected.publicationEvidence.observedAt)} ; date exacte non fournie`
+                : date(selected.publishedAt)}
+            </dd>
             <dt>Contact RH</dt>
             <dd>
-              Aucun contact publié dans cette synthèse ; candidature sur le site
-              employeur.
+              Utilisez le lien de candidature fourni par la source ; aucun
+              contact personnel n’est collecté.
             </dd>
             <dt>Source</dt>
             <dd>{selected.sourceName}</dd>
@@ -271,8 +315,7 @@ export function ExternalOffers() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Voir l’annonce et candidater chez l’employeur{" "}
-            <ExternalLink size={17} />
+            Voir l’annonce et candidater <ExternalLink size={17} />
           </a>
           <div className="report-reference">
             {reported ? (

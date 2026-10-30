@@ -67,3 +67,7 @@ La mise à jour de l’annuaire est décrite dans [COMPANY_CATALOGUE.md](COMPANY
 ## Google Jobs autonome
 
 Le serveur démarre `SerpApiAutomation`, indépendamment de la navigation privée. Les recherches stage/alternance couvrent les domaines du catalogue dans une rotation persistante et bornée. La classification explicite, la résolution de communes françaises et les dates source autorisent uniquement les publications admissibles, sans badge humain. Le suivi privé est en lecture seule. Voir [le module et ses limites](SERPAPI.md).
+
+## Maintenance tous secteurs
+
+Le référentiel complet de 1 584 métiers alimente les connecteurs, avec 42 domaines et des recherches universelles/PME prioritaires. Le catalogue de démarrage reprend les annonces employeurs déjà sourcées, sans nouvelle date de vérification. Offres et Repérées partagent les nouvelles annonces, tout en distinguant les synthèses éditoriales des descriptions API. La taille d’entreprise n’est jamais inventée. Voir [les règles et limites de maintenance](ALL_SECTORS.md).

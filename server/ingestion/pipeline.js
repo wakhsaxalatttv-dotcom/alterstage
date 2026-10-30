@@ -2,7 +2,7 @@ import { isBlockedSource } from "../../shared/source-policy.js";
 import {
   franceTravailSource,
   franceTravailConfiguration,
-  fetchFranceTravail,
+  createFranceTravailClient,
   FranceTravailError,
   FT_SEARCH_URL,
 } from "./france-travail.js";
@@ -50,12 +50,7 @@ export async function readSources(file = process.env.SOURCES_FILE) {
       throw new Error("Valeurs structurées par défaut invalides");
     ids.add(source.id);
   }
-  return [
-    ...parsed,
-    ...builtins.filter(
-      (source) => source.kind === "france-travail" && !ids.has(source.id),
-    ),
-  ];
+  return [...parsed, ...builtins.filter((source) => !ids.has(source.id))];
 }
 const iso = (value) => {
   if (typeof value !== "string" || Number.isNaN(Date.parse(value))) return null;
@@ -115,7 +110,8 @@ export function normalizeRecord(
     allowOlderActiveSource:
       trustedFt || (trustedLba && source.includeOlderActive === true),
     allowMissingWebsite: trustedApi,
-    allowFranceTravailSource: trustedFt,
+    allowFranceTravailSource:
+      trustedFt || (trustedLba && source.includeFranceTravail === true),
     companyIdentity: trustedApi ? record.companyIdentity : null,
   });
   const externalId = String(record.externalId || record.sourceUrl || "").slice(
@@ -173,19 +169,29 @@ export function normalizeRecord(
   };
 }
 export class IngestionPipeline {
-  constructor(
-    store,
-    {
-      sources = readSources,
-      fetcher = (source) =>
-        source.kind === "france-travail"
-          ? fetchFranceTravail()
-          : fetchFeed(source),
-    } = {},
-  ) {
+  constructor(store, { sources = readSources, fetcher = null } = {}) {
     this.store = store;
     this.sources = sources;
-    this.fetcher = fetcher;
+    const ftClient = createFranceTravailClient({
+      readCursor: () =>
+        Number(
+          store.db
+            .prepare("SELECT value FROM metadata WHERE key='ft-rome-cursor'")
+            .get()?.value,
+        ) || 0,
+      writeCursor: (cursor) =>
+        store.db
+          .prepare(
+            "INSERT INTO metadata(key,value) VALUES('ft-rome-cursor',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+          )
+          .run(String(cursor)),
+    });
+    this.fetcher =
+      fetcher ||
+      ((source) =>
+        source.kind === "france-travail"
+          ? ftClient.collect()
+          : fetchFeed(source));
     this.running = null;
   }
   async status() {

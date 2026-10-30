@@ -45,7 +45,7 @@ export class SerpApiAutomation {
       .get();
     const recent = this.store.db
       .prepare(
-        "SELECT count(*) AS searches,count(DISTINCT domain) AS domains FROM serpapi_schedule WHERE last_success>=?",
+        "SELECT count(*) AS searches,count(DISTINCT CASE WHEN domain NOT IN ('Tous les secteurs','PME et structures locales') THEN domain END) AS domains FROM serpapi_schedule WHERE last_success>=?",
       )
       .get(time - this.refreshDays * DAY);
     const used = this.store.db
@@ -88,7 +88,11 @@ export class SerpApiAutomation {
       enabled: this.enabled,
       running: !!this.running,
       totalSearches: SERPAPI_SEARCHES.length,
-      totalDomains: new Set(SERPAPI_SEARCHES.map((s) => s.domain)).size,
+      totalDomains: new Set(
+        SERPAPI_SEARCHES.filter(
+          (s) => !s.id.startsWith("general:") && !s.id.startsWith("local:"),
+        ).map((s) => s.domain),
+      ).size,
       completedSearches: recent.searches,
       completedDomains: recent.domains,
       dailyLimit: this.dailyLimit,
@@ -106,7 +110,7 @@ export class SerpApiAutomation {
   }
   async execute() {
     if (!this.enabled) return { status: "disabled" };
-    const recoveryKey = "serpapi-geographic-reanalysis-v2";
+    const recoveryKey = "serpapi-all-sectors-reanalysis-v3";
     const recoveryClaim = this.store.transaction(
       () =>
         this.store.db
@@ -195,7 +199,7 @@ export class SerpApiAutomation {
           : null) ||
         this.store.db
           .prepare(
-            "SELECT * FROM serpapi_schedule WHERE last_success IS NULL OR last_success<? ORDER BY last_attempt IS NOT NULL,last_attempt,id LIMIT 1",
+            "SELECT * FROM serpapi_schedule WHERE last_success IS NULL OR last_success<? ORDER BY last_attempt IS NOT NULL,CASE WHEN id LIKE 'general:%' THEN 0 WHEN id LIKE 'local:%' THEN 1 ELSE 2 END,last_attempt,id LIMIT 1",
           )
           .get(time - this.refreshDays * DAY);
       if (!search) return null;

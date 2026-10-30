@@ -45,7 +45,7 @@ try {
   await section.locator("article").first().waitFor();
   assert.equal(
     await section.locator("article").count(),
-    selectOffers(externalOffers, defaultFilters).length,
+    Math.min(20, selectOffers(externalOffers, defaultFilters).length),
   );
   assert.equal(
     await navigation
@@ -75,12 +75,15 @@ try {
     offer.id.startsWith("vinci-"),
   );
   for (const entry of entries) {
+    await section
+      .getByRole("searchbox", { name: "Métier, entreprise ou domaine" })
+      .fill(entry.title);
     const card = section.locator("article").filter({
       has: page.getByRole("heading", { name: entry.title, exact: true }),
     });
     assert.equal(
       await card
-        .getByRole("link", { name: "Annonce officielle" })
+        .getByRole("link", { name: "Ouvrir la source" })
         .getAttribute("href"),
       entry.sourceUrl,
     );
@@ -92,14 +95,14 @@ try {
     assert.equal(
       await dialog
         .getByRole("link", {
-          name: "Voir l’annonce et candidater chez l’employeur",
+          name: "Voir l’annonce et candidater",
         })
         .getAttribute("href"),
       entry.sourceUrl,
     );
     assert.equal(
       await dialog
-        .getByRole("link", { name: "Site officiel du groupe" })
+        .getByRole("link", { name: "Site de l’entreprise" })
         .getAttribute("href"),
       "https://www.vinci.com",
     );
@@ -117,7 +120,13 @@ try {
   await section
     .getByRole("button", { name: "Chimie & matériaux", exact: true })
     .click();
-  assert.equal(await section.locator("article").count(), 15);
+  assert.equal(
+    await section.locator("article").count(),
+    selectOffers(externalOffers, {
+      ...defaultFilters,
+      domain: "Chimie, procédés & matériaux",
+    }).length,
+  );
   await section
     .locator("article")
     .first()
@@ -131,7 +140,7 @@ try {
     await page
       .getByRole("dialog")
       .getByRole("link", {
-        name: "Voir l’annonce et candidater chez l’employeur",
+        name: "Voir l’annonce et candidater",
       })
       .getAttribute("href"),
     /safran-group\.com/,
@@ -181,7 +190,7 @@ try {
   await page.screenshot({ path: "/tmp/offres-reperees.png", fullPage: false });
   assert.deepEqual(errors, []);
   console.log(
-    "Repérées : navigation mobile/ordinateur, fiches et quinze stages chimie, provenance, filtres combinés, dates anciennes et état vide validés.",
+    "Repérées : navigation mobile/ordinateur, fiches, contrats et stages chimie, provenance, filtres combinés, dates anciennes et état vide validés.",
   );
 } finally {
   await browser.close();

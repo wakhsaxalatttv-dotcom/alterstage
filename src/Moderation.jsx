@@ -294,7 +294,7 @@ function Review({ offer: o, review }) {
             {[
               [
                 "sourceChecked",
-                "J’ai ouvert l’annonce originale : elle est récente, toujours ouverte et correspond à ce poste technique ou informatique.",
+                "J’ai ouvert l’annonce originale : elle est récente, toujours ouverte et correspond à ce poste et au domaine indiqué.",
               ],
               [
                 "rightsChecked",

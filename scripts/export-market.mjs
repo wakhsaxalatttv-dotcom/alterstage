@@ -21,7 +21,7 @@ try {
     useRestriction:
       "Usage gratuit et non lucratif uniquement selon les conditions de l’API. Ne pas revendre ces données.",
     notice:
-      "Offres signalées actives par la source lors de la collecte. Publication d’origine conservée ; les offres anciennes restent non revérifiées.",
+      "Annonces renvoyées actives par la source lors de la collecte. Dates d’origine et partenaires conservés ; disponibilité non revérifiée par un humain.",
     offers: rows,
   };
   await writeFile(

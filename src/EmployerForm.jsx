@@ -211,7 +211,7 @@ export function EmployerForm({
         <div className="form-section-title">
           <span>02</span>
           <div>
-            <h2>Une opportunité technique ou informatique</h2>
+            <h2>Une opportunité dans le domaine de votre choix</h2>
             <p>Stages, apprentissage et professionnalisation uniquement.</p>
           </div>
         </div>
@@ -441,7 +441,7 @@ export function EmployerForm({
             <Check size={15} /> Gratuit pour cette version
           </li>
           <li>
-            <Check size={15} /> Technique et informatique
+            <Check size={15} /> Tous les secteurs
           </li>
           <li>
             <Check size={15} /> Aucun contact inventé

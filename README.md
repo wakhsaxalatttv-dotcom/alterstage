@@ -1,6 +1,6 @@
 # Offres Fraîches
 
-Stages et alternances techniques et informatiques en France. React 19, Vite, Express et **SQLite/FTS5 natif sous Node.js 24+**. Recherche gratuite ; aucun paiement. Le catalogue ne contient aucune offre fictive. **11 offres d’alternance reçues de La Bonne Alternance sont fournies dans un instantané daté**, sans clé dans le dépôt. Seules les publications datant de 45 jours maximum sont visibles, même après synchronisation ; les offres restent explicitement non revérifiées.
+Stages et alternances **dans tous les secteurs en France**. React 19, Vite, Express et **SQLite/FTS5 natif sous Node.js 24+**. Recherche gratuite, aucun paiement ni annonce fictive. Les annonces employeurs déjà sourcées et encore admissibles sont intégrées dans **Offres** au démarrage, sans nouveau contrôle de disponibilité supposé. Les connecteurs autorisés complètent automatiquement le catalogue ; leurs clés restent côté serveur. La limite de publication reste fixée à 45 jours et Meteojob est exclu.
 
 ## Lancer dans Codespaces
 
@@ -16,7 +16,7 @@ Ouvrir le port **5173** dans l’onglet Ports. Vite relaie `/api` à Express sur
 
 ## Ce qui est disponible
 
-- Catalogue entreprises enrichi, alimenté par les entreprises des offres importées et 19 pistes initiales dont ESN et spécialistes réseaux/télécoms, cloud et cybersécurité. Aucune taille, agence, stack, contact ou offre en cours n’est devinée. Les profils sont enrichis lors d’un dépôt validé, avec provenance.
+- Catalogue entreprises enrichi, alimenté par les entreprises des offres importées et 56 fiches initiales dont ESN et spécialistes réseaux/télécoms, cloud et cybersécurité. Aucune taille, agence, stack, contact ou offre en cours n’est devinée. Les profils sont enrichis lors d’un dépôt validé, avec provenance.
 - Recherche serveur indexée : mots-clés, ville, technologie mentionnée, région, famille/spécialité, formation, contrat et date ; pagination et vrai compteur global.
 - Vue rapide à la demande : description, missions, compétences fournies, dates distinctes, source originale et candidature officielle. Badge de contrôle humain valable sept jours, distinct de l’extraction automatique.
 - Dépôt entreprise avec aperçu, présentation et données enrichies sourcées, logo facultatif autorisé, contact générique RH/tutorat avec provenance. Une soumission reste privée avant revue.
@@ -129,7 +129,7 @@ La palette d’origine est rétablie : vert `#176B50`, fond crème `#FCFCF9`, en
 
 Les variables Render doivent être nommées `FRANCE_TRAVAIL_CLIENT_ID` et `FRANCE_TRAVAIL_CLIENT_SECRET`. Après déploiement, la collecte démarre automatiquement si elles sont présentes. Les logs privés indiquent son résultat, sans secret. L’application doit avoir accès à l’API Offres d’emploi. Si `INGEST_INTERVAL_MINUTES=0` est défini, le remplacer par `180` pour une collecte périodique. Détails et limites dans [docs/FRANCE_TRAVAIL.md](docs/FRANCE_TRAVAIL.md). La connexion réelle ne peut être annoncée qu’après une collecte réussie sur Render.
 
-La collecte France Travail parcourt maintenant 315 codes métiers techniques et leurs spécialisations, sans imposer de mots-clés dans les titres. La pagination est complétée par un découpage automatique des périodes trop remplies. Le compte rendu privé affiche les métiers parcourus et signale toute collecte partielle (quota, budget ou réseau) ; aucune exhaustivité ne peut être annoncée avant une collecte réelle réussie sur Render.
+La collecte France Travail parcourt désormais les 1 584 codes métiers du référentiel ROME v4.60, dans tous les secteurs, avec un curseur persistant de reprise en cas de budget atteint, sans imposer de mots-clés dans les titres. La pagination est complétée par un découpage automatique des périodes trop remplies. Le compte rendu privé affiche les métiers parcourus et signale toute collecte partielle (quota, budget ou réseau) ; aucune exhaustivité ne peut être annoncée avant une collecte réelle réussie sur Render.
 
 ### Contrôle automatique du catalogue
 
@@ -149,6 +149,16 @@ Le plan d’implémentation, le modèle, les endpoints, les performances mesuré
 
 ### SerpApi / Google Jobs automatique
 
-Avec `SERPAPI_API_KEY` sur Render, le serveur lance seul la collecte et l’analyse sur les **21 domaines**, en stages et alternances. Les fiches admissibles rejoignent directement **Offres** ; Meteojob, les écoles, les annonces anciennes et les données insuffisantes sont exclues de la publication. Une date manquante n’est jamais inventée : une indication relative exploitable reste affichée comme telle, avec son relevé. L’alternance sans sous-type est identifiée explicitement. Une analyse automatique ne donne pas un badge de vérification humaine.
+Avec `SERPAPI_API_KEY` sur Render, le serveur lance seul la collecte et l’analyse sur les **42 domaines**, en stages et alternances. Les fiches admissibles rejoignent directement **Offres** ; Meteojob, les écoles, les annonces anciennes et les données insuffisantes sont exclues de la publication. Une date manquante n’est jamais inventée : une indication relative exploitable reste affichée comme telle, avec son relevé. L’alternance sans sous-type est identifiée explicitement. Une analyse automatique ne donne pas un badge de vérification humaine.
 
 La rotation échelonnée respecte un budget persistant (par défaut trois appels/heure, 24/jour), avec reprise et renouvellement hebdomadaire. Aucun bouton d’import n’est nécessaire. Les premières recherches peuvent s’enchaîner à une minute d’intervalle, dans les mêmes plafonds horaires et quotidiens. L’espace privé sert au suivi et affiche les motifs réels des fiches non publiées. Voir [configuration, règles, quotas et limites](docs/SERPAPI.md).
+
+### Maintenance tous secteurs
+
+La recherche n’est plus réservée aux filières techniques : commerce, marketing, RH, comptabilité, banque, santé, restauration, transport, agriculture, artisanat et autres secteurs sont admis en stage ou alternance. Google Jobs possède des recherches générales prioritaires, des recherches PME/TPE/start-ups/associations et une rotation par domaine. Les critères de date, contrat, localisation et provenance restent obligatoires ; les écoles et organismes de formation ne deviennent pas des offres d’employeurs.
+
+La rubrique **Repérées** combine les liens éditoriaux déjà sourcés et les annonces publiques reçues des connecteurs, quel que soit le type ou la taille d’entreprise. Elle distingue stages et alternances, propose un filtre de contrat et une pagination. Une taille PME/TPE n’est jamais déduite d’une recherche ; elle reste inconnue si la source ne la fournit pas.
+
+Voir [la maintenance et le catalogue de démarrage](docs/ALL_SECTORS.md). Sur une base propre au 30 octobre 2026, les données du dépôt permettent 29 annonces employeurs admissibles sur les 30 liens existants ; ce nombre baisse avec leur ancienneté ou les décisions de retrait, sans date inventée. Il ne s’agit pas de 29 nouvelles annonces collectées aujourd’hui.
+
+Collecte réelle du 30 octobre 2026 : 326 annonces reçues via La Bonne Alternance ; après exclusions et dédoublonnage, **105 offres d’alternance uniques** ont été exportées sans contact ni clé. Elles incluent les relais France Travail identifiés comme tels, sans prétendre utiliser l’accès OAuth direct. Avec les 29 annonces employeurs admissibles déjà sourcées, le catalogue préparé comporte **134 offres** à cette date sur une base propre. Les échéances et retraits peuvent ensuite réduire ce nombre.

@@ -165,10 +165,10 @@ function App() {
     spotted:
       "Des liens employeurs et des synthèses détaillées pour élargir vos recherches.",
     favorites:
-      "Les offres techniques et informatiques que vous gardez de côté, sur cet appareil.",
+      "Les offres de tous les secteurs que vous gardez de côté, sur cet appareil.",
     alerts: "Vos recherches enregistrées, à retrouver à chaque visite.",
     employers:
-      "Proposez un stage ou une alternance technique ou informatique. Publication après validation.",
+      "Proposez un stage ou une alternance dans le domaine de votre choix. Publication après validation.",
     companies:
       "Explorez les sites des entreprises et retrouvez les annonces réellement publiées dans le catalogue.",
   };
@@ -467,7 +467,7 @@ function App() {
                     setFilters((f) => ({ ...f, group: v, domain: "" }));
                   }}
                   options={Object.keys(domainGroups)}
-                  placeholder="Technique & informatique"
+                  placeholder="Tous les domaines"
                 />
                 <Filter
                   label="Domaine"
@@ -654,7 +654,7 @@ function App() {
                       ? "Utilisez le signet sur une offre pour la retrouver ici."
                       : active
                         ? "Essayez des critères plus larges. Vous pouvez aussi enregistrer cette recherche pour la retrouver plus tard."
-                        : "Aucune annonce n’a encore été validée. Explorez les sites d’entreprises ou proposez une offre. Ici, seuls les stages et alternances techniques et informatiques sont publiés."
+                        : "Aucune annonce n’a encore été validée. Explorez les sites d’entreprises ou proposez une offre. Ici, seuls les stages et alternances de tous les secteurs sont publiés."
                   }
                   action={() =>
                     page === "favorites"
@@ -759,7 +759,7 @@ function App() {
                 autorisation. Des flux JSON ou RSS autorisés peuvent être
                 configurés côté serveur ; leurs annonces passent par la
                 modération. France Travail reste désactivé. Seuls les stages et
-                alternances techniques et informatiques sont acceptés.
+                alternances de tous les secteurs sont acceptés.
               </p>
               <p>
                 Google aide à trouver une annonce ; un résultat de recherche
@@ -840,7 +840,7 @@ function App() {
               <p>Vos critères actuels seront conservés dans ce navigateur.</p>
               <div className="criteria">
                 {Object.values(filters).filter(Boolean).join(" · ") ||
-                  "Tous les stages et alternances techniques et informatiques, partout en France"}
+                  "Tous les stages et alternances de tous les secteurs, partout en France"}
               </div>
               <div className="local-note">
                 <Bell size={22} />
@@ -920,6 +920,13 @@ function App() {
                 <dd>{modal.offer.source}</dd>
               </dl>
               <VerifiedBadge offer={modal.offer} />
+              {modal.offer.editorialSummary && (
+                <p className="local-note">
+                  Synthèse éditoriale d’une annonce employeur consultée le{" "}
+                  {date(modal.offer.sourceConsultedAt)}. La disponibilité
+                  actuelle n’a pas été revérifiée.
+                </p>
+              )}
               <h3>Description du poste</h3>
               <p className="description">
                 {modal.offer.description ||

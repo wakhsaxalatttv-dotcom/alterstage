@@ -1,3 +1,5 @@
+import { lbaSource } from "../server/ingestion/lba.js";
+import { franceTravailDomains } from "../server/ingestion/france-travail-domains.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -89,7 +91,7 @@ test("France Travail preserves real source dates, contract, origin and missing d
   assert.deepEqual(offer.education, ["Bac + 2"]);
   assert.equal(offer.location.region, "Pays de la Loire");
 });
-test("France Travail excludes >45 days, future dates, anonymous employers, schools, ordinary CDD and off-topic roles", () => {
+test("France Travail excludes >45 days, future dates, anonymous employers, schools and ordinary CDD while accepting non-technical sectors", () => {
   const jobs = [
     fixture(),
     fixture({ id: "old", dateCreation: day(46) }),
@@ -100,12 +102,16 @@ test("France Travail excludes >45 days, future dates, anonymous employers, schoo
     fixture({ id: "sales", romeCode: "D1401" }),
   ];
   const records = parseFranceTravail({ resultats: jobs }, now);
-  assert.equal(records.length, 1);
+  assert.equal(records.length, 2);
+  assert.equal(
+    records.find((o) => o.externalId === "sales").domain,
+    "Commerce & vente",
+  );
   assert.deepEqual(records.exclusions, {
     old: 2,
     school: 1,
     contract: 1,
-    outOfScope: 1,
+    outOfScope: 0,
     incomplete: 1,
   });
   assert.equal(
@@ -138,7 +144,7 @@ test("OAuth is server-side, cached in memory, and pagination deduplicates withou
   let tokens = 0,
     searches = 0;
   const client = createFranceTravailClient({
-    env: credentials,
+    env: { ...credentials, FRANCE_TRAVAIL_MAX_REQUESTS: "5000" },
     wait: async () => {},
     fetcher: async (url, options) => {
       assert.equal(options.redirect, "manual");
@@ -326,14 +332,24 @@ test("France Travail source is automatically merged with custom feeds and can be
     await writeFile(file, "[]");
     Object.assign(process.env, credentials, { FRANCE_TRAVAIL_ENABLED: "true" });
     const sources = await readSources(file);
-    assert.deepEqual(sources, [franceTravailSource]);
+    assert.deepEqual(sources, [
+      ...(process.env.LBA_API_KEY && process.env.LBA_ENABLED !== "false"
+        ? [lbaSource]
+        : []),
+      franceTravailSource,
+    ]);
     assert.ok(
       !JSON.stringify(sources).includes(
         credentials.FRANCE_TRAVAIL_CLIENT_SECRET,
       ),
     );
     process.env.FRANCE_TRAVAIL_ENABLED = "false";
-    assert.deepEqual(await readSources(file), []);
+    assert.deepEqual(
+      await readSources(file),
+      process.env.LBA_API_KEY && process.env.LBA_ENABLED !== "false"
+        ? [lbaSource]
+        : [],
+    );
   } finally {
     for (const key of keys)
       if (previous[key] === undefined) delete process.env[key];
@@ -378,8 +394,11 @@ test("Broad technical discovery has no keyword gate and splits saturated periods
   });
   const data = JSON.parse(await client.collect());
   assert.equal(data.collection.truncated, false);
-  assert.equal(data.collection.completedRomeCodes, 315);
-  assert.equal(queried.size, 315);
+  assert.equal(
+    data.collection.completedRomeCodes,
+    Object.keys(franceTravailDomains).length,
+  );
+  assert.equal(queried.size, Object.keys(franceTravailDomains).length);
   assert.ok(leaves.size >= 4);
   const returned = new Set(data.resultats.map((j) => j.id));
   for (const id of leaves) assert.ok(returned.has(id));

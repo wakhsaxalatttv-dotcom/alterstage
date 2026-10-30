@@ -1,3 +1,4 @@
+import { seedEditorialCatalogue } from "./ingestion/editorial-catalogue.js";
 import { franceTravailConfiguration } from "./ingestion/france-travail.js";
 import { seedBundledCatalogue } from "./ingestion/bundled.js";
 import { createApp } from "./app.js";
@@ -10,6 +11,10 @@ console.info(
   `[Catalogue] Contrôle de conformité : ${audit.checked} annonce(s) contrôlée(s), ${audit.withdrawn} retirée(s), ${audit.expired} expirée(s).`,
 );
 await seedBundledCatalogue(app.locals.store);
+const editorial = await seedEditorialCatalogue(app.locals.store);
+console.info(
+  `[Catalogue employeurs] ${editorial.created} annonces sourcées ajoutées, ${editorial.excluded} non admissibles. Aucun nouveau contrôle de disponibilité supposé.`,
+);
 const server = app.listen(port, "0.0.0.0", () =>
   console.log(`Offres Fraîches : serveur prêt sur le port ${port}`),
 );

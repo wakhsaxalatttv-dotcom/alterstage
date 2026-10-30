@@ -1,10 +1,12 @@
+import { isNonProductionOffer } from "../../shared/production-policy.js";
+import { allRomeDomains, romeParents } from "./rome-domains.js";
 import { isBlockedSource } from "../../shared/source-policy.js";
 import { isTrainingEmployer } from "../../shared/employer-policy.js";
 import { isRecentPublication } from "../../shared/freshness.js";
 import { createHash } from "node:crypto";
 import { regions } from "../../src/domain.js";
 import { plainText } from "../enrichment.js";
-export const romeDomains = {
+const technicalRomeDomains = {
   H1503: "Chimie, procédés & matériaux",
   H2301: "Chimie, procédés & matériaux",
   M1801: "Systèmes, réseaux & cloud",
@@ -31,16 +33,21 @@ export const romeDomains = {
   H1504: "Qualité, sécurité & métrologie",
   H1506: "Qualité, sécurité & métrologie",
 };
+export const romeDomains = Object.fromEntries(
+  Object.entries(allRomeDomains).map(([code, domain]) => [
+    code,
+    technicalRomeDomains[code] ||
+      technicalRomeDomains[romeParents[code]] ||
+      domain,
+  ]),
+);
 export const lbaSource = {
   id: "la-bonne-alternance",
   name: "La Bonne Alternance",
   kind: "lba",
   url:
     "https://api.apprentissage.beta.gouv.fr/api/job/v1/search?" +
-    new URLSearchParams({
-      romes: Object.keys(romeDomains).join(","),
-      partners_to_exclude: "France Travail",
-    }),
+    new URLSearchParams({}),
   allowedHosts: ["api.apprentissage.beta.gouv.fr"],
   tokenEnv: "LBA_API_KEY",
   enabled: true,
@@ -50,9 +57,14 @@ export const lbaSource = {
   authorizationRef:
     "Diffusion gratuite non lucrative selon les conditions de l’API ; publication limitée à 45 jours sur demande du responsable du projet.",
   includeOlderActive: true,
+  includeFranceTravail: true,
   publishUnverified: true,
 };
-export function parseLba(body, now = Date.now()) {
+export function parseLba(
+  body,
+  now = Date.now(),
+  { includeFranceTravail = false } = {},
+) {
   const data = typeof body === "string" ? JSON.parse(body) : body;
   if (!Array.isArray(data.jobs)) throw new Error("Réponse LBA invalide");
   const excluded = {
@@ -69,6 +81,12 @@ export function parseLba(body, now = Date.now()) {
   for (const j of data.jobs) {
     const label = j.identifier?.partner_label || "";
     if (
+      isNonProductionOffer({ title: j.offer?.title, sourceUrl: j.apply?.url })
+    ) {
+      excluded.sandbox++;
+      continue;
+    }
+    if (
       isBlockedSource({ sourcePartner: label, applicationUrl: j.apply?.url })
     ) {
       excluded.meteojob++;
@@ -81,8 +99,9 @@ export function parseLba(body, now = Date.now()) {
       continue;
     }
     if (
-      /france\s*travail|p[oô]le\s*emploi/i.test(label) ||
-      /francetravail\.(fr|io)/i.test(j.apply?.url || "")
+      !includeFranceTravail &&
+      (/france\s*travail|p[oô]le\s*emploi/i.test(label) ||
+        /francetravail\.(fr|io)/i.test(j.apply?.url || ""))
     ) {
       excluded.franceTravail++;
       continue;
@@ -113,9 +132,9 @@ export function parseLba(body, now = Date.now()) {
       excluded.old++;
       continue;
     }
-    const domain = j.offer?.rome_codes
-      ?.map((c) => romeDomains[c])
-      .find(Boolean);
+    const domain =
+      j.offer?.rome_codes?.map((c) => romeDomains[c]).find(Boolean) ||
+      "Autres domaines";
     if (!domain) {
       excluded.outOfScope++;
       continue;

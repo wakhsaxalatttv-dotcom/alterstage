@@ -5,7 +5,10 @@ const array = (value) =>
   value == null ? [] : Array.isArray(value) ? value : [value];
 export function parseFeed(source, body) {
   if (source.kind === "france-travail") return parseFranceTravail(body);
-  if (source.kind === "lba") return parseLba(body);
+  if (source.kind === "lba")
+    return parseLba(body, Date.now(), {
+      includeFranceTravail: source.includeFranceTravail === true,
+    });
   if (source.kind === "json") {
     const parsed = JSON.parse(body);
     const records = Array.isArray(parsed) ? parsed : parsed.offers;

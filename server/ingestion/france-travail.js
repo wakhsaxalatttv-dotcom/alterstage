@@ -136,8 +136,11 @@ export function createFranceTravailClient({
   fetcher = fetch,
   now = Date.now,
   wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+  readCursor = null,
+  writeCursor = null,
 } = {}) {
   let cachedToken = null;
+  let romeCursor = 0;
   let tokenExpiresAt = 0;
   async function request(url, options) {
     try {
@@ -191,7 +194,11 @@ export function createFranceTravailClient({
   return {
     async collect() {
       const records = new Map();
-      const romes = Object.keys(franceTravailDomains);
+      const allRomes = Object.keys(franceTravailDomains);
+      const start =
+        Math.max(0, Number(readCursor ? readCursor() : romeCursor) || 0) %
+        allRomes.length;
+      const romes = [...allRomes.slice(start), ...allRomes.slice(0, start)];
       const until = Math.floor(now() / 1000) * 1000;
       const since = Date.parse(publicationCutoff(until));
       const maxPages = Math.min(
@@ -202,7 +209,7 @@ export function createFranceTravailClient({
         5000,
         Math.max(
           1,
-          Math.floor(Number(env.FRANCE_TRAVAIL_MAX_REQUESTS)) || 1000,
+          Math.floor(Number(env.FRANCE_TRAVAIL_MAX_REQUESTS)) || 2000,
         ),
       );
       let requests = 0,
@@ -318,13 +325,16 @@ export function createFranceTravailClient({
         return false;
       }
       try {
-        for (const rome of romes)
+        for (const rome of romes) {
           if (await scan(rome, since, until)) completedRomeCodes++;
+          romeCursor = (allRomes.indexOf(rome) + 1) % allRomes.length;
+          if (writeCursor) writeCursor(romeCursor);
+        }
       } catch (error) {
         // Keep fetched records on a quota/network interruption, but never report a completed collection.
         if (
           !(error instanceof FranceTravailError) ||
-          !records.size ||
+          (!records.size && error.code !== "request_budget") ||
           !["request_budget", "rate_limited", "network"].includes(error.code)
         )
           throw error;
@@ -338,6 +348,7 @@ export function createFranceTravailClient({
           partitions,
           completedRomeCodes,
           totalRomeCodes: romes.length,
+          nextRomeIndex: romeCursor,
           examined,
           filteredExclusions,
           since: new Date(since).toISOString(),
@@ -407,12 +418,14 @@ export function parseFranceTravail(body, now = Date.now()) {
         ? "Contrat de professionnalisation"
         : /\bstage\b/i.test(type)
           ? "Stage"
-          : null;
+          : /alternance|alternant/i.test(nature + " " + type)
+            ? "Alternance — type non précisé"
+            : null;
     if (!contract) {
       exclusions.contract++;
       continue;
     }
-    const domain = franceTravailDomains[offer.romeCode];
+    const domain = franceTravailDomains[offer.romeCode] || "Autres domaines";
     if (!domain) {
       exclusions.outOfScope++;
       continue;

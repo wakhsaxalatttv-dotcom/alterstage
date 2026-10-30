@@ -6,6 +6,77 @@ import {
   publicationIndex,
 } from "../../shared/freshness.js";
 const domainRules = [
+  [
+    "Ressources humaines",
+    /ressources humaines|recrutement|recruteur|\brh\b|gestionnaire paie/,
+  ],
+  [
+    "Comptabilité, finance & audit",
+    /comptab|finance|audit financier|controle de gestion|tresorerie/,
+  ],
+  [
+    "Banque, assurance & immobilier",
+    /banque|bancaire|assurance|immobilier|gestion de patrimoine/,
+  ],
+  [
+    "Marketing & communication",
+    /marketing|communication|community manager|social media|publicite/,
+  ],
+  [
+    "Commerce & vente",
+    /commercial|vente|vendeur|business develop|retail|boutique/,
+  ],
+  [
+    "Achats & relation client",
+    /achats|acheteur|relation client|service client|customer success/,
+  ],
+  ["Droit & administration", /juridi|juriste|droit|administration publique/],
+  [
+    "Assistanat & gestion",
+    /assistanat|assistant administratif|secretariat|gestion administrative/,
+  ],
+  [
+    "Conseil & gestion de projet",
+    /conseil|consultant|gestion de projet|chef de projet/,
+  ],
+  [
+    "Santé & médico-social",
+    /sante|infirmier|medical|pharmacie|soignant|aide soignant/,
+  ],
+  [
+    "Social, éducation & animation",
+    /educateur|education|animation|travail social|mediation|pedagogie/,
+  ],
+  ["Sport & bien-être", /sport|bien etre|esthetique|coiffure|fitness/],
+  [
+    "Sécurité & services aux particuliers",
+    /agent de securite|surveillance|services a la personne|aide a domicile/,
+  ],
+  [
+    "Transport & logistique",
+    /logistique|transport|supply chain|magasinier|preparateur de commandes/,
+  ],
+  [
+    "Hôtellerie, restauration & tourisme",
+    /hotel|restauration|tourisme|cuisinier|commis de cuisine|receptionniste|serveur/,
+  ],
+  [
+    "Culture, arts & audiovisuel",
+    /culture|audiovisuel|spectacle|musique|cinema|graphis|design/,
+  ],
+  ["Journalisme & édition", /journalis|edition|redacteur|redaction/],
+  [
+    "Agriculture, paysage & environnement",
+    /agric|agronom|paysag|horticul|elevage|veterin/,
+  ],
+  [
+    "Artisanat, mode & métiers d’art",
+    /artisan|mode|textile|couture|bijout|cerami/,
+  ],
+  [
+    "Agroalimentaire & métiers de bouche",
+    /agroaliment|boulanger|patissier|boucher|charcutier/,
+  ],
   ["Cybersécurité", /cyber|securite informatique|pentest|soc analyst/],
   [
     "Chimie, procédés & matériaux",
@@ -76,12 +147,6 @@ export function analyzeSerpCandidate(candidate) {
   const reasons = [];
   if (!hasRecentPublication({ ...candidate, sourceId: "serpapi-google-jobs" }))
     reasons.push("publication_missing_or_outside_45_days");
-  if (
-    /commercial|marketing|recruteur|ressources humaines|comptable|business develop/.test(
-      title,
-    )
-  )
-    reasons.push("non_technical_role");
   const domain =
     domainRules.find(([, rule]) => rule.test(title))?.[0] ||
     domainRules
@@ -90,8 +155,8 @@ export function analyzeSerpCandidate(candidate) {
         ([, rule]) =>
           rule.test(description) &&
           /ingenieur|technicien|develop|analyst/.test(title),
-      )?.[0];
-  if (!domain) reasons.push("technical_domain_not_established");
+      )?.[0] ||
+    "Autres domaines";
   const contracts = [];
   const contractDescription = description
     .split(/[.!?;]+/)

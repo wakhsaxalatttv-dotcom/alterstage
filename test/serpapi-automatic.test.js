@@ -6,7 +6,10 @@ import { SerpApiInbox } from "../server/ingestion/serpapi-inbox.js";
 import { SerpApiAutomation } from "../server/ingestion/serpapi-automation.js";
 import { analyzeSerpCandidate } from "../server/ingestion/serpapi-analysis.js";
 import { createFrenchLocationResolver } from "../server/ingestion/french-location.js";
-import { SERPAPI_SEARCHES } from "../shared/serpapi-searches.js";
+import {
+  SERPAPI_SEARCHES,
+  SECTOR_SEARCHES,
+} from "../shared/serpapi-searches.js";
 import { domains } from "../shared/catalog.js";
 const now = Date.now();
 const job = () => ({
@@ -39,7 +42,9 @@ async function setup() {
   };
 }
 test("automatic discovery covers every site domain for both stages and alternances", () => {
-  assert.equal(SERPAPI_SEARCHES.length, domains.length * 2);
+  assert.equal(SECTOR_SEARCHES.length, domains.length * 2);
+  assert.ok(SERPAPI_SEARCHES.some((s) => s.query === "stage"));
+  assert.ok(SERPAPI_SEARCHES.some((s) => s.query === "alternance PME"));
   for (const domain of domains)
     assert.deepEqual(
       SERPAPI_SEARCHES.filter((s) => s.domain === domain).map(
@@ -65,8 +70,8 @@ test("automatic analysis does not infer publication dates, alternance subtypes o
     analyzeSerpCandidate({
       ...candidate,
       title: "Stage marketing cloud",
-    }).reasons.includes("non_technical_role"),
-    true,
+    }).domain,
+    "Marketing & communication",
   );
   assert.equal(
     analyzeSerpCandidate({ ...candidate, title: "Stage chimie matériaux" })
@@ -231,11 +236,12 @@ test("scheduler rotates all domains, persists daily/hourly budgets and never rer
     assert.equal(calls, 24);
     assert.equal(auto.status().usedToday, 24);
     time += 86400000;
-    for (let i = 24; i < SERPAPI_SEARCHES.length; i++) {
-      assert.equal((await auto.tick()).status, "success");
-      time += 20 * 60000;
+    while (calls < SERPAPI_SEARCHES.length) {
+      const result = await auto.tick();
+      if (result.status === "waiting") time += 86400000;
+      else time += 20 * 60000;
     }
-    assert.equal(auto.status().completedSearches, 42);
+    assert.equal(auto.status().completedSearches, SERPAPI_SEARCHES.length);
     assert.equal(auto.status().completedDomains, domains.length);
     assert.equal((await auto.tick()).status, "waiting");
     const again = new SerpApiAutomation({
@@ -247,7 +253,7 @@ test("scheduler rotates all domains, persists daily/hourly budgets and never rer
       env: {},
     });
     assert.equal((await again.tick()).status, "waiting");
-    assert.equal(calls, 42);
+    assert.equal(calls, SERPAPI_SEARCHES.length);
   } finally {
     await s.close();
   }

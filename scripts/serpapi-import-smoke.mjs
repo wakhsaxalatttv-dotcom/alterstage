@@ -1,3 +1,4 @@
+import { SERPAPI_SEARCHES } from "../shared/serpapi-searches.js";
 import { chromium } from "playwright";
 import { existsSync } from "node:fs";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -108,7 +109,11 @@ try {
   await page
     .getByRole("heading", { name: "Google Jobs — actualisation automatique" })
     .waitFor();
-  await page.getByText(/1 \/ 42 recherches effectuées/).waitFor();
+  await page
+    .getByText(
+      new RegExp(`1 / ${SERPAPI_SEARCHES.length} recherches effectuées`),
+    )
+    .waitFor();
   assert.equal(
     await page
       .getByRole("button", { name: "Importer Google Jobs", exact: true })

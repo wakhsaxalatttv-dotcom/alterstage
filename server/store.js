@@ -682,9 +682,11 @@ export class OfferStore {
         offer.source =
           offer.origin === "employer"
             ? "Dépôt direct de l’entreprise"
-            : offer.sourceId
-              ? `Flux autorisé · ${offer.sourceName}`
-              : "Site officiel de l’entreprise";
+            : offer.sourceId === "employer-editorial"
+              ? `Annonce employeur · ${offer.sourceName}`
+              : offer.sourceId
+                ? `Flux autorisé · ${offer.sourceName}`
+                : "Site officiel de l’entreprise";
         this.saveCompany(
           offer.company,
           offer.lastVerifiedAt,

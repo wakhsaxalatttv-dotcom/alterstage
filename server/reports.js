@@ -1,3 +1,5 @@
+import { publicOffer } from "./domain.js";
+import { canonicalUrl } from "./store.js";
 import { isBlockedSource } from "../shared/source-policy.js";
 import { randomUUID } from "node:crypto";
 import { ValidationError } from "./domain.js";
@@ -21,12 +23,47 @@ export class Reports {
         .all()
         .map((row) => row.id),
     );
-    return externalOffers.filter(
+    const hiddenUrls = new Set();
+    for (const row of this.store.db
+      .prepare(
+        "SELECT id,canonical_url FROM offers WHERE moderation IN ('withdrawn','rejected') OR status IN ('withdrawn','expired')",
+      )
+      .all()) {
+      hidden.add(row.id);
+      hiddenUrls.add(row.canonical_url);
+    }
+    const curated = externalOffers.filter(
       (offer) =>
         !hidden.has(offer.id) &&
+        !hiddenUrls.has(canonicalUrl(offer.sourceUrl)) &&
         !isBlockedSource(offer) &&
         isRecentPublication(offer.publishedAt),
     );
+    const live = this.store.db
+      .prepare(
+        "SELECT payload FROM offers WHERE moderation='approved' AND status NOT IN ('expired','withdrawn') ORDER BY published_at DESC LIMIT 200",
+      )
+      .all()
+      .map((row) => publicOffer(JSON.parse(row.payload)))
+      .filter(Boolean)
+      .filter((o) => !hidden.has(o.id))
+      .map((o) => ({
+        ...o,
+        sourceKind: "market",
+        companyWebsite: o.company.website,
+        summary: o.description,
+        profile: (o.skills || []).join(" · "),
+        companySummary: o.company.description || null,
+        sourceName: o.sourceName || o.source,
+        duration: o.duration || null,
+      }));
+    const seen = new Set();
+    return [...curated, ...live].filter((o) => {
+      const key = canonicalUrl(o.sourceUrl);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   }
   async create(body) {
     const id = text(body.offerId, 180, "Annonce");
@@ -53,7 +90,9 @@ export class Reports {
         .run(
           reportId,
           id,
-          reference ? "reference" : "catalogue",
+          reference && reference.sourceKind !== "market"
+            ? "reference"
+            : "catalogue",
           body.reason,
           details,
           new Date().toISOString(),
@@ -116,17 +155,21 @@ export class Reports {
               "INSERT OR REPLACE INTO hidden_references(id,hidden_at,reason) VALUES(?,?,?)",
             )
             .run(report.offer_id, now, note);
-        else {
-          const row = this.store.db
+        const row =
+          this.store.db
             .prepare("SELECT payload FROM offers WHERE id=?")
-            .get(report.offer_id);
-          if (row)
-            this.store.writeOffer({
-              ...JSON.parse(row.payload),
-              moderationStatus: "withdrawn",
-              status: "withdrawn",
-            });
-        }
+            .get(report.offer_id) ||
+          this.store.db
+            .prepare(
+              "SELECT payload FROM offers WHERE canonical_url=? AND moderation!='rejected'",
+            )
+            .get(canonicalUrl(JSON.parse(report.offer_snapshot).sourceUrl));
+        if (row)
+          this.store.writeOffer({
+            ...JSON.parse(row.payload),
+            moderationStatus: "withdrawn",
+            status: "withdrawn",
+          });
       }
       const status = body.action === "dismiss" ? "dismissed" : "resolved";
       this.store.db
