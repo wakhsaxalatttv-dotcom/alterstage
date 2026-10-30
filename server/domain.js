@@ -300,6 +300,7 @@ export function deduplicate(offers) {
 }
 export function nonComplianceReasons(offer, now = Date.now()) {
   const reasons = [];
+  if (offer.sourceClosedAt) reasons.push("source_closed");
   if (isNonProductionOffer(offer)) reasons.push("non_production_source");
   if (isBlockedSource(offer)) reasons.push("blocked_source_meteojob");
   if (!hasRecentPublication(offer, now))

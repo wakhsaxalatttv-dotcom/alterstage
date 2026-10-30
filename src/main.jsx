@@ -916,8 +916,6 @@ function App() {
                     ? `Google Jobs indique « ${modal.offer.publicationEvidence.text} », relevé le ${date(modal.offer.publicationEvidence.observedAt)}. Date exacte non fournie.`
                     : date(modal.offer.publishedAt)}
                 </dd>
-                <dt>Source</dt>
-                <dd>{modal.offer.source}</dd>
               </dl>
               <VerifiedBadge offer={modal.offer} />
               {modal.offer.editorialSummary && (

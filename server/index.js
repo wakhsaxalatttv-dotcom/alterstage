@@ -1,3 +1,4 @@
+import { auditAvailability } from "./ingestion/availability.js";
 import { seedEditorialCatalogue } from "./ingestion/editorial-catalogue.js";
 import { franceTravailConfiguration } from "./ingestion/france-travail.js";
 import { seedBundledCatalogue } from "./ingestion/bundled.js";
@@ -19,6 +20,18 @@ const server = app.listen(port, "0.0.0.0", () =>
   console.log(`Offres Fraîches : serveur prêt sur le port ${port}`),
 );
 app.locals.serpApiAutomation.start();
+let availabilityRun;
+const checkAvailability = () => {
+  if (availabilityRun) return availabilityRun;
+  availabilityRun = auditAvailability(app.locals.store)
+    .then((r) => console.info(`[Disponibilité] ${r.checked} pages contrôlées, ${r.closed} offres clôturées retirées, ${r.inconclusive} contrôles sans preuve concluante.`))
+    .catch(() => console.error("Contrôle de disponibilité indisponible."))
+    .finally(() => { availabilityRun = null; });
+  return availabilityRun;
+};
+checkAvailability();
+const availabilityTimer = setInterval(checkAvailability, 15 * 60000);
+availabilityTimer.unref();
 const ft = franceTravailConfiguration();
 console.info(
   `[France Travail] ${!ft.enabled ? "Collecte désactivée." : ft.configured ? "Identifiants présents ; connexion API à tester par la collecte." : "Source non configurée : identifiant client ou secret absent."}`,
@@ -51,10 +64,12 @@ const timer = minutes >= 5 ? setInterval(run, minutes * 60000) : null;
 timer?.unref();
 async function shutdown() {
   if (timer) clearInterval(timer);
+  clearInterval(availabilityTimer);
   server.close(async () => {
     if (app.locals.pipeline.running)
       await app.locals.pipeline.running.catch(() => {});
     await app.locals.serpApiAutomation.stop();
+    await availabilityRun;
     await closeFeedConnections();
     app.locals.store.close();
     process.exit(0);

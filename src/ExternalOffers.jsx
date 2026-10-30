@@ -306,8 +306,6 @@ export function ExternalOffers() {
               Utilisez le lien de candidature fourni par la source ; aucun
               contact personnel n’est collecté.
             </dd>
-            <dt>Source</dt>
-            <dd>{selected.sourceName}</dd>
           </dl>
           <a
             className="primary external-apply"

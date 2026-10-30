@@ -33,3 +33,15 @@ Un filtre de contrat, les domaines présents, la recherche et la pagination de 2
 ## Vérification
 
 `npm test` couvre l’admission des nouveaux secteurs, les familles ROME, la reprise FT, le catalogue de démarrage, l’absence de fausse vérification et les retraits croisés. Les parcours navigateur vérifient la recherche, les deux rubriques, les contrats et les tailles de téléphone/ordinateur. Les offres fictives utilisées pour les tests restent exclusivement dans des bases temporaires.
+
+### Contrôle des clôtures
+
+Le statut « Active » du fournisseur ne prouve pas que la candidature reste ouverte.
+Le serveur contrôle donc les pages de candidature en arrière-plan (3 requêtes
+simultanées, 200 annonces par passage, passage toutes les 15 minutes, nouvelle
+lecture d'une même page après 6 heures). Les HTTP 404/410 et les messages explicites
+de clôture entraînent un retrait persistant des offres et des repérées. Un blocage,
+une page JavaScript seule ou un échec réseau reste inconcluant et ne crée jamais
+un badge « vérifié ». Les redirections sont contrôlées, sans envoyer de clé API.
+Les noms techniques des connecteurs ne sont plus affichés dans les cartes ou les
+fiches publiques ; leur provenance est conservée en base et dans l'administration.

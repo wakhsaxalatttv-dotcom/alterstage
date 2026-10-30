@@ -50,6 +50,7 @@ export function selectOffers(offers, filters, now = Date.now()) {
       .toLowerCase();
   return offers
     .filter(inScope)
+    .filter((o) => !o.sourceClosedAt)
     .filter((o) => !isBlockedSource(o))
     .filter((o) => !filters.companyId || o.company.id === filters.companyId)
     .filter((o) => contracts.includes(o.contract))

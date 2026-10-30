@@ -135,7 +135,7 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
       </div>
       <div className="offer-bottom">
         <a href={o.sourceUrl} target="_blank" rel="noreferrer">
-          {o.source} <ExternalLink size={13} />
+          Candidater <ExternalLink size={13} />
         </a>
         <button onClick={details}>
           Voir l’offre <ArrowRight size={16} />
