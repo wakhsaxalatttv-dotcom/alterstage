@@ -1,3 +1,4 @@
+import { isSuspendedImport } from "./suspended-catalogue.js";
 import { isBlockedSource } from "../shared/source-policy.js";
 import { CompanyCatalogue } from "./company-catalogue.js";
 import {
@@ -49,6 +50,7 @@ export class OfferStore {
       this.migrateLegacy(folder);
       this.seedDirectory();
       this.companyCatalogue.seed();
+      this.suspendReportedImports();
       this.lastComplianceAudit = this.auditPublicOffers();
     } catch (error) {
       this.db.close();
@@ -322,7 +324,7 @@ export class OfferStore {
     }
   }
   async ingest(offer) {
-    if (isBlockedSource(offer)) return "invalid";
+    if (isBlockedSource(offer) || isSuspendedImport(offer)) return "invalid";
     try {
       return this.transaction(() => {
         const row = this.db
@@ -367,6 +369,21 @@ export class OfferStore {
       if (/UNIQUE constraint/.test(e.message)) return "duplicate";
       throw e;
     }
+  }
+  suspendReportedImports() {
+    return this.transaction(() => {
+      let suspended = 0;
+      for (const row of this.db.prepare("SELECT id,payload FROM offers WHERE moderation NOT IN ('withdrawn','rejected')").all()) {
+        const offer = JSON.parse(row.payload);
+        if (!isSuspendedImport(offer)) continue;
+        offer.status = "withdrawn";
+        offer.moderationStatus = "withdrawn";
+        offer.reviewNote = "Lot importé suspendu après signalement de postes pourvus. Nouvelle disponibilité à établir avant republication.";
+        this.writeOffer(offer);
+        suspended++;
+      }
+      return suspended;
+    });
   }
   auditPublicOffers(now = Date.now()) {
     return this.transaction(() => {

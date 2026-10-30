@@ -22,7 +22,7 @@ try {
       "utf8",
     ),
     snapshot = JSON.parse(text);
-  const expected = snapshot.offers.filter((o) =>
+  const expected = snapshot.publicationSuspended ? 0 : snapshot.offers.filter((o) =>
     publicOffer({ ...o, moderationStatus: "approved" }),
   ).length;
   const response = await (await fetch(base + "/api/offers")).json();

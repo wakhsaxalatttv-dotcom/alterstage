@@ -17,6 +17,7 @@ export async function seedBundledCatalogue(
     !Array.isArray(snapshot.offers)
   )
     throw new Error("Instantané de marché invalide");
+  if (snapshot.publicationSuspended) return;
   for (const offer of snapshot.offers) {
     const existing = store.db
       .prepare("SELECT payload FROM offers WHERE source_id=? AND external_id=?")

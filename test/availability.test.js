@@ -20,7 +20,10 @@ test("closed pages disappear from offers and repérées, survive reingestion; in
   try {
     const snapshot = JSON.parse(await readFile(new URL('../config/market-offers.json', import.meta.url)));
     const [closed, unknown] = structuredClone(snapshot.offers.slice(0, 2));
-    for (const o of [closed, unknown]) await store.ingest(o);
+    for (const [i, o] of [closed, unknown].entries()) {
+      o.sourceUrl = o.applicationUrl = `https://example.org/availability-fixture-${i}`;
+      await store.ingest(o);
+    }
     const now = Date.now();
     const result = await auditAvailability(store, { now, check: async (url) => url === closed.applicationUrl ? { state: 'closed', evidence: 'HTTP 410' } : { state: 'unknown' } });
     assert.equal(result.closed, 1);

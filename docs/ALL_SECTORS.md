@@ -45,3 +45,14 @@ une page JavaScript seule ou un échec réseau reste inconcluant et ne crée jam
 un badge « vérifié ». Les redirections sont contrôlées, sans envoyer de clé API.
 Les noms techniques des connecteurs ne sont plus affichés dans les cartes ou les
 fiches publiques ; leur provenance est conservée en base et dans l'administration.
+
+### Suspension du lot du 30 octobre 2026
+
+Après signalement de candidatures vers des postes pourvus, les 105 annonces du
+fichier `config/market-offers.json` sont suspendues (`publicationSuspended`).
+Ce fichier reste une archive de provenance, et ne constitue plus un catalogue à
+publier. Le redémarrage retire les lignes déjà présentes ; l'ingestion refuse
+également ces URL avec un nouvel identifiant ou des paramètres de suivi modifiés.
+La suspension ne signifie pas qu'une clôture a été techniquement prouvée pour
+chacune des 105 annonces. Elle évite de maintenir publiquement ce lot contesté.
+Les autres annonces ne doivent pas être présentées comme nouvellement vérifiées.

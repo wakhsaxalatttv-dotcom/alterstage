@@ -7904,5 +7904,7 @@
       "technicalReviewAt": null,
       "technologies": []
     }
-  ]
+  ],
+  "publicationSuspended": true,
+  "suspensionReason": "Lot signalé comme renvoyant vers des postes pourvus ; publication suspendue dans l’attente d’un contrôle indépendant des candidatures."
 }
