@@ -16,6 +16,8 @@ de test/développement restent interdites.
 L’application couvre 42 domaines, les stages, l’apprentissage, la
 professionnalisation et l’alternance sans sous-type précisé. Les PME, TPE, ESN,
 associations et grands groupes sont admis, sans taille d’entreprise inventée.
+Les diagnostics Google Jobs démarrent également sur une recherche générale « stage » ; le diagnostic LinkedIn sur « alternance ». Le sélecteur privé propose tous les secteurs, sans restriction aux sept anciennes recherches techniques. Le formulaire accepte des compétences et outils de tout métier.
+
 Le même seuil de 30 jours est appliqué aux requêtes, compteurs, détails, filtres,
 Repérées, favoris et connecteurs. Les indices relatifs de publication restent des
 intervalles conservateurs, jamais des dates exactes inventées.

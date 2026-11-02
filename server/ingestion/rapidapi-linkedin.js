@@ -106,7 +106,7 @@ export function createRapidApiProbe({
       const key = env.RAPIDAPI_LINKEDIN_KEY.trim();
       const url = new URL(RAPIDAPI_LINKEDIN_URL);
       url.search = new URLSearchParams({
-        search: "alternance informatique",
+        search: "alternance",
         location: "France",
         sortBy: "date",
         page: "1",

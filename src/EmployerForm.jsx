@@ -155,9 +155,9 @@ export function EmployerForm({
             help="Villes ou agences séparées par une virgule, uniquement si documentées."
           />
           <Field
-            label="Stack technique déclarée"
+            label="Compétences, outils et technologies"
             name="companyStack"
-            help="Technologies séparées par une virgule. Ne pas déduire la stack d’une seule annonce."
+            help="Ex. relation client, comptabilité, Excel, langues ou logiciels métier. Séparer les éléments par une virgule et indiquer uniquement les informations fournies par l’entreprise."
           />
           <Field
             label="Rythme d’alternance accepté"

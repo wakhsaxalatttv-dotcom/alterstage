@@ -3,6 +3,7 @@ import { responseShape } from "./rapidapi-linkedin.js";
 import { dispatcher } from "./http.js";
 export const SERPAPI_QUERIES = [
   ...new Set([
+    ...SERPAPI_SEARCHES.map((s) => s.query),
     "alternance informatique",
     "stage informatique",
     "alternance réseaux télécommunications",
@@ -10,7 +11,6 @@ export const SERPAPI_QUERIES = [
     "alternance maintenance industrielle",
     "stage chimie matériaux",
     "alternance chimie procédés",
-    ...SERPAPI_SEARCHES.map((s) => s.query),
   ]),
 ];
 export const SERPAPI_URL = "https://serpapi.com/search.json";

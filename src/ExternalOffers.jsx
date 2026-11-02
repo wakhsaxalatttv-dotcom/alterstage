@@ -116,7 +116,7 @@ export function ExternalOffers() {
             type="search"
             value={filters.query}
             onChange={(event) => change("query", event.target.value)}
-            placeholder="Ex. réseaux, Axians, maintenance…"
+            placeholder="Ex. vente, ressources humaines, santé…"
           />
         </label>
         <Filter

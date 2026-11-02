@@ -1,3 +1,4 @@
+import { SERPAPI_SEARCHES } from "../shared/serpapi-searches.js";
 import React, { useEffect, useState } from "react";
 import { request } from "./api";
 import { EmployerForm } from "./EmployerForm";
@@ -6,7 +7,7 @@ export function SerpApiInbox({ token, configured }) {
     [error, setError] = useState(""),
     [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false),
-    [query, setQuery] = useState("alternance informatique"),
+    [query, setQuery] = useState("stage"),
     [rights, setRights] = useState(false),
     [selected, setSelected] = useState(null);
   const load = async () => {
@@ -71,15 +72,7 @@ export function SerpApiInbox({ token, configured }) {
       <label className="field">
         Recherche Google Jobs
         <select value={query} onChange={(e) => setQuery(e.target.value)}>
-          {[
-            "alternance informatique",
-            "stage informatique",
-            "alternance réseaux télécommunications",
-            "stage systèmes électroniques",
-            "alternance maintenance industrielle",
-            "stage chimie matériaux",
-            "alternance chimie procédés",
-          ].map((q) => (
+          {[...new Set(SERPAPI_SEARCHES.map((s) => s.query))].map((q) => (
             <option key={q}>{q}</option>
           ))}
         </select>
