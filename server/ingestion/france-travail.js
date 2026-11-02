@@ -468,7 +468,7 @@ export function parseFranceTravail(body, now = Date.now()) {
         .slice(0, 20);
     // This is a local retention deadline, never a date attributed to the source.
     const retention = Math.min(
-      Date.parse(offer.dateCreation.slice(0, 10)) + 46 * 864e5,
+      Date.parse(offer.dateCreation.slice(0, 10)) + 31 * 864e5,
       now + 2 * 864e5,
     );
     records.push({

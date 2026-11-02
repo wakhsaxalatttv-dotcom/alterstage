@@ -17,7 +17,7 @@ const reasonLabel = (reason) =>
           "Référentiel géographique inaccessible ou délai dépassé",
         ...{
           publication_missing_or_outside_45_days:
-            "Publication absente, ambiguë ou potentiellement au-delà des 45 jours",
+            "Publication absente, ambiguë ou potentiellement au-delà des 30 jours",
           technical_domain_not_established: "Domaine technique non établi",
           contract_not_established: "Type de contrat non précisé",
           french_location_not_established: "Localisation française non établie",
@@ -89,7 +89,7 @@ export function SerpApiAutomationStatus({ token }) {
           <p className="muted">
             {data.usedToday} / {data.dailyLimit} appels automatiques utilisés
             aujourd’hui. La rotation est échelonnée, dans la limite du quota
-            fournisseur. Meteojob est exclu. Une preuve de candidature ouverte de moins de 24 heures est requise avant affichage.
+            fournisseur. Meteojob est exclu. Seules les annonces publiées dans les 30 derniers jours sont affichées, hors clôtures connues.
           </p>
           {data.enabled && data.nextEligibleAt > Date.now() && (
             <p className="muted">
@@ -134,7 +134,7 @@ export function SerpApiAutomationStatus({ token }) {
                 {data.state.published} offre(s) admissible(s) au catalogue,{" "}
                 {data.state.deferred} résultat(s) incomplet(s) non publié(s),{" "}
                 {data.state.excluded} exclu(s).{" "}
-                {data.state.awaitingAvailability || 0} en attente d’une preuve de candidature ouverte.
+                {data.state.awaitingAvailability || 0} en attente de validation.
               </p>
               {data.state.pauseUntil > Date.now() && (
                 <p>

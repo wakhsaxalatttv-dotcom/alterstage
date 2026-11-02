@@ -215,7 +215,7 @@ export function automaticSerpOffer(
       Date.parse(
         publicationIndex({ ...candidate, sourceId: "serpapi-google-jobs" }),
       ) +
-        46 * 86400000,
+        31 * 86400000,
       Date.parse(candidate.lastRetrievedAt || now) + 7 * 86400000,
     ),
   )

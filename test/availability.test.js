@@ -84,15 +84,15 @@ test('availability evidence expires at 24 hours and cannot be reused for a diffe
   assert.equal(hasRecentOpenEvidence({ ...offer, applicationUrl: 'https://example.org/different' }, now), false);
   assert.equal(hasRecentOpenEvidence({ ...offer, availabilityEvidence: { kind: 'provider-active', checkedAt: new Date(now).toISOString() } }, now), false);
 });
-test('all public views and SQL counters require positive evidence; an inconclusive recheck hides the offer without declaring it closed', async () => {
+test('recent eligible offers remain visible after inconclusive checks; verified metadata never substitutes the real publication date', async () => {
   const folder = await mkdtemp('/tmp/open-proof-test-'), store = new OfferStore(folder);
   try {
     const offer = { ...applicationFixture(), moderationStatus: 'approved', sourcePolicyApproved: true, sourceId: 'fixture-only', externalId: 'proof', contentHash: 'fixture-v1', lastFetchedAt: new Date().toISOString() };
     await store.ingest(offer);
-    assert.equal((await store.query()).total, 0);
-    assert.equal(await store.getPublic(offer.id), null);
-    assert.equal(selectOffers([offer], defaultFilters).length, 0);
-    assert.equal(new Reports(store).references().some((o) => o.id === offer.id), false);
+    assert.equal((await store.query()).total, 1);
+    assert.ok(await store.getPublic(offer.id));
+    assert.equal(selectOffers([offer], defaultFilters).length, 1);
+    assert.equal(new Reports(store).references().some((o) => o.id === offer.id), true);
     const now = Date.now();
     const checked = await auditAvailability(store, { now, check: async (_url, candidate) => ({ state: 'open', evidence: openApplicationEvidence(jobHtml(candidate), candidate, now) }) });
     assert.equal(checked.opened, 1);
@@ -101,10 +101,10 @@ test('all public views and SQL counters require positive evidence; an inconclusi
     assert.equal(visible.lastVerifiedAt, null);
     assert.equal(visible.status, 'to_verify');
     assert.equal(new Reports(store).references().some((o) => o.id === offer.id), true);
-    assert.equal(selectOffers([visible], defaultFilters, now + OPEN_PROOF_MAX_AGE_MS).length, 0);
-    assert.equal(publicOffer({ ...visible, moderationStatus: 'approved' }, now + OPEN_PROOF_MAX_AGE_MS), null);
+    assert.equal(selectOffers([visible], defaultFilters, now + OPEN_PROOF_MAX_AGE_MS).length, 1);
+    assert.ok(publicOffer({ ...visible, moderationStatus: 'approved' }, now + OPEN_PROOF_MAX_AGE_MS));
     await auditAvailability(store, { now: now + 6 * 3600000, check: async () => ({ state: 'unknown' }) });
-    assert.equal((await store.query()).total, 0);
+    assert.equal((await store.query()).total, 1);
     const preserved = (await store.read())[0];
     assert.equal(preserved.moderationStatus, 'approved');
     assert.equal(preserved.sourceClosedAt, undefined);

@@ -1,4 +1,3 @@
-import { fixtureOpenEvidence, confirmFixtureApplications } from "./helpers/open-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -101,8 +100,7 @@ test("automatic import publishes only eligible sourced offers, keeps missing inf
       geo,
     );
     assert.equal(report.created, 1);
-    assert.equal(report.published, 0);
-    await confirmFixtureApplications(s.store);
+    assert.equal(report.published, 1);
     assert.equal(report.deferred, 1);
     assert.equal(report.excluded, 1);
     assert.equal(geoCalls, 1);
@@ -141,8 +139,7 @@ test("absolute date extensions can be used, but relative labels and unknown loca
       ],
       async () => location,
     );
-    assert.equal(report.published, 0);
-    await confirmFixtureApplications(s.store);
+    assert.equal(report.published, 1);
     const relative = await s.inbox.ingestAutomatically(
       [
         {
@@ -154,8 +151,7 @@ test("absolute date extensions can be used, but relative labels and unknown loca
       ],
       async () => location,
     );
-    assert.equal(relative.published, 0);
-    await confirmFixtureApplications(s.store);
+    assert.equal(relative.published, 1);
     const relativeOffer = (await s.store.read()).find((o) =>
       o.sourceUrl.endsWith("/relative"),
     );

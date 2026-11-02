@@ -103,7 +103,7 @@ export function EmployerForm({
           <label className="consent">
             <input type="checkbox" name="sourceDateChecked" required /> J’ai
             consulté la source originale et confirmé sa date de publication,
-            datant de 45 jours maximum.
+            datant de 30 jours maximum.
           </label>
         )}
         <div className="form-section-title">

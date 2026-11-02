@@ -180,7 +180,7 @@ export class SerpApiInbox {
       .prepare(
         "SELECT payload FROM serpapi_candidates WHERE status='pending' AND retrieved_at>=? ORDER BY retrieved_at DESC LIMIT 100",
       )
-      .all(new Date(Date.now() - 45 * 86400000).toISOString())
+      .all(new Date(Date.now() - 30 * 86400000).toISOString())
       .map((r) => JSON.parse(r.payload));
   }
   stage(jobs) {
@@ -474,7 +474,7 @@ export class SerpApiInbox {
       !isRecentPublication(body.publishedAt)
     )
       throw new ValidationError(
-        "Confirmez la date sur la source originale : publication de 45 jours maximum requise.",
+        "Confirmez la date sur la source originale : publication de 30 jours maximum requise.",
       );
     const offer = normalizeSubmission(
       {

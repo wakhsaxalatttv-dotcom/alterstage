@@ -110,7 +110,7 @@ export class SerpApiAutomation {
   }
   async execute() {
     if (!this.enabled) return { status: "disabled" };
-    const recoveryKey = "serpapi-all-sectors-reanalysis-v3";
+    const recoveryKey = "serpapi-thirty-days-reanalysis-v4";
     const recoveryClaim = this.store.transaction(
       () =>
         this.store.db

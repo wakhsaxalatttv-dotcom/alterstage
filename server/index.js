@@ -12,7 +12,7 @@ console.info(
   `[Catalogue] Contrôle de conformité : ${audit.checked} annonce(s) contrôlée(s), ${audit.withdrawn} retirée(s), ${audit.expired} expirée(s).`,
 );
 await seedBundledCatalogue(app.locals.store);
-await seedBundledCatalogue(app.locals.store, new URL("../config/verified-market-offers.json", import.meta.url));
+await seedBundledCatalogue(app.locals.store, new URL("../config/recent-market-offers.json", import.meta.url));
 const editorial = await seedEditorialCatalogue(app.locals.store);
 console.info(
   `[Catalogue employeurs] ${editorial.created} annonces sourcées ajoutées, ${editorial.excluded} non admissibles. Aucun nouveau contrôle de disponibilité supposé.`,

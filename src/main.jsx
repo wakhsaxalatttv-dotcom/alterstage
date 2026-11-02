@@ -1,4 +1,3 @@
-import { hasRecentOpenEvidence } from "../shared/availability.js";
 import { publicationIndex } from "../shared/freshness.js";
 import { AppLogo } from "./AppLogo";
 import { ReportForm } from "./ReportForm";
@@ -112,7 +111,7 @@ function App() {
     };
   }, [reload, filters, listPage]);
   const offers = data.offers || [],
-    results = offers.filter((o) => hasRecentOpenEvidence(o)),
+    results = offers,
     active = Object.values(filters).filter(Boolean).length;
   const change = (key, value) => setFilters((f) => ({ ...f, [key]: value }));
   const toggleFav = (o) =>
@@ -812,7 +811,7 @@ function App() {
                   officielles.
                 </li>
                 <li>
-                  <Check /> Seules les offres de 45 jours maximum sont
+                  <Check /> Seules les offres de 30 jours maximum sont
                   affichées.
                 </li>
                 <li>

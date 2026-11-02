@@ -1,4 +1,3 @@
-import { fixtureOpenEvidence, confirmFixtureApplications } from "./helpers/open-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -62,8 +61,6 @@ test("Training employers are excluded including accented university names; legit
   );
   assert.equal(isTrainingEmployer("Entreprise fictive", "", "8559A"), true);
   const offer = { ...base(), moderationStatus: "approved" };
-  assert.equal(publicOffer(offer), null);
-  offer.availabilityEvidence = fixtureOpenEvidence(offer);
   assert.ok(publicOffer(offer));
   assert.equal(nonComplianceReasons(offer).length, 0);
 });

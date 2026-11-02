@@ -1,6 +1,6 @@
 # Offres Fraîches
 
-Stages et alternances **dans tous les secteurs en France**. React 19, Vite, Express et **SQLite/FTS5 natif sous Node.js 24+**. Recherche gratuite, aucun paiement ni annonce fictive. Aucune annonce n’est visible sans preuve de candidature ouverte de moins de 24 heures. Les imports et références historiques restent masqués tant que ce contrôle n’est pas positif. Les connecteurs autorisés complètent automatiquement le catalogue ; leurs clés restent côté serveur. La limite de publication reste fixée à 45 jours et Meteojob est exclu.
+Stages et alternances **dans tous les secteurs en France**. React 19, Vite, Express et **SQLite/FTS5 natif sous Node.js 24+**. Recherche gratuite, aucun paiement ni annonce fictive. Les annonces admissibles des 30 derniers jours sont affichées, hors clôtures et retraits connus. Un contrôle réseau inconcluant ne les masque plus. Les connecteurs autorisés complètent automatiquement le catalogue ; leurs clés restent côté serveur. La limite de publication reste fixée à 30 jours et Meteojob est exclu.
 
 ## Lancer dans Codespaces
 
@@ -29,7 +29,7 @@ Ouvrir le port **5173** dans l’onglet Ports. Vite relaie `/api` à Express sur
 
 Le plan par étapes, le schéma et les compromis sont dans **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**. Les champs et interfaces se trouvent dans `server/models.d.ts`.
 
-Le guide **[docs/INGESTION.md](docs/INGESTION.md)** explique les flux, les conditions d’autorisation, les variables et la revue. `config/sources.example.json` est vide volontairement. Le lot historique `config/market-offers.json` est suspendu. Un éventuel `config/verified-market-offers.json` n’est visible que tant que ses preuves de disponibilité sont encore valides. Il ne prétend pas être connecté en direct sans clé. Voir aussi [config/DATA_LICENSE.md](config/DATA_LICENSE.md). France Travail dispose désormais d’un connecteur serveur qui s’active lorsque ses deux identifiants privés sont configurés ; voir [docs/FRANCE_TRAVAIL.md](docs/FRANCE_TRAVAIL.md). Les liens Google de l’annuaire sont des pistes de recherche, pas des sources de postes confirmés ou des partenariats.
+Le guide **[docs/INGESTION.md](docs/INGESTION.md)** explique les flux, les conditions d’autorisation, les variables et la revue. `config/sources.example.json` est vide volontairement. Le lot historique `config/market-offers.json` est suspendu. Un éventuel `config/recent-market-offers.json` n’est visible que dans la limite de 30 jours, hors clôtures connues. Il ne prétend pas être connecté en direct sans clé. Voir aussi [config/DATA_LICENSE.md](config/DATA_LICENSE.md). France Travail dispose désormais d’un connecteur serveur qui s’active lorsque ses deux identifiants privés sont configurés ; voir [docs/FRANCE_TRAVAIL.md](docs/FRANCE_TRAVAIL.md). Les liens Google de l’annuaire sont des pistes de recherche, pas des sources de postes confirmés ou des partenariats.
 
 L’audit de maintenance se lance avec `npm run maintain:offers` ; son rapport privé distingue collecte, pages contrôlées, ouvertures confirmées et résultats inconcluants. Voir [la règle de publication](docs/ALL_SECTORS.md) et [le bilan du 2 novembre](docs/OFFERS_AUDIT_2026-11-02.md).
 
@@ -82,7 +82,7 @@ Avec le serveur de développement démarré, `npm run test:references` contrôle
 
 ### Limite de fraîcheur et accès supplémentaires
 
-La règle partagée `shared/freshness.js` exclut de l’affichage toute publication de plus de 45 jours (45e jour inclus), sans date valide ou datée dans le futur. Elle s’applique aux listes, compteurs, détails API, offres liées aux entreprises, favoris affichés et références éditoriales. La date de consultation ne prolonge jamais la publication. Les anciennes données privées peuvent rester en base pour conserver l’historique de modération, mais ne sont plus publiques. L’instantané distribué est également nettoyé ; les références vieillissent automatiquement hors de l’affichage.
+La règle partagée `shared/freshness.js` exclut de l’affichage toute publication de plus de 30 jours (45e jour inclus), sans date valide ou datée dans le futur. Elle s’applique aux listes, compteurs, détails API, offres liées aux entreprises, favoris affichés et références éditoriales. La date de consultation ne prolonge jamais la publication. Les anciennes données privées peuvent rester en base pour conserver l’historique de modération, mais ne sont plus publiques. L’instantané distribué est également nettoyé ; les références vieillissent automatiquement hors de l’affichage.
 
 La clé LBA existante suffit pour le connecteur actuel, désormais étendu aux codes ROME H1503 (laboratoire d’analyse industrielle) et H2301 (production chimique/pharmaceutique). La collecte du 27 octobre n’a fourni aucune nouvelle offre chimie éligible ; les quinze nouveaux stages sont des références éditoriales officielles, sans flux automatique. Aucune clé n’est nécessaire pour ces liens publics.
 
@@ -90,7 +90,7 @@ Pour une extension future, Adzuna demande un `app_id` et une `app_key` (https://
 
 ### Présentation des annonces
 
-Les cartes et fiches affichent la date de publication, sans les anciens encarts de fraîcheur ni les lignes de vérification non effectuée. La limite de 45 jours continue de s’appliquer automatiquement ; aucune vérification n’est inventée. La présentation reprend les couleurs d’origine vert et crème, des cartes sobres, une typographie lisible et des actions de candidature visibles. Aucun visuel généré ni bandeau décoratif n’est utilisé.
+Les cartes et fiches affichent la date de publication, sans les anciens encarts de fraîcheur ni les lignes de vérification non effectuée. La limite de 30 jours continue de s’appliquer automatiquement ; aucune vérification n’est inventée. La présentation reprend les couleurs d’origine vert et crème, des cartes sobres, une typographie lisible et des actions de candidature visibles. Aucun visuel généré ni bandeau décoratif n’est utilisé.
 
 ### Gestion des dépôts et signalements
 
@@ -115,7 +115,7 @@ Dans les **Logs** privés du service, rechercher `[Administration]` après un d�
 
 Le design vert et crème et l’accroche d’origine sont conservés. La feuille blanche sur fond vert de l’application est dans `public/brand-leaf.svg`, réutilisé par `AppLogo` et comme favicon. `CompanyLogo` affiche le logo fourni, puis l’icône du domaine officiel renseigné, puis un monogramme SVG si nécessaire. Aucun domaine n’est deviné et aucune clé d’accès n’est requise.
 
-`src/appearance.css` limite les ajouts aux cadres de logo et aux micro-interactions : apparition des cartes à leur entrée dans l’écran (y compris au défilement sur téléphone), survol, confirmation du favori et ouverture de fenêtre. Ces effets sont désactivés avec `prefers-reduced-motion`; les survols sont réservés aux périphériques adaptés. Les filtres, la modération privée, les signalements et la limite de 45 jours restent inchangés. `npm run test:design` contrôle les replis des logos, la fenêtre et le retour de focus, le responsive et la réduction des animations. Voir [docs/DESIGN.md](docs/DESIGN.md).
+`src/appearance.css` limite les ajouts aux cadres de logo et aux micro-interactions : apparition des cartes à leur entrée dans l’écran (y compris au défilement sur téléphone), survol, confirmation du favori et ouverture de fenêtre. Ces effets sont désactivés avec `prefers-reduced-motion`; les survols sont réservés aux périphériques adaptés. Les filtres, la modération privée, les signalements et la limite de 30 jours restent inchangés. `npm run test:design` contrôle les replis des logos, la fenêtre et le retour de focus, le responsive et la réduction des animations. Voir [docs/DESIGN.md](docs/DESIGN.md).
 
 ### Vérification téléphone et ordinateur
 
@@ -135,7 +135,7 @@ La collecte France Travail parcourt désormais les 1 584 codes métiers du réf�
 
 ### Contrôle automatique du catalogue
 
-Au démarrage et après chaque collecte, un audit retire des résultats les offres hors critères : publication hors des 45 jours, contrat non éligible, domaine non technique, lieu français non établi, école/université identifiée, source originale absente/invalide ou offre expirée/inactive. Les motifs et les décisions sont conservés dans l’historique privé, sans suppression physique des données. Les retraits ne sont pas annulés par une collecte. Les échéances locales expirées peuvent être renouvelées uniquement par une nouvelle donnée source. Voir [docs/COMPLIANCE.md](docs/COMPLIANCE.md).
+Au démarrage et après chaque collecte, un audit retire des résultats les offres hors critères : publication hors des 30 jours, contrat non éligible, domaine non technique, lieu français non établi, école/université identifiée, source originale absente/invalide ou offre expirée/inactive. Les motifs et les décisions sont conservés dans l’historique privé, sans suppression physique des données. Les retraits ne sont pas annulés par une collecte. Les échéances locales expirées peuvent être renouvelées uniquement par une nouvelle donnée source. Voir [docs/COMPLIANCE.md](docs/COMPLIANCE.md).
 
 ### Tester RapidAPI sans Shell
 

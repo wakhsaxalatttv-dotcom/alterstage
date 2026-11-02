@@ -1,4 +1,3 @@
-import { hasRecentOpenEvidence } from "../shared/availability.js";
 import { isNonProductionOffer } from "../shared/production-policy.js";
 import { isBlockedSource } from "../shared/source-policy.js";
 import { isTrainingEmployer } from "../shared/employer-policy.js";
@@ -349,7 +348,6 @@ export function nonComplianceReasons(offer, now = Date.now()) {
 }
 export function publicOffer(offer, now = Date.now()) {
   if (
-    !hasRecentOpenEvidence(offer, now) ||
     nonComplianceReasons(offer, now).length ||
     offer.moderationStatus !== "approved" ||
     ["expired", "withdrawn"].includes(offer.status)

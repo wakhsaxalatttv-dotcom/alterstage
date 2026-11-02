@@ -1,6 +1,6 @@
 # France Travail — API Offres d’emploi
 
-**Publication :** un résultat API « actif » ne suffit pas. La [preuve récente de candidature ouverte](ALL_SECTORS.md) est requise avant affichage, même si la collecte fonctionne.
+**Publication :** les résultats admissibles des [30 derniers jours](ALL_SECTORS.md) sont affichés, hors clôtures ou expirations connues. Un statut actif ou une publication récente ne constitue pas une vérification humaine.
 
 Le connecteur serveur est dans `server/ingestion/france-travail.js`. Aucun scraping, aucune clé navigateur, aucun jeton sur disque. L’ajout du connecteur ne prouve pas que les clés enregistrées dans Render fonctionnent : seule une collecte réussie le confirme.
 
@@ -25,13 +25,13 @@ La recherche parcourt les 1 584 codes métiers du référentiel ROME v4.60, dans
 
 Aucun mot-clé de titre n’est exigé : une offre dont le titre ne mentionne pas « alternance » peut être retenue. La sélection exige un contrat structuré d’apprentissage, de professionnalisation, ou un type libellé stage ; une alternance structurée sans sous-type reste identifiée comme telle. Un CDD ordinaire mentionnant le mot « alternance » est exclu.
 
-Sont exclus : publication absente, future ou datant de plus de 45 jours ; domaines hors périmètre ; employeur anonyme ; lieu/région non établi ; annonce sans URL originale, titre ou description ; écoles/organismes de formation identifiés par leur nom ou leur code NAF 85. Ces règles prudentes peuvent écarter des annonces incomplètes. Elles ne constituent pas une certification de l’entreprise.
+Sont exclus : publication absente, future ou datant de plus de 30 jours ; domaines hors périmètre ; employeur anonyme ; lieu/région non établi ; annonce sans URL originale, titre ou description ; écoles/organismes de formation identifiés par leur nom ou leur code NAF 85. Ces règles prudentes peuvent écarter des annonces incomplètes. Elles ne constituent pas une certification de l’entreprise.
 
 Les descriptions disponibles sont nettoyées, sans compléter les informations absentes. Les adresses e-mail et téléphones sont retirés ; les liens de candidature restent disponibles. Pas d’adresse personnelle collectée. Le site entreprise est absent si la source ne le fournit pas.
 
 `dateCreation` reste la date de publication, `dateActualisation` la date de modification source, `lastFetchedAt` la date de collecte. Le statut `returned_by_api` signifie uniquement que l’offre figurait dans la réponse. `lastVerifiedAt` et la revue technique restent nuls : aucun badge de vérification humaine automatique.
 
-L’API de recherche ne fournit pas de date d’expiration utilisable par ce connecteur : `sourceExpiresAt` reste nul. `expiresAt` est une échéance **locale** de conservation d’au plus deux jours, plafonnée par la fenêtre de 45 jours. Une nouvelle collecte renouvelle cette échéance uniquement pour les offres renvoyées. Une offre qui cesse d’être renvoyée disparaît à cette échéance, pas immédiatement : ce n’est pas une vérification individuelle en direct.
+L’API de recherche ne fournit pas de date d’expiration utilisable par ce connecteur : `sourceExpiresAt` reste nul. `expiresAt` est une échéance **locale** de conservation d’au plus deux jours, plafonnée par la fenêtre de 30 jours. Une nouvelle collecte renouvelle cette échéance uniquement pour les offres renvoyées. Une offre qui cesse d’être renvoyée disparaît à cette échéance, pas immédiatement : ce n’est pas une vérification individuelle en direct.
 
 Les annonces éligibles suivent la politique de publication API autorisée du catalogue, comme LBA, et restent non revérifiées. Les dépôts d’entreprises et flux génériques restent soumis à la validation manuelle. Le connecteur ne permet pas aux déposants de contourner ces contrôles. Les retraits et refus administrateur ne sont jamais annulés par une collecte ultérieure. Le stockage existant dédoublonne par identifiant source, URL et titre/entreprise/lieu.
 

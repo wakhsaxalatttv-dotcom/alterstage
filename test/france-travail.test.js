@@ -1,4 +1,3 @@
-import { fixtureOpenEvidence, confirmFixtureApplications } from "./helpers/open-fixture.js";
 import { lbaSource } from "../server/ingestion/lba.js";
 import { franceTravailDomains } from "../server/ingestion/france-travail-domains.js";
 import test from "node:test";
@@ -92,7 +91,7 @@ test("France Travail preserves real source dates, contract, origin and missing d
   assert.deepEqual(offer.education, ["Bac + 2"]);
   assert.equal(offer.location.region, "Pays de la Loire");
 });
-test("France Travail excludes >45 days, future dates, anonymous employers, schools and ordinary CDD while accepting non-technical sectors", () => {
+test("France Travail excludes >30 days, future dates, anonymous employers, schools and ordinary CDD while accepting non-technical sectors", () => {
   const jobs = [
     fixture(),
     fixture({ id: "old", dateCreation: day(46) }),
@@ -116,7 +115,7 @@ test("France Travail excludes >45 days, future dates, anonymous employers, schoo
     incomplete: 1,
   });
   assert.equal(
-    parseFranceTravail({ resultats: [fixture({ dateCreation: day(40) })] }, now)
+    parseFranceTravail({ resultats: [fixture({ dateCreation: day(29) })] }, now)
       .length,
     1,
   );
@@ -225,8 +224,6 @@ test("Only the fixed FT connector may publish its API records unverified; ingest
     });
     assert.equal((await pipeline.run()).reports[0].created, 1);
     assert.equal((await pipeline.run()).reports[0].unchanged, 1);
-    assert.equal((await store.query()).total, 0);
-    await confirmFixtureApplications(store);
     const listed = await store.query();
     assert.equal(listed.total, 1);
     assert.equal(listed.offers[0].lastVerifiedAt, null);
@@ -311,7 +308,7 @@ test("France Travail reports page caps and does not infer an exhaustive market c
   assert.ok(
     normalizeRecord(
       parseFranceTravail(
-        { resultats: [fixture({ dateCreation: day(40) })] },
+        { resultats: [fixture({ dateCreation: day(29) })] },
         now,
       )[0],
       franceTravailSource,
@@ -387,7 +384,7 @@ test("Broad technical discovery has no keyword gate and splits saturated periods
           Math.floor((min + max) / 2000) * 1000,
         ).toISOString(),
       });
-      if (max - min > 20 * 864e5)
+      if (max - min > 10 * 864e5)
         return json({ resultats: [job] }, 206, {
           "content-range": "offres 0-149/999",
         });
@@ -439,8 +436,6 @@ test("Incomplete FT coverage stays partial in the persisted ingestion report whi
     assert.equal(result.reports[0].status, "partial");
     assert.equal(result.reports[0].created, 1);
     assert.deepEqual(store.runs()[0].coverage, coverage);
-    assert.equal((await store.query()).total, 0);
-    await confirmFixtureApplications(store);
     assert.equal((await store.query()).offers[0].lastVerifiedAt, null);
   } finally {
     store.close();

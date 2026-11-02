@@ -42,10 +42,8 @@ export async function seedEditorialCatalogue(
       report.excluded++;
       continue;
     }
-    const deadline = Math.min(
-      Date.parse(ref.publishedAt) + 46 * 86400000,
-      Date.parse(observedAt) + 8 * 86400000,
-    );
+    // Publication age controls visibility; an old consultation is not a closure.
+    const deadline = Date.parse(ref.publishedAt) + 31 * 86400000;
     if (deadline <= Date.now()) {
       report.excluded++;
       continue;

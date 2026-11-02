@@ -55,7 +55,7 @@ export const lbaSource = {
   licenseUrl:
     "https://api.apprentissage.beta.gouv.fr/fr/explorer/recherche-offre",
   authorizationRef:
-    "Diffusion gratuite non lucrative selon les conditions de l’API ; publication limitée à 45 jours sur demande du responsable du projet.",
+    "Diffusion gratuite non lucrative selon les conditions de l’API ; publication limitée à 30 jours sur demande du responsable du projet.",
   includeOlderActive: true,
   includeFranceTravail: true,
   publishUnverified: true,

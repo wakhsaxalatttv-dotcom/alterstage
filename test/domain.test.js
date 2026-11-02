@@ -1,4 +1,3 @@
-import { fixtureOpenEvidence, confirmFixtureApplications } from "./helpers/open-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -30,7 +29,6 @@ export const fixture = () => ({
   consent: true,
 });
 const offer = normalizeSubmission(fixture());
-offer.availabilityEvidence = fixtureOpenEvidence(offer);
 test("a submission never invents publication, verification or a contact", () => {
   const o = normalizeSubmission({ ...fixture(), publishedAt: "" });
   assert.equal(o.publishedAt, null);

@@ -1,4 +1,3 @@
-import { fixtureOpenEvidence, confirmFixtureApplications } from "./helpers/open-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -29,31 +28,28 @@ const offer = (date) => ({
   moderationStatus: "approved",
   status: "to_verify",
   lastVerifiedAt: null,
-  availabilityEvidence: fixtureOpenEvidence({ sourceUrl: "https://example.org/" + date }),
 });
-test("45 jours inclus : publication originale, date absente/future et favori ancien", () => {
+test("30 jours inclus : publication originale, date absente/future et favori ancien", () => {
   const now = Date.parse("2026-10-27T20:00:00Z");
-  assert.equal(publicationCutoff(now), "2026-09-12");
-  for (const value of ["2026-09-12", "2026-10-27"])
+  assert.equal(publicationCutoff(now), "2026-09-27");
+  for (const value of ["2026-09-27", "2026-10-27"])
     assert.equal(isRecentPublication(value, now), true);
   for (const value of [
-    "2026-09-11",
+    "2026-09-26",
     "2026-10-28",
     "2026-09-31",
     null,
     "invalide",
   ])
     assert.equal(isRecentPublication(value, now), false);
-  const boundaryOffer = offer("2026-09-12");
-  boundaryOffer.availabilityEvidence = fixtureOpenEvidence(boundaryOffer, now);
   const old = {
-    ...offer("2026-09-11"),
+    ...offer("2026-09-26"),
     lastFetchedAt: "2026-10-27",
     sourceUpdatedAt: "2026-10-27",
   };
   assert.equal(publicOffer(old, now), null);
   assert.equal(
-    selectOffers([old, boundaryOffer], defaultFilters, now).length,
+    selectOffers([old, offer("2026-09-27")], defaultFilters, now).length,
     1,
   );
 });

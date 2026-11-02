@@ -1,6 +1,6 @@
 # Plan d’implémentation et architecture
 
-Depuis le 2 novembre 2026, toutes les vues publiques et leurs compteurs exigent une [preuve de candidature ouverte de moins de 24 heures](ALL_SECTORS.md). Cette règle complète la conformité et la modération ; une importation seule n’autorise plus l’affichage.
+La règle demandée le 2 novembre rétablit les annonces admissibles des [30 derniers jours](ALL_SECTORS.md). Le blocage obligatoire de disponibilité de moins de 24 heures est supprimé ; les clôtures constatées et la modération restent appliquées.
 
 ## 1. Données, catalogue et ingestion
 

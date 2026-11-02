@@ -1,4 +1,3 @@
-import { fixtureOpenEvidence, confirmFixtureApplications } from "./helpers/open-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -128,8 +127,7 @@ test("real geocoding path and source description publish a recent technical offe
       ],
       resolve,
     );
-    assert.equal(report.published, 0);
-    await confirmFixtureApplications(store);
+    assert.equal(report.published, 1);
     const offer = (await store.query()).offers[0];
     assert.equal(offer.location.region, "Pays de la Loire");
     assert.equal(offer.contract, "Alternance — type non précisé");

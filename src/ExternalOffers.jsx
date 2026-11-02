@@ -162,7 +162,7 @@ export function ExternalOffers() {
         Effacer les filtres
       </button>
       <p className="external-date">
-        Tri : publication la plus récente. Seules les offres de 45 jours maximum
+        Tri : publication la plus récente. Seules les offres de 30 jours maximum
         sont affichées.
       </p>
       {data.loading && <p role="status">Chargement des offres repérées…</p>}

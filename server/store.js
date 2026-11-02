@@ -1,4 +1,3 @@
-import { hasRecentOpenEvidence } from "../shared/availability.js";
 import { isSuspendedImport } from "./suspended-catalogue.js";
 import { isBlockedSource } from "../shared/source-policy.js";
 import { CompanyCatalogue } from "./company-catalogue.js";
@@ -40,9 +39,6 @@ export class OfferStore {
     mkdirSync(folder, { recursive: true });
     this.db = new DatabaseSync(path.join(folder, "catalogue.sqlite"));
     chmodSync(path.join(folder, "catalogue.sqlite"), 0o600);
-    this.db.function("has_open_application", (payload) => {
-      try { return hasRecentOpenEvidence(JSON.parse(payload)) ? 1 : 0; } catch { return 0; }
-    });
     this.db.exec(
       readFileSync(new URL("./schema.sql", import.meta.url), "utf8"),
     );
@@ -465,7 +461,7 @@ export class OfferStore {
   }
   publicConditions() {
     return {
-      sql: `has_open_application(payload)=1 AND moderation='approved' AND status NOT IN ('expired','withdrawn') AND expires_at>? AND published_at>=? AND published_at<=? AND domain IN (${placeholders(domains)}) AND contract IN (${placeholders(contracts)})`,
+      sql: `moderation='approved' AND status NOT IN ('expired','withdrawn') AND expires_at>? AND published_at>=? AND published_at<=? AND domain IN (${placeholders(domains)}) AND contract IN (${placeholders(contracts)})`,
       params: [
         Date.now(),
         publicationCutoff(),

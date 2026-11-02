@@ -1,5 +1,7 @@
 # Audit réel du 2 novembre 2026
 
+**Bilan historique, avant rétablissement :** le responsable a ensuite demandé de réafficher les annonces de moins de 30 jours. Le blocage obligatoire de 24 heures a été supprimé et 24 annonces sourcées rétablies localement. Voir la [règle actuelle](ALL_SECTORS.md). Les résultats réseau ci-dessous ne changent pas.
+
 ## Résultat
 
 **Aucune nouvelle annonce publiée : zéro candidature ouverte confirmée.**

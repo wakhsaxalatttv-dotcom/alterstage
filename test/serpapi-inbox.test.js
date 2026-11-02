@@ -180,7 +180,7 @@ test("Google Jobs import requires admin and rights attestation, shares quota wit
     await rm(folder, { recursive: true, force: true });
   }
 });
-test("documented SerpApi dates between 30 and 45 days can pass the usual human review", async () => {
+test("documented SerpApi dates within 30 days can pass the usual human review", async () => {
   const folder = await mkdtemp("/tmp/serp-review-");
   const store = new OfferStore(folder);
   try {
@@ -188,7 +188,7 @@ test("documented SerpApi dates between 30 and 45 days can pass the usual human r
     inbox.stage([job()]);
     const result = await inbox.submit(inbox.list()[0].id, {
       ...form(),
-      publishedAt: new Date(Date.now() - 40 * 86400000)
+      publishedAt: new Date(Date.now() - 29 * 86400000)
         .toISOString()
         .slice(0, 10),
     });

@@ -1,4 +1,3 @@
-import { hasRecentOpenEvidence } from "../shared/availability.js";
 import { publicOffer } from "./domain.js";
 import { canonicalUrl } from "./store.js";
 import { isBlockedSource } from "../shared/source-policy.js";
@@ -35,7 +34,6 @@ export class Reports {
     }
     const curated = externalOffers.filter(
       (offer) =>
-        hasRecentOpenEvidence(offer) &&
         !hidden.has(offer.id) &&
         !hiddenUrls.has(canonicalUrl(offer.sourceUrl)) &&
         !isBlockedSource(offer) &&

@@ -1,4 +1,4 @@
-export const MAX_PUBLICATION_AGE_DAYS = 45;
+export const MAX_PUBLICATION_AGE_DAYS = 30;
 const DAY = 86400000;
 // La limite est inclusive et calculée par jour pour les dates source sans heure.
 export const publicationCutoff = (now = Date.now()) =>
