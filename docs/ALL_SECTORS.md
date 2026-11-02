@@ -75,3 +75,9 @@ L’import de la première page TotalEnergies ajoute ensuite 20 stages réelleme
 datés, dans plusieurs domaines, soit 84 offres locales. Leur pays est explicitement
 France, mais aucune ville ou région n’est inventée. Les 16 annonces de la page 2
 n’ont pas été capturées. Voir [la provenance TotalEnergies](TOTALENERGIES_UPLOAD.md).
+
+Le fichier Airbus « Search for Jobs.html » ajoute 20 stages de la première page
+Workday (445 résultats annoncés, pas tous capturés). « Posted Today » reste une
+indication relative, avec une observation de fichier fixe et un intervalle
+conservateur, sans date exacte inventée ni rajeunissement au déploiement.
+Le catalogue local passe à 104 offres. Voir [l’audit Airbus](AIRBUS_UPLOAD.md).

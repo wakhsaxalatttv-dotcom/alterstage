@@ -2,7 +2,7 @@ import { searchText } from "../enrichment.js";
 import { canonicalUrl } from "../store.js";
 import { createHash } from "node:crypto";
 import { externalOffers } from "../../shared/external-offers.js";
-import { isRecentPublication } from "../../shared/freshness.js";
+import { hasRecentPublication, publicationIndex } from "../../shared/freshness.js";
 import { isBlockedSource } from "../../shared/source-policy.js";
 import { normalizeSubmission, nonComplianceReasons } from "../domain.js";
 // Existing sourced editorial announcements are not newly fetched or newly verified.
@@ -19,7 +19,7 @@ export async function seedEditorialCatalogue(
   };
   for (const ref of references) {
     if (
-      !isRecentPublication(ref.publishedAt) ||
+      !hasRecentPublication(ref) ||
       isBlockedSource(ref) ||
       store.db
         .prepare("SELECT id FROM hidden_references WHERE id=?")
@@ -43,7 +43,7 @@ export async function seedEditorialCatalogue(
       continue;
     }
     // Publication age controls visibility; an old consultation is not a closure.
-    const deadline = Date.parse(ref.publishedAt) + 31 * 86400000;
+    const deadline = Date.parse(publicationIndex(ref)) + 31 * 86400000;
     if (deadline <= Date.now()) {
       report.excluded++;
       continue;
@@ -101,12 +101,13 @@ export async function seedEditorialCatalogue(
           .slice(0, 20);
     Object.assign(offer, {
       id: ref.id,
-      sourceId: "employer-editorial",
+      sourceId: ref.sourceId === "airbus-upload" ? "airbus-upload" : "employer-editorial",
       sourceName: ref.sourceName,
       source: `Annonce employeur · ${ref.sourceName}`,
       externalId: ref.id,
       sourcePolicyApproved: true,
       sourcePublishedAt: ref.sourcePublishedAt || ref.publishedAt,
+      ...(ref.publicationEvidence ? { publicationEvidence: ref.publicationEvidence } : {}),
       sourceUpdatedAt: ref.sourceUpdatedAt || null,
       sourceDocument: ref.sourceDocument || null,
       sourceConsultedAt: observedAt,
@@ -125,6 +126,7 @@ export async function seedEditorialCatalogue(
           sourceUrl: offer.sourceUrl,
           expiresAt: offer.expiresAt,
           ...(offer.sourceDocument ? { sourceDocument: offer.sourceDocument } : {}),
+          ...(offer.publicationEvidence ? { publicationEvidence: offer.publicationEvidence } : {}),
           ...(offer.company.logoUrl ? { companyLogoUrl: offer.company.logoUrl } : {}),
         }),
       )

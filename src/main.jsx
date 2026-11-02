@@ -917,7 +917,7 @@ function App() {
                 <dt>Publication</dt>
                 <dd>
                   {modal.offer.publicationEvidence?.kind === "relative"
-                    ? `Google Jobs indique « ${modal.offer.publicationEvidence.text} », relevé le ${date(modal.offer.publicationEvidence.observedAt)}. Date exacte non fournie.`
+                    ? `${modal.offer.sourceId === "airbus-upload" ? "Airbus" : "Google Jobs"} indique « ${modal.offer.publicationEvidence.text} », relevé le ${date(modal.offer.publicationEvidence.observedAt)}. Date exacte non fournie.`
                     : date(modal.offer.publishedAt)}
                 </dd>
               </dl>

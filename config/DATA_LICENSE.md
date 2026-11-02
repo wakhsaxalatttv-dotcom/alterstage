@@ -29,3 +29,13 @@ originales des seules informations de la liste. Le document complet et ses scrip
 ne sont pas déployés. L’URL du logo fournie par le portail est référencée pour les
 entités TotalEnergies sans revendiquer de partenariat. Voir [la provenance et les
 limites de vérification](../docs/TOTALENERGIES_UPLOAD.md).
+
+## Fichier Airbus fourni
+
+Vingt stages et leurs liens Workday originaux sont repris avec des synthèses
+limitées aux informations présentes. L’indication « Posted Today » reste relative,
+avec une première observation du fichier distincte de la publication. Le document
+complet, ses scripts et ses données de session ne sont pas déployés. Le logo local
+provient du SVG Airbus de Simple Icons, collection distribuée sous CC0 ; la marque
+reste propriété de son titulaire, sans partenariat revendiqué. Voir [la provenance
+et les limites](../docs/AIRBUS_UPLOAD.md).

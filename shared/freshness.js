@@ -1,3 +1,4 @@
+import { isAirbusUploadEvidence } from "./airbus-publication-evidence.js";
 export const MAX_PUBLICATION_AGE_DAYS = 30;
 const DAY = 86400000;
 // La limite est inclusive et calculée par jour pour les dates source sans heure.
@@ -29,6 +30,11 @@ export function relativePublicationWindow(text, observedAt) {
     .replace(/\u00a0/g, " ")
     .trim()
     .toLowerCase();
+  if (/^(?:posted\s+)?today$|^aujourd['’]hui$/.test(value)) {
+    // Unknown publisher timezone: use a conservative 48-hour interval, not a
+    // fabricated calendar publication date. Observation is fixed by the source.
+    return { earliest: new Date(observed - 48 * 3600000).toISOString(), latest: new Date(observed).toISOString(), observedAt: new Date(observed).toISOString() };
+  }
   const match = value.match(
     /^(?:(?:posted\s+)?(?:il y a\s+)?)?(\d{1,3})\s*(minutes?|mins?|heures?|hours?|jours?|days?|semaines?|weeks?|mois|months?)(?:\s+ago)?$/,
   );
@@ -60,7 +66,7 @@ export function publicationIndex(offer) {
   if (offer.sourcePublishedAt || offer.publishedAt)
     return offer.sourcePublishedAt || offer.publishedAt;
   if (
-    offer.sourceId !== "serpapi-google-jobs" ||
+    (offer.sourceId !== "serpapi-google-jobs" && !isAirbusUploadEvidence(offer)) ||
     offer.publicationEvidence?.kind !== "relative"
   )
     return null;
@@ -78,7 +84,7 @@ export function hasRecentPublication(offer, now = Date.now()) {
       now,
     );
   if (
-    offer.sourceId !== "serpapi-google-jobs" ||
+    (offer.sourceId !== "serpapi-google-jobs" && !isAirbusUploadEvidence(offer)) ||
     offer.publicationEvidence?.kind !== "relative"
   )
     return false;

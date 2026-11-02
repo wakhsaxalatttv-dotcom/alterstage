@@ -219,7 +219,7 @@ function Review({ offer: o, review }) {
         Publication source :{" "}
         {o.publishedAt ||
           (o.publicationEvidence?.kind === "relative"
-            ? `Indication Google Jobs : ${o.publicationEvidence.text}, relevée le ${new Date(o.publicationEvidence.observedAt).toLocaleDateString("fr-FR")} ; date exacte non fournie`
+            ? `Indication ${o.sourceId === "airbus-upload" ? "Airbus" : "Google Jobs"} : ${o.publicationEvidence.text}, relevée le ${new Date(o.publicationEvidence.observedAt).toLocaleDateString("fr-FR")} ; date exacte non fournie`
             : "Non fournie — publication bloquée")}{" "}
         · Échéance interne : {o.expiresAt}
       </p>

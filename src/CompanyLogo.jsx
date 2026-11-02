@@ -28,6 +28,7 @@ export function CompanyLogo({ company, size = 48 }) {
   const companyName = (company.name || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
   // SNCF assets are the genuine images embedded in the supplied employer archives.
   const localLogos = {
+    AIRBUS: "/company-logos/airbus.svg",
     "SNCF RESEAU": "/company-logos/sncf-reseau.avif",
     "SNCF VOYAGEURS": "/company-logos/sncf-voyageurs.avif",
     "SNCF GARES & CONNEXIONS": "/company-logos/sncf-gares-connexions.avif",

@@ -213,7 +213,7 @@ export function ExternalOffers() {
             </p>
             <p className="external-date">
               {offer.publicationEvidence?.kind === "relative"
-                ? `Publication Google Jobs : ${offer.publicationEvidence.text} (relevé le ${date(offer.publicationEvidence.observedAt)})`
+                ? `Publication ${offer.sourceId === "airbus-upload" ? "Airbus" : "Google Jobs"} : ${offer.publicationEvidence.text} (relevé le ${date(offer.publicationEvidence.observedAt)})`
                 : `Publication source : ${date(offer.publishedAt)}`}
             </p>
             <div className="external-actions">

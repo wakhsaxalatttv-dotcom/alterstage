@@ -25,3 +25,8 @@ accessible précise « Icône », pour ne pas assimiler un favicon à un logo in
 Les services externes peuvent être bloqués ou indisponibles : seul le chargement
 effectif dans le navigateur permet de confirmer l’affichage. Le logo local SNCF
 n’utilise aucun de ces services. Aucun secret/API payante n’est nécessaire.
+
+Le logo Airbus est également disponible localement dans `airbus.svg` : marque
+vectorielle reprise sans modification visuelle de Simple Icons. Les éléments XML
+ont été contrôlés ; aucune dépendance externe ni image générée. Sa provenance et
+les vérifications sont dans [l’import Airbus](AIRBUS_UPLOAD.md).

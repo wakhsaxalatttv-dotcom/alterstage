@@ -70,6 +70,7 @@ export interface Offer {
   sourcePublishedAt?: string | null;
   publicationEvidence?: {
     kind: "relative";
+    observationKind?: "uploaded-file";
     text: string;
     observedAt: string;
   } | null;

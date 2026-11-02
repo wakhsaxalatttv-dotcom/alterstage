@@ -4,7 +4,7 @@ import { isBlockedSource } from "../shared/source-policy.js";
 import { randomUUID } from "node:crypto";
 import { ValidationError } from "./domain.js";
 import { externalOffers } from "../shared/external-offers.js";
-import { isRecentPublication } from "../shared/freshness.js";
+import { hasRecentPublication } from "../shared/freshness.js";
 import { reportReasons } from "../shared/reporting.js";
 const text = (value, max, label) => {
   if (value == null) return "";
@@ -37,7 +37,7 @@ export class Reports {
         !hidden.has(offer.id) &&
         !hiddenUrls.has(canonicalUrl(offer.sourceUrl)) &&
         !isBlockedSource(offer) &&
-        isRecentPublication(offer.publishedAt),
+        hasRecentPublication(offer),
     );
     const publicConditions = this.store.publicConditions();
     const live = this.store.db

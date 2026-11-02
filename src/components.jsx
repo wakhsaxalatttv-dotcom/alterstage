@@ -130,7 +130,7 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
       <div className="offer-meta">
         <span>
           {o.publicationEvidence?.kind === "relative"
-            ? `Publication Google Jobs : « ${o.publicationEvidence.text} » (relevé le ${date(o.publicationEvidence.observedAt)})`
+            ? `Publication ${o.sourceId === "airbus-upload" ? "Airbus" : "Google Jobs"} : « ${o.publicationEvidence.text} » (relevé le ${date(o.publicationEvidence.observedAt)})`
             : o.publishedAt ? `Publiée le ${date(o.publishedAt)}` : "Publication : date non fournie"}
         </span>
       </div>
