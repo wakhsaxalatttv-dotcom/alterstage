@@ -109,6 +109,7 @@ export async function seedEditorialCatalogue(
       sourcePublishedAt: ref.sourcePublishedAt || ref.publishedAt,
       ...(ref.publicationEvidence ? { publicationEvidence: ref.publicationEvidence } : {}),
       sourceUpdatedAt: ref.sourceUpdatedAt || null,
+      ...(ref.sourcePortalPostedAt ? { sourcePortalPostedAt: ref.sourcePortalPostedAt } : {}),
       sourceDocument: ref.sourceDocument || null,
       sourceConsultedAt: observedAt,
       lastFetchedAt: observedAt,
@@ -127,6 +128,7 @@ export async function seedEditorialCatalogue(
           expiresAt: offer.expiresAt,
           ...(offer.sourceDocument ? { sourceDocument: offer.sourceDocument } : {}),
           ...(offer.publicationEvidence ? { publicationEvidence: offer.publicationEvidence } : {}),
+          ...(offer.sourcePortalPostedAt ? { sourcePortalPostedAt: offer.sourcePortalPostedAt, sourcePublishedAt: offer.sourcePublishedAt } : {}),
           ...(offer.company.logoUrl ? { companyLogoUrl: offer.company.logoUrl } : {}),
         }),
       )

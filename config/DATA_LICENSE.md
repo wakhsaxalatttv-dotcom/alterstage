@@ -39,3 +39,11 @@ complet, ses scripts et ses données de session ne sont pas déployés. Le logo 
 provient du SVG Airbus de Simple Icons, collection distribuée sous CC0 ; la marque
 reste propriété de son titulaire, sans partenariat revendiqué. Voir [la provenance
 et les limites](../docs/AIRBUS_UPLOAD.md).
+
+## Fichiers Orange fournis
+
+Les résumés et métadonnées des onze postes admissibles proviennent des documents
+fournis ; aucun script, suivi, cookie ou document intégral n’est déployé.
+Le logo est issu du dépôt officiel Orange Open Source, conservé comme marque
+d’identification du recruteur ou du groupe sans partenariat revendiqué.
+Voir [la provenance et la distinction des dates](../docs/ORANGE_UPLOAD.md).

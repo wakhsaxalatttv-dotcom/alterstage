@@ -75,6 +75,7 @@ export interface Offer {
     observedAt: string;
   } | null;
   sourceUpdatedAt?: string | null;
+  sourcePortalPostedAt?: string | null;
   firstRetrievedAt: string;
   lastFetchedAt?: string;
   updatedAt: string;

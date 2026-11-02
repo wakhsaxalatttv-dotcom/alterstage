@@ -29,6 +29,9 @@ export function CompanyLogo({ company, size = 48 }) {
   // SNCF assets are the genuine images embedded in the supplied employer archives.
   const localLogos = {
     AIRBUS: "/company-logos/airbus.svg",
+    ORANGE: "/company-logos/orange.svg",
+    "ORANGE SA": "/company-logos/orange.svg",
+    "ORANGE CYBERDEFENSE": "/company-logos/orange.svg",
     "SNCF RESEAU": "/company-logos/sncf-reseau.avif",
     "SNCF VOYAGEURS": "/company-logos/sncf-voyageurs.avif",
     "SNCF GARES & CONNEXIONS": "/company-logos/sncf-gares-connexions.avif",
@@ -42,7 +45,7 @@ export function CompanyLogo({ company, size = 48 }) {
     : /^SYSOCO(?:\s|$)/.test(companyName) ? "https://www.sysoco.fr"
     : website?.origin;
   const candidates = [
-    ...(localLogo ? [{ url: localLogo, label: `Logo de ${company.name}` }] : []),
+    ...(localLogo ? [{ url: localLogo, label: companyName === "ORANGE CYBERDEFENSE" ? "Logo du groupe Orange" : `Logo de ${company.name}` }] : []),
     ...(localLogo?.endsWith(".avif") ? [{ url: "/company-logos/sncf.svg", label: "Logo du groupe SNCF" }] : []),
     ...(logo ? [{ url: logo.href, label: `Logo de ${company.name}` }] : []),
     ...(brandWebsite

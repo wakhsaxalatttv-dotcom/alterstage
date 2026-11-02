@@ -81,3 +81,9 @@ Workday (445 résultats annoncés, pas tous capturés). « Posted Today » reste
 indication relative, avec une observation de fichier fixe et un intervalle
 conservateur, sans date exacte inventée ni rajeunissement au déploiement.
 Le catalogue local passe à 104 offres. Voir [l’audit Airbus](AIRBUS_UPLOAD.md).
+
+Les deux fichiers Orange ajoutent ensuite 10 stages et une alternance française,
+avec leurs dates initiales et les résumés réellement fournis. Neuf autres fiches
+sont exclues (huit hors France et un contrat stage/alternance non établi).
+Le catalogue local atteint 115 offres ; le logo Orange est servi localement.
+Voir [la provenance Orange](ORANGE_UPLOAD.md).

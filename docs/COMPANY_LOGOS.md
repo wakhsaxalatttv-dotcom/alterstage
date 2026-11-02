@@ -30,3 +30,9 @@ Le logo Airbus est également disponible localement dans `airbus.svg` : marque
 vectorielle reprise sans modification visuelle de Simple Icons. Les éléments XML
 ont été contrôlés ; aucune dépendance externe ni image générée. Sa provenance et
 les vérifications sont dans [l’import Airbus](AIRBUS_UPLOAD.md).
+
+`orange.svg` provient directement du dépôt officiel Orange Open Source, tag
+`v5.3.3` de Orange-Boosted-Bootstrap. Le fichier est repris sans changement visuel,
+avec ses variantes responsives natives, et ne contient aucun script ou lien externe.
+Pour Orange Cyberdefense, il est identifié comme logo du groupe, sans prétendre
+être une variante spécifique à la filiale. Voir [l’import Orange](ORANGE_UPLOAD.md).
