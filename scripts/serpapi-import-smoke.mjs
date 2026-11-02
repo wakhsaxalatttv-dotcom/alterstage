@@ -1,3 +1,4 @@
+import { confirmFixtureApplications } from "../test/helpers/open-fixture.js";
 import { SERPAPI_SEARCHES } from "../shared/serpapi-searches.js";
 import { chromium } from "playwright";
 import { existsSync } from "node:fs";
@@ -53,6 +54,8 @@ const app = createApp({
   },
 });
 await app.locals.serpApiAutomation.tick();
+assert.equal((await app.locals.store.query()).total, 0);
+await confirmFixtureApplications(app.locals.store);
 const server = app.listen(0, "127.0.0.1");
 await new Promise((r) => server.once("listening", r));
 const api = `http://127.0.0.1:${server.address().port}`;
@@ -151,7 +154,7 @@ try {
   }
   assert.deepEqual(errors, []);
   console.log(
-    "Google Jobs automatique : offre admissible publiée sans clic, données incomplètes privées, Meteojob exclu, aucun faux badge, suivi sans bouton d’import, mobile/PC validés.",
+    "Scénario Google Jobs isolé : offre fictive masquée puis visible après preuve d’ouverture simulée, données incomplètes privées, Meteojob exclu, aucun faux badge, suivi sans bouton d’import, mobile/PC validés.",
   );
 } finally {
   await browser.close();

@@ -1,3 +1,4 @@
+import { hasRecentOpenEvidence } from "../shared/availability.js";
 import { isSuspendedImport } from "./suspended-catalogue.js";
 import { isBlockedSource } from "../shared/source-policy.js";
 import { CompanyCatalogue } from "./company-catalogue.js";
@@ -39,6 +40,9 @@ export class OfferStore {
     mkdirSync(folder, { recursive: true });
     this.db = new DatabaseSync(path.join(folder, "catalogue.sqlite"));
     chmodSync(path.join(folder, "catalogue.sqlite"), 0o600);
+    this.db.function("has_open_application", (payload) => {
+      try { return hasRecentOpenEvidence(JSON.parse(payload)) ? 1 : 0; } catch { return 0; }
+    });
     this.db.exec(
       readFileSync(new URL("./schema.sql", import.meta.url), "utf8"),
     );
@@ -461,7 +465,7 @@ export class OfferStore {
   }
   publicConditions() {
     return {
-      sql: `moderation='approved' AND status NOT IN ('expired','withdrawn') AND expires_at>? AND published_at>=? AND published_at<=? AND domain IN (${placeholders(domains)}) AND contract IN (${placeholders(contracts)})`,
+      sql: `has_open_application(payload)=1 AND moderation='approved' AND status NOT IN ('expired','withdrawn') AND expires_at>? AND published_at>=? AND published_at<=? AND domain IN (${placeholders(domains)}) AND contract IN (${placeholders(contracts)})`,
       params: [
         Date.now(),
         publicationCutoff(),
@@ -475,12 +479,8 @@ export class OfferStore {
     this.freshCache();
     const key = "offers:" + JSON.stringify(filters),
       hit = this.cache.get(key);
-    if (hit) {
-      hit.offers = hit.offers
-        .map((o) => publicOffer({ ...o, moderationStatus: "approved" }))
-        .filter(Boolean);
-      return hit;
-    }
+    if (hit && hit.offers.every((o) => publicOffer({ ...o, moderationStatus: "approved" }))) return hit;
+    if (hit) this.cache.clear();
     const { sql, params } = this.publicConditions();
     const clauses = [sql],
       args = [...params];
@@ -695,6 +695,8 @@ export class OfferStore {
         offer.moderationStatus = "approved";
         offer.status = "active";
         offer.lastVerifiedAt = new Date().toISOString();
+        offer.availabilityCheckedAt = offer.lastVerifiedAt;
+        offer.availabilityEvidence = { kind: "manual-review", checkedAt: offer.lastVerifiedAt, url: offer.applicationUrl || offer.sourceUrl, openConfirmed: true };
         offer.technicalReviewAt = offer.lastVerifiedAt;
         offer.source =
           offer.origin === "employer"

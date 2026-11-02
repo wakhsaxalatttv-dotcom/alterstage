@@ -2,7 +2,10 @@ import { chromium } from "playwright";
 import { existsSync } from "node:fs";
 import assert from "node:assert/strict";
 import { selectOffers, defaultFilters } from "../src/domain.js";
-import { externalOffers } from "../shared/external-offers.js";
+import { externalOffers as sourceFixtures } from "../shared/external-offers.js";
+import { fixtureOpenEvidence } from "../test/helpers/open-fixture.js";
+// Browser-only fixtures: simulated proof, never a real publication.
+const externalOffers = sourceFixtures.map((o) => ({ ...o, availabilityEvidence: fixtureOpenEvidence(o) }));
 const browser = await chromium.launch({
   executablePath:
     process.env.BROWSER_EXECUTABLE ||
@@ -71,7 +74,7 @@ try {
     await section.innerText(),
     /Offre ancienne|Dernière vérification/,
   );
-  const entries = externalOffers.filter((offer) =>
+  const entries = selectOffers(externalOffers, defaultFilters).filter((offer) =>
     offer.id.startsWith("vinci-"),
   );
   for (const entry of entries) {

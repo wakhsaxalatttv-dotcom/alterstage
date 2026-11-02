@@ -1,3 +1,4 @@
+import { hasRecentOpenEvidence } from "../shared/availability.js";
 import { publicationIndex } from "../shared/freshness.js";
 import { AppLogo } from "./AppLogo";
 import { ReportForm } from "./ReportForm";
@@ -77,6 +78,10 @@ function App() {
 
   useEffect(() => setListPage(1), [filters]);
   useEffect(() => {
+    const timer = setInterval(() => setReload((n) => n + 1), 60000);
+    return () => clearInterval(timer);
+  }, []);
+  useEffect(() => {
     const controller = new AbortController();
     setData((previous) => ({ ...previous, status: "loading", offers: [] }));
     const timer = setTimeout(
@@ -107,7 +112,7 @@ function App() {
     };
   }, [reload, filters, listPage]);
   const offers = data.offers || [],
-    results = offers,
+    results = offers.filter((o) => hasRecentOpenEvidence(o)),
     active = Object.values(filters).filter(Boolean).length;
   const change = (key, value) => setFilters((f) => ({ ...f, [key]: value }));
   const toggleFav = (o) =>

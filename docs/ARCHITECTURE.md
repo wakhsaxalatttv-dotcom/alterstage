@@ -1,5 +1,7 @@
 # Plan d’implémentation et architecture
 
+Depuis le 2 novembre 2026, toutes les vues publiques et leurs compteurs exigent une [preuve de candidature ouverte de moins de 24 heures](ALL_SECTORS.md). Cette règle complète la conformité et la modération ; une importation seule n’autorise plus l’affichage.
+
 ## 1. Données, catalogue et ingestion
 
 Implémenté :

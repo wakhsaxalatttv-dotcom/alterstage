@@ -34,6 +34,10 @@ export function ExternalOffers() {
       });
     return () => controller.abort();
   }, [refresh]);
+  useEffect(() => {
+    const timer = setInterval(() => setRefresh((n) => n + 1), 60000);
+    return () => clearInterval(timer);
+  }, []);
   const externalOffers = data.offers;
   const open = (offer) => {
     setSelected(offer);

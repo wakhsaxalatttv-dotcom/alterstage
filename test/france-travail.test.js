@@ -1,3 +1,4 @@
+import { fixtureOpenEvidence, confirmFixtureApplications } from "./helpers/open-fixture.js";
 import { lbaSource } from "../server/ingestion/lba.js";
 import { franceTravailDomains } from "../server/ingestion/france-travail-domains.js";
 import test from "node:test";
@@ -224,6 +225,8 @@ test("Only the fixed FT connector may publish its API records unverified; ingest
     });
     assert.equal((await pipeline.run()).reports[0].created, 1);
     assert.equal((await pipeline.run()).reports[0].unchanged, 1);
+    assert.equal((await store.query()).total, 0);
+    await confirmFixtureApplications(store);
     const listed = await store.query();
     assert.equal(listed.total, 1);
     assert.equal(listed.offers[0].lastVerifiedAt, null);
@@ -436,6 +439,8 @@ test("Incomplete FT coverage stays partial in the persisted ingestion report whi
     assert.equal(result.reports[0].status, "partial");
     assert.equal(result.reports[0].created, 1);
     assert.deepEqual(store.runs()[0].coverage, coverage);
+    assert.equal((await store.query()).total, 0);
+    await confirmFixtureApplications(store);
     assert.equal((await store.query()).offers[0].lastVerifiedAt, null);
   } finally {
     store.close();

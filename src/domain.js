@@ -1,3 +1,4 @@
+import { hasRecentOpenEvidence } from "../shared/availability.js";
 import { isBlockedSource } from "../shared/source-policy.js";
 import { isTrainingEmployer } from "../shared/employer-policy.js";
 import { publicationIndex, hasRecentPublication } from "../shared/freshness.js";
@@ -50,6 +51,7 @@ export function selectOffers(offers, filters, now = Date.now()) {
       .toLowerCase();
   return offers
     .filter(inScope)
+    .filter((o) => hasRecentOpenEvidence(o, now))
     .filter((o) => !o.sourceClosedAt)
     .filter((o) => !isBlockedSource(o))
     .filter((o) => !filters.companyId || o.company.id === filters.companyId)

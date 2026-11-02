@@ -1,3 +1,4 @@
+import { fixtureOpenEvidence, confirmFixtureApplications } from "./helpers/open-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -90,7 +91,8 @@ test("relative publication is public with truthful evidence, indexed, filtered a
   try {
     let inbox = new SerpApiInbox(store);
     const result = await inbox.ingestAutomatically([job()], geo);
-    assert.equal(result.published, 1);
+    assert.equal(result.published, 0);
+    await confirmFixtureApplications(store);
     const offer = (await store.query()).offers[0];
     assert.equal(offer.publishedAt, null);
     assert.equal(offer.sourcePublishedAt, null);
@@ -144,7 +146,8 @@ test("previously saved Google Jobs results are reanalyzed at their actual observ
       )
       .run(old.id, oldObservedAt, JSON.stringify(old));
     const report = await inbox.reanalyzeSaved(geo);
-    assert.equal(report.published, 1);
+    assert.equal(report.published, 0);
+    await confirmFixtureApplications(store);
     const offer = (await store.query()).offers[0];
     assert.equal(offer.publicationEvidence.observedAt, oldObservedAt);
     assert.equal(offer.firstRetrievedAt, oldObservedAt);

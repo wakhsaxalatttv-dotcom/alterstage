@@ -5,6 +5,7 @@ export function isNonProductionUrl(value) {
       host = u.hostname.toLowerCase();
     return (
       host === "localhost" ||
+      /(?:^|\.)(?:dev|qa|uat|testing)(?:\.)/i.test(host) ||
       /^127\.|^10\.|^192\.168\./.test(host) ||
       /(?:^|[.-])(?:recette|sandbox|staging|preprod|preproduction|ppd|rec|demo)(?:[.-]|$)/i.test(
         host,

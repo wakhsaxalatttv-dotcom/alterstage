@@ -1,3 +1,4 @@
+import { fixtureOpenEvidence, confirmFixtureApplications } from "./helpers/open-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
@@ -85,6 +86,8 @@ test("authorized LBA records are visible unverified and filterable by either con
       lbaSource,
     );
     await store.ingest(offer);
+    assert.equal((await store.query()).total, 0);
+    await confirmFixtureApplications(store);
     assert.equal((await store.query()).total, 1);
     assert.equal(
       (await store.query({ contract: "Contrat de professionnalisation" }))
@@ -122,6 +125,8 @@ test("bundled snapshot starts a fresh deployment, is idempotent, and cannot undo
     );
     await seedBundledCatalogue(store, file);
     await seedBundledCatalogue(store, file);
+    assert.equal((await store.query()).total, 0);
+    await confirmFixtureApplications(store);
     assert.equal((await store.query()).total, 1);
     const id = (await store.read())[0].id;
     await store.review(id, { action: "withdraw" });

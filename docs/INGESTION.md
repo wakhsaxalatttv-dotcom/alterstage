@@ -1,5 +1,7 @@
 # Brancher un flux autorisé
 
+**Publication :** la récupération d’un résultat ne le publie pas. La [preuve récente de candidature ouverte](ALL_SECTORS.md) est obligatoire depuis le 2 novembre 2026, y compris pour les connecteurs autorisés.
+
 Le pipeline fonctionne sans source et ne génère aucune annonce. `config/sources.example.json` contient une liste vide volontairement. Aucun flux France Travail, Dares ou tiers n’est connecté par défaut.
 
 ## Configuration serveur
@@ -65,9 +67,9 @@ Lorsque `LBA_API_KEY` est disponible et qu’aucun fichier SOURCES_FILE personna
 
 Le responsable a explicitement autorisé l’inclusion d’annonces de plus de 30 jours toujours actives dans l’API et avant leur échéance source. Depuis la demande du 27 octobre 2026, une limite publique absolue de 45 jours s’applique aussi à ces annonces, indépendamment de leur statut actif. Cette exception est réservée au connecteur LBA reconnu : les dépôts ordinaires conservent leur limite de 30 jours. Les deux types de contrats sont conservés lorsque la source accepte apprentissage et professionnalisation. Un site d’entreprise manquant n’est pas inventé.
 
-Ces annonces deviennent visibles **sans badge humain** et avec `lastVerifiedAt=null`. La date de collecte ne remplace ni la date de publication, ni une vérification de disponibilité. Leur statut source et la date de collecte sont affichés. La date d’expiration source est appliquée précisément, en complément de l’échéance interne. Un retrait/refus du modérateur ne peut pas être annulé par une collecte ou un rechargement de l’instantané. Les marques de vérification des profils entreprises ne sont pas accordées par ce connecteur.
+Ces annonces sont préparées **sans badge humain** et avec `lastVerifiedAt=null`. Depuis le 2 novembre, elles restent masquées jusqu’à obtention d’une preuve de candidature ouverte de moins de 24 heures. La date de collecte ne remplace ni la date de publication, ni une vérification de disponibilité. Leur statut source et la date de collecte sont affichés. La date d’expiration source est appliquée précisément, en complément de l’échéance interne. Un retrait/refus du modérateur ne peut pas être annulé par une collecte ou un rechargement de l’instantané. Les marques de vérification des profils entreprises ne sont pas accordées par ce connecteur.
 
-L’instantané `config/market-offers.json` est chargé par `server/index.js` au démarrage pour que Render puisse servir les offres collectées ici. Il ne contient ni clé ni contacts personnels. `npm run export:market` le régénère depuis les seules annonces LBA publiques non revérifiées de la base locale ; respecter [la restriction de réutilisation](../config/DATA_LICENSE.md). Une version d’instantané plus ancienne ne remplace pas une collecte locale plus récente. Sans clé sur Render, aucune actualisation API n’est prétendue ; les dates et avertissements restent visibles, et les échéances expirées sont masquées.
+L’archive `config/market-offers.json` reste suspendue et ne publie aucune annonce. `npm run export:market` écrit un fichier distinct `config/verified-market-offers.json` depuis les seules annonces LBA ayant une preuve de candidature ouverte encore valide ; respecter [la restriction de réutilisation](../config/DATA_LICENSE.md). Une version d’instantané plus ancienne ne remplace pas une collecte locale plus récente. Sans clé sur Render, aucune actualisation API n’est prétendue ; les dates et avertissements restent visibles, et les échéances expirées sont masquées.
 
 Le fournisseur autorise une diffusion gratuite et non lucrative. Aucune offre payante, alerte payante utilisant ces données ni revente des données ne doit être activée sans accord approprié. Les clés doivent rester côté serveur. Le routage proxy de la plateforme est conservé : pour l’endpoint gouvernemental fixe autorisé, la résolution de la destination est confiée au proxy géré, sans désactiver TLS ni ouvrir de destination arbitraire.
 

@@ -1,6 +1,6 @@
 # Offres Fraîches
 
-Stages et alternances **dans tous les secteurs en France**. React 19, Vite, Express et **SQLite/FTS5 natif sous Node.js 24+**. Recherche gratuite, aucun paiement ni annonce fictive. Les annonces employeurs déjà sourcées et encore admissibles sont intégrées dans **Offres** au démarrage, sans nouveau contrôle de disponibilité supposé. Les connecteurs autorisés complètent automatiquement le catalogue ; leurs clés restent côté serveur. La limite de publication reste fixée à 45 jours et Meteojob est exclu.
+Stages et alternances **dans tous les secteurs en France**. React 19, Vite, Express et **SQLite/FTS5 natif sous Node.js 24+**. Recherche gratuite, aucun paiement ni annonce fictive. Aucune annonce n’est visible sans preuve de candidature ouverte de moins de 24 heures. Les imports et références historiques restent masqués tant que ce contrôle n’est pas positif. Les connecteurs autorisés complètent automatiquement le catalogue ; leurs clés restent côté serveur. La limite de publication reste fixée à 45 jours et Meteojob est exclu.
 
 ## Lancer dans Codespaces
 
@@ -29,7 +29,9 @@ Ouvrir le port **5173** dans l’onglet Ports. Vite relaie `/api` à Express sur
 
 Le plan par étapes, le schéma et les compromis sont dans **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**. Les champs et interfaces se trouvent dans `server/models.d.ts`.
 
-Le guide **[docs/INGESTION.md](docs/INGESTION.md)** explique les flux, les conditions d’autorisation, les variables et la revue. `config/sources.example.json` est vide volontairement. Le serveur charge au démarrage `config/market-offers.json` dans sa base, y compris sur Render sans clé API. Il ne prétend pas être connecté en direct sans clé. Voir aussi [config/DATA_LICENSE.md](config/DATA_LICENSE.md). France Travail dispose désormais d’un connecteur serveur qui s’active lorsque ses deux identifiants privés sont configurés ; voir [docs/FRANCE_TRAVAIL.md](docs/FRANCE_TRAVAIL.md). Les liens Google de l’annuaire sont des pistes de recherche, pas des sources de postes confirmés ou des partenariats.
+Le guide **[docs/INGESTION.md](docs/INGESTION.md)** explique les flux, les conditions d’autorisation, les variables et la revue. `config/sources.example.json` est vide volontairement. Le lot historique `config/market-offers.json` est suspendu. Un éventuel `config/verified-market-offers.json` n’est visible que tant que ses preuves de disponibilité sont encore valides. Il ne prétend pas être connecté en direct sans clé. Voir aussi [config/DATA_LICENSE.md](config/DATA_LICENSE.md). France Travail dispose désormais d’un connecteur serveur qui s’active lorsque ses deux identifiants privés sont configurés ; voir [docs/FRANCE_TRAVAIL.md](docs/FRANCE_TRAVAIL.md). Les liens Google de l’annuaire sont des pistes de recherche, pas des sources de postes confirmés ou des partenariats.
+
+L’audit de maintenance se lance avec `npm run maintain:offers` ; son rapport privé distingue collecte, pages contrôlées, ouvertures confirmées et résultats inconcluants. Voir [la règle de publication](docs/ALL_SECTORS.md) et [le bilan du 2 novembre](docs/OFFERS_AUDIT_2026-11-02.md).
 
 ## Tests et production
 

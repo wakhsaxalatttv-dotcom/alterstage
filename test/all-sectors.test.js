@@ -1,3 +1,4 @@
+import { fixtureOpenEvidence, confirmFixtureApplications } from "./helpers/open-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -73,6 +74,8 @@ test("existing sourced employer references populate Offers without claiming a ne
   try {
     const report = await seedEditorialCatalogue(store);
     assert.ok(report.created > 0);
+    assert.equal((await store.query()).total, 0);
+    await confirmFixtureApplications(store);
     const before = (await store.query()).total;
     assert.equal(before, report.created);
     const offer = (await store.query()).offers[0];
@@ -101,6 +104,7 @@ test("PME alternances and stages from live sources appear in Repérées and Offe
   try {
     const offer = normalizeSubmission(fixture());
     offer.moderationStatus = "approved";
+    offer.availabilityEvidence = fixtureOpenEvidence(offer);
     await store.submit(offer);
     const reports = new Reports(store);
     const reference = reports.references().find((r) => r.id === offer.id);
@@ -129,6 +133,7 @@ test("a curated reference report also removes its promoted catalogue entry and p
   const store = new OfferStore(folder);
   try {
     await seedEditorialCatalogue(store);
+    await confirmFixtureApplications(store);
     const offer = (await store.query()).offers[0];
     const reports = new Reports(store);
     const reported = await reports.create({

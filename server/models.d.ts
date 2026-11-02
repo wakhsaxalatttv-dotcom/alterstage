@@ -51,6 +51,17 @@ export interface Offer {
   sourceExpiresAt?: string | null;
   sourcePartner?: string | null;
   sourceStatus?: string | null;
+  availabilityCheckedAt?: string;
+  sourceClosedAt?: string;
+  availabilityEvidence?: {
+    kind: "application-page" | "manual-review";
+    checkedAt: string;
+    url: string;
+    validThrough?: string;
+    openConfirmed?: boolean;
+    jobIdentityMatched?: boolean;
+    applicationActionFound?: boolean;
+  };
   acceptedContracts?: string[];
   sourceName?: string;
   externalId?: string;

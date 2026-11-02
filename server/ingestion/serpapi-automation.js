@@ -260,6 +260,7 @@ export class SerpApiAutomation {
         status: result.status,
         pauseUntil,
         published: report.published || 0,
+        awaitingAvailability: report.awaitingAvailability || 0,
         deferred: report.deferred || 0,
         excluded: report.excluded || 0,
         reasons: report.reasons || {},

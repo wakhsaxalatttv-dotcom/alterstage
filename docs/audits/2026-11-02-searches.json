@@ -1,0 +1,602 @@
+{
+  "startedAt": "2026-11-02T13:03:05.063Z",
+  "method": "Recherche globale + une recherche ROME représentative par domaine mappé ; contrôle ciblé non exhaustif.",
+  "searches": [
+    {
+      "domain": "Tous domaines",
+      "rome": null,
+      "received": 324,
+      "eligible": 0,
+      "excluded": {
+        "old": 210,
+        "meteojob": 57,
+        "sandbox": 57,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Agriculture, paysage & environnement",
+      "rome": "A1101",
+      "received": 7,
+      "eligible": 0,
+      "excluded": {
+        "old": 6,
+        "meteojob": 1,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Bâtiment, génie civil & travaux publics",
+      "rome": "A1206",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Artisanat, mode & métiers d’art",
+      "rome": "B1101",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Autres métiers techniques",
+      "rome": "B1612",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Banque, assurance & immobilier",
+      "rome": "C1101",
+      "received": 2,
+      "eligible": 0,
+      "excluded": {
+        "old": 2,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Maintenance industrielle",
+      "rome": "C1113",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 103
+      }
+    },
+    {
+      "domain": "Agroalimentaire & métiers de bouche",
+      "rome": "D1101",
+      "received": 62,
+      "eligible": 0,
+      "excluded": {
+        "old": 49,
+        "meteojob": 10,
+        "sandbox": 1,
+        "school": 2,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Commerce & vente",
+      "rome": "D1201",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Marketing & communication",
+      "rome": "D1411",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Journalisme & édition",
+      "rome": "E1102",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 25
+      }
+    },
+    {
+      "domain": "Télécommunications",
+      "rome": "F1605",
+      "received": 58,
+      "eligible": 0,
+      "excluded": {
+        "old": 53,
+        "meteojob": 4,
+        "sandbox": 1,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Hôtellerie, restauration & tourisme",
+      "rome": "G1101",
+      "received": 3,
+      "eligible": 0,
+      "excluded": {
+        "old": 3,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Ressources humaines",
+      "rome": "G1219",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 0
+      }
+    },
+    {
+      "domain": "Conseil & gestion de projet",
+      "rome": "G1405",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Conception, méthodes & bureau d’études",
+      "rome": "H1202",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Automatismes & robotique",
+      "rome": "H1208",
+      "received": 6,
+      "eligible": 0,
+      "excluded": {
+        "old": 3,
+        "meteojob": 3,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Électronique & instrumentation",
+      "rome": "H1209",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Chimie, procédés & matériaux",
+      "rome": "H1503",
+      "received": 4,
+      "eligible": 0,
+      "excluded": {
+        "old": 4,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Qualité, sécurité & métrologie",
+      "rome": "H1504",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Électricité & électrotechnique",
+      "rome": "I1309",
+      "received": 19,
+      "eligible": 0,
+      "excluded": {
+        "old": 11,
+        "meteojob": 7,
+        "sandbox": 0,
+        "school": 1,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Support & maintenance informatique",
+      "rome": "I1401",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Santé & médico-social",
+      "rome": "J1101",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Sport & bien-être",
+      "rome": "K1101",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Social, éducation & animation",
+      "rome": "K1201",
+      "received": 7,
+      "eligible": 0,
+      "excluded": {
+        "old": 5,
+        "meteojob": 2,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Droit & administration",
+      "rome": "K1401",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Sécurité & services aux particuliers",
+      "rome": "K1701",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 70
+      }
+    },
+    {
+      "domain": "Transport & logistique",
+      "rome": "K1722",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 0
+      }
+    },
+    {
+      "domain": "Culture, arts & audiovisuel",
+      "rome": "L1101",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Achats & relation client",
+      "rome": "M1101",
+      "received": 6,
+      "eligible": 0,
+      "excluded": {
+        "old": 6,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Comptabilité, finance & audit",
+      "rome": "M1201",
+      "received": 6,
+      "eligible": 0,
+      "excluded": {
+        "old": 6,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Assistanat & gestion",
+      "rome": "M1601",
+      "received": 17,
+      "eligible": 0,
+      "excluded": {
+        "old": 11,
+        "meteojob": 6,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Systèmes, réseaux & cloud",
+      "rome": "M1801",
+      "received": 0,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    },
+    {
+      "domain": "Autres métiers informatiques",
+      "rome": "M1803",
+      "received": 2,
+      "eligible": 0,
+      "excluded": {
+        "old": 2,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 0,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 55
+      }
+    },
+    {
+      "domain": "Développement logiciel & web",
+      "rome": "M1804",
+      "received": 1,
+      "eligible": 0,
+      "excluded": {
+        "old": 0,
+        "meteojob": 0,
+        "sandbox": 0,
+        "school": 1,
+        "inactive": 0,
+        "franceTravail": 0,
+        "missing": 0,
+        "outOfScope": 0,
+        "recruiters": 150
+      }
+    }
+  ],
+  "finishedAt": "2026-11-02T13:03:52.791Z"
+}

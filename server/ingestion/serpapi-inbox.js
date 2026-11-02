@@ -218,6 +218,7 @@ export class SerpApiInbox {
       excluded: 0,
       deferred: 0,
       published: 0,
+      awaitingAvailability: 0,
       invalid: 0,
       reasons: {},
     };
@@ -354,7 +355,12 @@ export class SerpApiInbox {
       const row = this.db
         .prepare("SELECT id FROM offers WHERE source_id=? AND external_id=?")
         .get(offer.sourceId, offer.externalId);
-      if (row && (await this.store.getPublic(row.id))) report.published++;
+      const published = Boolean(row && (await this.store.getPublic(row.id)));
+      if (published) report.published++;
+      else if (row) {
+        report.awaitingAvailability++;
+        reason("open_application_proof_missing");
+      }
       this.db
         .prepare(
           "UPDATE serpapi_candidates SET status=? WHERE id=? AND status!='rejected'",
@@ -364,7 +370,7 @@ export class SerpApiInbox {
             ? "matched"
             : result === "invalid"
               ? "pending"
-              : "published",
+              : published ? "published" : "matched",
           candidate.id,
         );
     }
@@ -373,6 +379,7 @@ export class SerpApiInbox {
   async reanalyzeSaved(resolveLocation) {
     const total = {
       published: 0,
+      awaitingAvailability: 0,
       deferred: 0,
       excluded: 0,
       created: 0,

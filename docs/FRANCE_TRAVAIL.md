@@ -1,5 +1,7 @@
 # France Travail — API Offres d’emploi
 
+**Publication :** un résultat API « actif » ne suffit pas. La [preuve récente de candidature ouverte](ALL_SECTORS.md) est requise avant affichage, même si la collecte fonctionne.
+
 Le connecteur serveur est dans `server/ingestion/france-travail.js`. Aucun scraping, aucune clé navigateur, aucun jeton sur disque. L’ajout du connecteur ne prouve pas que les clés enregistrées dans Render fonctionnent : seule une collecte réussie le confirme.
 
 ## Configuration Render

@@ -13,6 +13,7 @@ try {
         !o.lastVerifiedAt,
     )
     .map((o) => ({ ...o, publicContacts: [] }));
+  if (!rows.length) throw new Error("Aucune offre avec preuve récente de candidature ouverte : aucun instantané publié.");
   const snapshot = {
     source: "la-bonne-alternance",
     collectedAt: new Date().toISOString(),
@@ -21,11 +22,11 @@ try {
     useRestriction:
       "Usage gratuit et non lucratif uniquement selon les conditions de l’API. Ne pas revendre ces données.",
     notice:
-      "Annonces renvoyées actives par la source lors de la collecte. Dates d’origine et partenaires conservés ; disponibilité non revérifiée par un humain.",
+      "Annonces avec preuve récente de candidature ouverte, soumise à expiration après 24 heures. Dates originales conservées ; aucun contrôle humain supposé.",
     offers: rows,
   };
   await writeFile(
-    new URL("../config/market-offers.json", import.meta.url),
+    new URL("../config/verified-market-offers.json", import.meta.url),
     JSON.stringify(snapshot, null, 2) + "\n",
   );
   console.log(

@@ -1,5 +1,7 @@
 # Google Jobs : collecte, analyse et publication automatiques
 
+**Depuis le 2 novembre 2026 :** les résultats sont préparés automatiquement, mais seules les annonces ayant une [preuve de candidature ouverte de moins de 24 heures](ALL_SECTORS.md) sont visibles. Un résultat admissible sans cette preuve reste masqué et ne compte pas comme publication.
+
 ## Configuration
 
 Définir `SERPAPI_API_KEY` côté serveur Render, puis déployer le code. La clé ne doit jamais être préfixée `VITE_` ni être copiée dans le navigateur ou le dépôt. Aucun passage dans Sources pour lancer un import n’est nécessaire. L’espace privé affiche seulement le suivi de l’automatisation Google Jobs.

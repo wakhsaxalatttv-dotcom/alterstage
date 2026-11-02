@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { publicOffer } from "../domain.js";
+import { nonComplianceReasons } from "../domain.js";
 /** Non-secret, dated public catalogue snapshot; never overrides a moderator's rejection or withdrawal. */
 export async function seedBundledCatalogue(
   store,
@@ -33,7 +33,7 @@ export async function seedBundledCatalogue(
       !offer.sourcePolicyApproved
     )
       continue;
-    if (publicOffer({ ...offer, moderationStatus: "approved" }))
+    if (!nonComplianceReasons(offer).length)
       await store.ingest(offer);
   }
 }

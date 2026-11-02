@@ -31,6 +31,7 @@ const reasonLabel = (reason) =>
           invalid_source_record: "Donnée source illisible",
           ineligible_source_record: "Annonce incomplète ou hors périmètre",
           editorial_decision_preserved: "Décision de modération conservée",
+          open_application_proof_missing: "Candidature ouverte non confirmée récemment — annonce masquée",
           normalization_failed: "Données incompatibles avec le catalogue",
           non_technical_role: "Métier hors périmètre technique",
         },
@@ -88,7 +89,7 @@ export function SerpApiAutomationStatus({ token }) {
           <p className="muted">
             {data.usedToday} / {data.dailyLimit} appels automatiques utilisés
             aujourd’hui. La rotation est échelonnée, dans la limite du quota
-            fournisseur. Meteojob est exclu.
+            fournisseur. Meteojob est exclu. Une preuve de candidature ouverte de moins de 24 heures est requise avant affichage.
           </p>
           {data.enabled && data.nextEligibleAt > Date.now() && (
             <p className="muted">
@@ -132,7 +133,8 @@ export function SerpApiAutomationStatus({ token }) {
               <p>
                 {data.state.published} offre(s) admissible(s) au catalogue,{" "}
                 {data.state.deferred} résultat(s) incomplet(s) non publié(s),{" "}
-                {data.state.excluded} exclu(s).
+                {data.state.excluded} exclu(s).{" "}
+                {data.state.awaitingAvailability || 0} en attente d’une preuve de candidature ouverte.
               </p>
               {data.state.pauseUntil > Date.now() && (
                 <p>

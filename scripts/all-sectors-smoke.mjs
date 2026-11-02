@@ -1,3 +1,4 @@
+import { fixtureOpenEvidence } from "../test/helpers/open-fixture.js";
 import { seedBundledCatalogue } from "../server/ingestion/bundled.js";
 import { chromium } from "playwright";
 import { existsSync } from "node:fs";
@@ -43,9 +44,11 @@ for (const [title, domain, contract, path] of [
     sourceUrl: `https://example.org/jobs/${path}`,
   });
   offer.moderationStatus = "approved";
+  offer.availabilityEvidence = fixtureOpenEvidence(offer);
   await app.locals.store.submit(offer);
 }
-const expected = liveCount + seeded.created + 2;
+assert.equal(liveCount, 0);
+const expected = 2;
 const server = app.listen(0, "127.0.0.1");
 await new Promise((r) => server.once("listening", r));
 const api = `http://127.0.0.1:${server.address().port}`;
@@ -123,7 +126,7 @@ try {
   }
   assert.deepEqual(errors, []);
   console.log(
-    `Tous secteurs : ${liveCount + seeded.created} annonces sourcées dont ${liveCount} reçues par API disponibles sur base propre, plus deux tests fictifs isolés ; RH/comptabilité, PME stage/alternance, filtres et mobile/PC validés.`,
+    `Tous secteurs : ${seeded.created} archives sourcées masquées sans preuve actuelle ; deux offres fictives isolées avec preuve simulée testent RH/comptabilité, PME, stage/alternance et mobile/PC. Aucune disponibilité réelle déduite de ce test.`,
   );
 } finally {
   await browser.close();

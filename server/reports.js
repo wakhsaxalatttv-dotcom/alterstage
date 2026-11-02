@@ -1,3 +1,4 @@
+import { hasRecentOpenEvidence } from "../shared/availability.js";
 import { publicOffer } from "./domain.js";
 import { canonicalUrl } from "./store.js";
 import { isBlockedSource } from "../shared/source-policy.js";
@@ -34,16 +35,18 @@ export class Reports {
     }
     const curated = externalOffers.filter(
       (offer) =>
+        hasRecentOpenEvidence(offer) &&
         !hidden.has(offer.id) &&
         !hiddenUrls.has(canonicalUrl(offer.sourceUrl)) &&
         !isBlockedSource(offer) &&
         isRecentPublication(offer.publishedAt),
     );
+    const publicConditions = this.store.publicConditions();
     const live = this.store.db
       .prepare(
-        "SELECT payload FROM offers WHERE moderation='approved' AND status NOT IN ('expired','withdrawn') ORDER BY published_at DESC LIMIT 200",
+        "SELECT payload FROM offers WHERE " + publicConditions.sql + " ORDER BY published_at DESC LIMIT 200",
       )
-      .all()
+      .all(...publicConditions.params)
       .map((row) => publicOffer(JSON.parse(row.payload)))
       .filter(Boolean)
       .filter((o) => !hidden.has(o.id))

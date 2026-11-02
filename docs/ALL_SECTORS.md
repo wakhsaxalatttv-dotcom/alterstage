@@ -1,58 +1,63 @@
-# Maintenance : stages et alternances tous secteurs
+# Stages et alternances : tous secteurs, disponibilité contrôlée
 
-## Périmètre livré
+La plateforme couvre 42 domaines, les 1 584 métiers ROME des familles A à N,
+les stages, l’apprentissage, la professionnalisation et l’alternance sans
+sous-type précisé. Les PME, TPE, ESN, associations et grands groupes sont admis
+sans inventer la taille d’une entreprise. Meteojob, annonces d’écoles détectées,
+contrats ordinaires et sources de développement/préproduction restent exclus.
 
-Les 21 domaines techniques existants sont conservés et complétés par 21 domaines de commerce, communication, gestion, santé, services, culture, transport, agriculture, artisanat et autres métiers. Les contrats restent stage, apprentissage, professionnalisation et alternance sans sous-type fourni. Aucun CDI, emploi ordinaire, offre Meteojob, annonce de recette ou annonce d’école détectée n’est autorisé par cet élargissement.
+## Condition de publication depuis le 2 novembre 2026
 
-La classification Google Jobs lit le titre et les informations de l’annonce, sans utiliser la requête comme preuve du métier ou du contrat. Les fonctions commerciales/RH ne sont plus exclues. Un domaine non déterminable reste « Autres domaines », sans transformer le métier en informatique.
+Une date de publication de moins de 45 jours, une autorisation de réutilisation
+et un statut fournisseur « Active » sont nécessaires lorsque applicables, mais
+ne suffisent jamais à établir la disponibilité. Il faut également une preuve
+positive de candidature ouverte, liée à l’URL actuelle et datant de moins de
+24 heures :
 
-## Catalogue de démarrage dans Offres
+- contrôle de la page individuelle : données `JobPosting` correspondant au titre
+  et à l’employeur, échéance `validThrough` future, contrôle de candidature activé,
+  absence de message explicite de clôture ;
+- ou revue humaine privée, avec attestation explicite que l’annonce originale a
+  été ouverte et que les candidatures sont toujours possibles.
 
-`seedEditorialCatalogue` reprend les 30 annonces employeurs déjà documentées dans les fichiers de références du projet. Au 30 octobre 2026, 29 respectent les limites du modèle sur une base propre. La date originale et le lien officiel restent identiques ; la dernière consultation reste celle enregistrée dans les données, pas la date du déploiement. Les textes sont des synthèses éditoriales existantes. La carte et le détail le précisent. Aucune disponibilité actuelle ni nouvelle vérification n’est prétendue.
+Les requêtes SQL, compteurs, détails, fiches entreprises, Repérées et favoris
+appliquent ce contrôle. Une collecte ne fabrique pas cette preuve. Un résultat
+inconcluant reste masqué sans affirmer qu’il est clôturé. Les 404/410 et messages
+explicites de clôture déclenchent un retrait durable. Une réponse HTTP 200 seule
+ne suffit pas. Le badge humain reste distinct du contrôle automatique.
 
-Le démarrage peut donc publier ces annonces admissibles même si aucune nouvelle API ne répond, sans créer de fausses entreprises ni d’annonces de démonstration. Ce n’est pas une nouvelle collecte en direct. Les anciennes annonces de plus de 45 jours, les délais locaux dépassés et les références retirées restent exclus. Les décisions de retrait et les doublons empêchent la réapparition au redémarrage. Le nombre réellement disponible peut être inférieur, selon la date et la base déployée.
+## Collecte et contrôle
 
-## Collecte élargie
+Google Jobs conserve ses 94 recherches universelles, PME/TPE/start-up/association
+et sectorielles, avec quotas persistants (3/heure et 24/jour par défaut). France
+Travail parcourt les métiers avec curseur de reprise et budget borné. LBA peut
+recevoir les relais FT, sans prétendre qu’un accès OAuth direct est actif.
 
-Le référentiel ROME complet contient 1 584 métiers (familles A à N), téléchargés depuis le CSV officiel déjà référencé par le projet. Le JSON inclut maintenant les libellés et leur provenance. LBA n’envoie plus une restriction aux seuls codes techniques ; cela évite aussi une URL démesurée. France Travail normalise toutes les familles et conserve les spécialisations techniques existantes. Une collecte FT interrompue reprend au prochain métier via le curseur SQLite, au lieu de recommencer indéfiniment au premier secteur. Budget FT par défaut : 2 000 requêtes, toujours borné et avec couverture partielle déclarée si nécessaire.
+Les vérifications de candidature sont limitées à trois connexions simultanées,
+200 offres par passage, toutes les 15 minutes et après collecte, sans répéter une
+page avant six heures. Elles valident les destinations et redirections publiques,
+limitent la réponse et n’envoient aucune clé API aux pages de candidature.
 
-Google Jobs ajoute des recherches universelles « stage » et « alternance », puis des requêtes PME, TPE, start-up et association, avant la rotation par secteur. Les petites structures ne sont pas écartées ; un résultat trouvé avec « PME » n’est pas pour autant labellisé PME sans donnée de taille. Les plafonds existants de trois appels/heure et 24/jour restent en place. Les quotas ou erreurs fournisseur peuvent limiter la collecte ; aucune exhaustivité de marché n’est annoncée.
+`npm run maintain:offers` exécute collecte, conformité et contrôle de disponibilité.
+Le bilan privé est conservé dans `.local/maintenance-last.json` (ou `DATA_DIR`), sans
+clé ni corps de réponse. Il indique explicitement qu’il s’agit de l’environnement
+local. Les clés et le déploiement Render restent des états séparés.
 
-La clé LBA disponible dans la configuration locale a permis une collecte réelle le 30 octobre 2026 : 326 annonces reçues, dont 57 Meteojob, 55 de recette/sandbox et 21 insuffisamment renseignées écartées avant normalisation. Les 193 résultats restants se dédoublonnent en 105 offres publiques uniques. L’instantané nettoyé les conserve sans clé ni coordonnées personnelles, avec dates et partenaires d’origine. Les doublons ne sont pas comptés comme nouvelles offres.
+## Archives et déploiement
 
-Les relais France Travail fournis par LBA sont désormais admis avec leur provenance : cela n’active pas le connecteur OAuth direct et n’invente aucun identifiant FT. L’inclusion est contrôlée par le connecteur LBA officiel ; un flux arbitraire ne peut pas se faire passer pour cet accès. Les liens locaux, de recette, de préproduction ou les annonces explicitement de test restent rejetés, même si l’API les renvoie actives.
+Le lot de 105 annonces du 30 octobre signalé comme pourvu reste suspendu dans
+`config/market-offers.json`. Ce fichier conserve sa provenance et sa liste de
+blocage ; il n’est plus une base à publier. Les références éditoriales historiques
+peuvent être préparées en base, mais aucune n’est affichée sans preuve actuelle.
+Une ancienne consultation n’est jamais datée du jour du déploiement.
 
-Le catalogue préparé contient ainsi 105 alternances reçues par API et 29 annonces employeurs déjà sourcées, soit 134 offres sur base propre à la date de collecte. La disponibilité n’est pas revérifiée humainement. Les clés présentes sur Render seront utilisées au démarrage ; son accès reste bloqué depuis le workspace. Le déploiement et son propre état doivent donc être confirmés séparément.
+`npm run export:market` écrit uniquement les offres LBA publiques avec preuve
+positive dans `config/verified-market-offers.json`, sans écraser l’archive suspendue.
+Sans offre admissible, il refuse de générer un instantané. Au démarrage, seules les
+preuves encore valides peuvent rendre un instantané récent visible ; elles ne
+sont jamais rajeunies. Le site peut donc démarrer avec zéro offre : aucun remplissage
+par des postes pourvus ou fictifs n’est autorisé.
 
-## Repérées : stages, alternances, toutes entreprises
-
-La rubrique combine les liens éditoriaux et les annonces publiques des connecteurs, dédoublonnés par URL. Les données dynamiques sont limitées aux 200 plus récentes dans cette vue complémentaire ; toutes les annonces publiques restent accessibles dans Offres avec sa pagination serveur. Il n’existe aucun filtre caché sur les grands groupes, les ESN, les PME ou les associations.
-
-Un filtre de contrat, les domaines présents, la recherche et la pagination de 20 cartes permettent de distinguer stages et alternances. Les descriptions, missions et informations d’entreprise proviennent des données disponibles ; les champs absents ne sont pas inventés. Les légendes distinguent une synthèse éditoriale et une description reçue par API. Un signalement suivi d’un retrait masque le même poste dans Offres et Repérées ; il reste retiré après redémarrage.
-
-## Vérification
-
-`npm test` couvre l’admission des nouveaux secteurs, les familles ROME, la reprise FT, le catalogue de démarrage, l’absence de fausse vérification et les retraits croisés. Les parcours navigateur vérifient la recherche, les deux rubriques, les contrats et les tailles de téléphone/ordinateur. Les offres fictives utilisées pour les tests restent exclusivement dans des bases temporaires.
-
-### Contrôle des clôtures
-
-Le statut « Active » du fournisseur ne prouve pas que la candidature reste ouverte.
-Le serveur contrôle donc les pages de candidature en arrière-plan (3 requêtes
-simultanées, 200 annonces par passage, passage toutes les 15 minutes, nouvelle
-lecture d'une même page après 6 heures). Les HTTP 404/410 et les messages explicites
-de clôture entraînent un retrait persistant des offres et des repérées. Un blocage,
-une page JavaScript seule ou un échec réseau reste inconcluant et ne crée jamais
-un badge « vérifié ». Les redirections sont contrôlées, sans envoyer de clé API.
-Les noms techniques des connecteurs ne sont plus affichés dans les cartes ou les
-fiches publiques ; leur provenance est conservée en base et dans l'administration.
-
-### Suspension du lot du 30 octobre 2026
-
-Après signalement de candidatures vers des postes pourvus, les 105 annonces du
-fichier `config/market-offers.json` sont suspendues (`publicationSuspended`).
-Ce fichier reste une archive de provenance, et ne constitue plus un catalogue à
-publier. Le redémarrage retire les lignes déjà présentes ; l'ingestion refuse
-également ces URL avec un nouvel identifiant ou des paramètres de suivi modifiés.
-La suspension ne signifie pas qu'une clôture a été techniquement prouvée pour
-chacune des 105 annonces. Elle évite de maintenir publiquement ce lot contesté.
-Les autres annonces ne doivent pas être présentées comme nouvellement vérifiées.
+Les noms techniques des connecteurs restent privés dans les cartes/fiches ;
+le lien original de candidature et la provenance interne sont conservés.
+Voir le [bilan réel de l’audit du 2 novembre](OFFERS_AUDIT_2026-11-02.md).

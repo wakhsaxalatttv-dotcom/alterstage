@@ -12,6 +12,7 @@ console.info(
   `[Catalogue] Contrôle de conformité : ${audit.checked} annonce(s) contrôlée(s), ${audit.withdrawn} retirée(s), ${audit.expired} expirée(s).`,
 );
 await seedBundledCatalogue(app.locals.store);
+await seedBundledCatalogue(app.locals.store, new URL("../config/verified-market-offers.json", import.meta.url));
 const editorial = await seedEditorialCatalogue(app.locals.store);
 console.info(
   `[Catalogue employeurs] ${editorial.created} annonces sourcées ajoutées, ${editorial.excluded} non admissibles. Aucun nouveau contrôle de disponibilité supposé.`,
@@ -24,7 +25,7 @@ let availabilityRun;
 const checkAvailability = () => {
   if (availabilityRun) return availabilityRun;
   availabilityRun = auditAvailability(app.locals.store)
-    .then((r) => console.info(`[Disponibilité] ${r.checked} pages contrôlées, ${r.closed} offres clôturées retirées, ${r.inconclusive} contrôles sans preuve concluante.`))
+    .then((r) => console.info(`[Disponibilité] ${r.checked} pages contrôlées, ${r.opened} candidatures ouvertes confirmées, ${r.closed} offres clôturées retirées, ${r.inconclusive} contrôles sans preuve concluante.`))
     .catch(() => console.error("Contrôle de disponibilité indisponible."))
     .finally(() => { availabilityRun = null; });
   return availabilityRun;
@@ -43,12 +44,13 @@ const minutes = Number(
 const run = () =>
   app.locals.pipeline
     .run()
-    .then((result) => {
+    .then(async (result) => {
       for (const report of result.reports)
         if (report.sourceId === "france-travail")
           console.info(
             `[France Travail] ${report.status} : ${report.created} nouvelle(s), ${report.updated} modifiée(s), ${report.invalid} invalide(s). ${report.coverage ? `Métiers parcourus : ${report.coverage.completedRomeCodes}/${report.coverage.totalRomeCodes}. ` : ""}${report.message || ""}`,
           );
+      await checkAvailability();
     })
     .catch(() =>
       console.error(

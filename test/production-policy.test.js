@@ -31,6 +31,8 @@ const fixture = () => ({
 test("non-production provenance is rejected without banning legitimate software test roles", () => {
   for (const sourceUrl of [
     "http://localhost/job",
+    "https://easyapply.n.fixture.dev.ingoedebanen.nl/job",
+    "https://qa.example.org/job",
     "https://labonnealternance-recette.apprentissage.beta.gouv.fr/job",
     "https://ppd-hub-alternance.opcoep.fr/job",
     "https://rec-hub-alternance.opcoep.fr/job",
@@ -50,6 +52,7 @@ test("non-production provenance is rejected without banning legitimate software 
     }),
     false,
   );
+  assert.equal(isNonProductionOffer({ sourceUrl: "https://company.dev/careers/job" }), false);
   const sample = fixture();
   sample.apply.url = "https://ppd-hub-alternance.opcoep.fr/job";
   assert.equal(

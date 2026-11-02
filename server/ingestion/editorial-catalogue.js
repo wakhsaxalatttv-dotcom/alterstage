@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { externalOffers } from "../../shared/external-offers.js";
 import { isRecentPublication } from "../../shared/freshness.js";
 import { isBlockedSource } from "../../shared/source-policy.js";
-import { normalizeSubmission, publicOffer } from "../domain.js";
+import { normalizeSubmission, nonComplianceReasons } from "../domain.js";
 // Existing sourced editorial announcements are not newly fetched or newly verified.
 export async function seedEditorialCatalogue(
   store,
@@ -124,7 +124,7 @@ export async function seedEditorialCatalogue(
         }),
       )
       .digest("hex");
-    if (!publicOffer({ ...offer, moderationStatus: "approved" })) {
+    if (nonComplianceReasons(offer).length) {
       report.excluded++;
       continue;
     }

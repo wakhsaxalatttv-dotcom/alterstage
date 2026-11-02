@@ -1,3 +1,5 @@
+import { normalizeSubmission } from "../server/domain.js";
+import { fixtureOpenEvidence, confirmFixtureApplications } from "./helpers/open-fixture.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -30,6 +32,12 @@ async function run(options, fn) {
       body: JSON.stringify(body),
     });
   try {
+    if (options.seedReference) {
+    const sample = normalizeSubmission({ ...fixture(), title: "Stage fictif distinct pour référence", sourceUrl: "https://example.org/reference-fixture" });
+    sample.moderationStatus = "approved";
+    sample.availabilityEvidence = fixtureOpenEvidence(sample);
+    await app.locals.store.submit(sample);
+    }
     await fn({ base, app, post, folder });
   } finally {
     server.closeAllConnections();
@@ -138,7 +146,7 @@ test("dépôt privé avant validation ; signalement privé reçu et retrait admi
     assert.equal(list.counts.open, 0);
   }));
 test("signalement d’une référence, classement et retrait durable même après réouverture de la base", () =>
-  run({}, async ({ base, app, post, folder }) => {
+  run({ seedReference: true }, async ({ base, app, post, folder }) => {
     const before = await (await fetch(base + "/api/references")).json();
     const target = before.offers[0];
     assert.ok(target);
@@ -215,7 +223,7 @@ test("signalements fermés sans modération configurée et limitation des envois
       503,
     ),
   );
-  await run({}, async ({ app, post }) => {
+  await run({ seedReference: true }, async ({ app, post }) => {
     const target = app.locals.reports.references()[0];
     for (let i = 0; i < 10; i++)
       assert.equal(
