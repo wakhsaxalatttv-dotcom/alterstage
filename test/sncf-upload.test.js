@@ -34,18 +34,18 @@ test('SNCF saved HTML imports only its dated stage, preserving actual metadata a
     assert.equal(await store.getPublic(offer.id), null);
   } finally { store.close(); await rm(folder,{recursive:true,force:true}); }
 });
-test('explicit owner confirmation publishes all 20 captured alternances without inventing publication dates or human review badges', async () => {
+test('explicit owner confirmations publish all captured alternances and stages without inventing dates or duplicating the known stage', async () => {
   const folder = await mkdtemp('/tmp/sncf-pending-test-'), store = new OfferStore(folder);
   try {
     assert.equal(pending.totalDisplayed, 32);
     assert.equal(pending.offers.length, 20);
     assert.equal(pending.publicationDatesAvailable, false);
-    assert.equal((await seedSncfPending(store)).created, 20);
-    assert.equal((await seedSncfPending(store)).existing, 20);
+    assert.equal((await seedSncfPending(store)).created, 39);
+    assert.equal((await seedSncfPending(store)).existing, 40);
     const rows = await store.read();
-    assert.equal(rows.length, 20);
-    assert.equal((await store.query()).total, 20);
-    for (const o of rows) {
+    assert.equal(rows.length, 40);
+    assert.equal((await store.query()).total, 40);
+    for (const o of rows.filter(o=>o.sourceId==='sncf-upload')) {
       assert.equal(o.moderationStatus, 'approved');
       assert.equal(o.editorialConfirmation.kind, 'owner-confirmation');
       assert.equal(o.publishedAt, null);
@@ -54,9 +54,9 @@ test('explicit owner confirmation publishes all 20 captured alternances without 
       assert.match(o.sourceUrl,/^https:\/\/emploi\.sncf\.com\/nos-offres\/\d+$/);
       assert.equal(o.sourceDocument.kind,'uploaded-mhtml');
     }
-    assert.equal(new Set(rows.map(o=>o.company.id)).size, 4);
-    assert.equal((await store.query({age:"7"})).total, 0);
-    assert.equal(new Reports(store).references().filter(o=>o.sourceId==='sncf-upload').length,20);
+    assert.equal(new Set(rows.map(o=>o.company.id)).size, 5);
+    assert.equal((await store.query({age:"7"})).total, 1);
+    assert.equal(new Reports(store).references().filter(o=>o.sourceId==='sncf-upload').length,39);
     const contracts = new Set(rows.map(o=>o.contract));
     assert.ok(contracts.has('Alternance — type non précisé'));
     assert.ok(contracts.has('Contrat de professionnalisation'));
@@ -71,7 +71,7 @@ test('owner exception is bounded to the supplied SNCF records, expires without r
   const folder = await mkdtemp('/tmp/sncf-owner-scope-'), store = new OfferStore(folder);
   try {
     await seedSncfPending(store);
-    const offer=(await store.read())[0];
+    const offer=(await store.read()).find(o=>o.externalId===pending.offers[0].externalId);
     const { publicOffer } = await import('../server/domain.js');
     const { selectOffers, defaultFilters } = await import('../src/domain.js');
     const { hasOwnerConfirmedSncfListing, SNCF_OWNER_CONFIRMATION } = await import('../shared/sncf-owner-confirmation.js');
@@ -91,4 +91,28 @@ test('owner exception is bounded to the supplied SNCF records, expires without r
       assert.equal(hasOwnerConfirmedSncfListing({...offer,...change},time),false);
     assert.equal(publicOffer({...offer,moderationStatus:'withdrawn',status:'withdrawn'},time),null);
   } finally {store.close();await rm(folder,{recursive:true,force:true});}
+});
+
+test('stage upload adds all 20 saved stage cards across sectors, retains the original known publication and uses independent batch confirmation', async () => {
+  const folder=await mkdtemp('/tmp/sncf-stages-batch-'),store=new OfferStore(folder);
+  try{
+    await seedEditorialCatalogue(store,sncfReferences);
+    const before=await store.getPublic('sncf-886156');
+    await seedSncfPending(store);
+    const list=await store.query({contract:'Stage',pageSize:50});
+    assert.equal(list.total,20);
+    assert.equal((await store.getPublic('sncf-886156')).publishedAt,before.publishedAt);
+    assert.equal((await store.read()).filter(o=>o.id==='sncf-886156').length,1);
+    const lawyer=await store.getPublic('sncf-687444');
+    const hr=await store.getPublic('sncf-819502');
+    assert.equal(lawyer.domain,'Droit & administration');
+    assert.equal(hr.domain,'Ressources humaines');
+    assert.equal(hr.duration,'6 mois');
+    const {SNCF_STAGE_CONFIRMATION,SNCF_OWNER_CONFIRMATION,hasOwnerConfirmedSncfListing}=await import('../shared/sncf-owner-confirmation.js');
+    assert.equal(lawyer.editorialConfirmation.confirmedAt,SNCF_STAGE_CONFIRMATION.confirmedAt);
+    assert.equal(lawyer.publishedAt,null);
+    const alternance=await store.getPublic('sncf-'+pending.offers[0].externalId);
+    assert.equal(alternance.editorialConfirmation.confirmedAt,SNCF_OWNER_CONFIRMATION.confirmedAt);
+    assert.equal(hasOwnerConfirmedSncfListing({...lawyer,sourceDocument:alternance.sourceDocument}),false);
+  }finally{store.close();await rm(folder,{recursive:true,force:true});}
 });

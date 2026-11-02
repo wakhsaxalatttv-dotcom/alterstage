@@ -26,19 +26,33 @@ export function CompanyLogo({ company, size = 48 }) {
   const logo = httpsUrl(company.logoUrl),
     website = httpsUrl(company.website);
   const companyName = (company.name || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
-  const sncfLogo = companyName === "SNCF RESEAU"
-    ? "/company-logos/sncf-reseau.avif"
-    : ["SNCF", "SNCF VOYAGEURS", "SNCF GARES & CONNEXIONS"].includes(companyName)
-      ? "/company-logos/sncf.svg"
-      : null;
+  // SNCF assets are the genuine images embedded in the supplied employer archives.
+  const localLogos = {
+    "SNCF RESEAU": "/company-logos/sncf-reseau.avif",
+    "SNCF VOYAGEURS": "/company-logos/sncf-voyageurs.avif",
+    "SNCF GARES & CONNEXIONS": "/company-logos/sncf-gares-connexions.avif",
+    SNCF: "/company-logos/sncf.svg",
+  };
+  const localLogo = localLogos[companyName];
+  // Prefer each brand's own official domain when the stored company website
+  // names its parent group. An icon is labelled as an icon, never as a verified logo.
+  const brandWebsite = /^AXIANS(?:\s|$)/.test(companyName) ? "https://www.axians.com"
+    : /^OMEXOM(?:\s|$)/.test(companyName) ? "https://www.omexom.com"
+    : /^SYSOCO(?:\s|$)/.test(companyName) ? "https://www.sysoco.fr"
+    : website?.origin;
   const candidates = [
-    ...(sncfLogo ? [{ url: sncfLogo, label: `Logo de ${company.name}` }] : []),
-    ...(sncfLogo?.endsWith(".avif") ? [{ url: "/company-logos/sncf.svg", label: `Logo de ${company.name}` }] : []),
+    ...(localLogo ? [{ url: localLogo, label: `Logo de ${company.name}` }] : []),
+    ...(localLogo?.endsWith(".avif") ? [{ url: "/company-logos/sncf.svg", label: "Logo du groupe SNCF" }] : []),
     ...(logo ? [{ url: logo.href, label: `Logo de ${company.name}` }] : []),
-    ...(website
+    ...(brandWebsite
       ? [
+          { url: `${brandWebsite}/favicon.ico`, label: `Icône du site officiel de ${company.name}` },
           {
-            url: `https://www.google.com/s2/favicons?domain_url=${encodeURIComponent(website.origin)}&sz=128`,
+            url: `https://www.google.com/s2/favicons?domain_url=${encodeURIComponent(brandWebsite)}&sz=128`,
+            label: `Icône du site officiel de ${company.name}`,
+          },
+          {
+            url: `https://icons.duckduckgo.com/ip3/${new URL(brandWebsite).hostname}.ico`,
             label: `Icône du site officiel de ${company.name}`,
           },
         ]

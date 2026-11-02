@@ -1,17 +1,24 @@
+import { sncfReferences } from "../../shared/sncf-references.js";
+import { seedEditorialCatalogue } from "./editorial-catalogue.js";
 import { searchText } from "../enrichment.js";
 import { createHash } from "node:crypto";
-import { SNCF_OWNER_CONFIRMATION } from "../../shared/sncf-owner-confirmation.js";
+import { SNCF_OWNER_CONFIRMATIONS } from "../../shared/sncf-owner-confirmation.js";
 import uploaded from "../../config/sncf-pending.json" with { type: "json" };
+import stages from "../../config/sncf-stages.json" with { type: "json" };
 import { normalizeSubmission } from "../domain.js";
 // Explicit owner confirmation authorizes these cards; missing publication dates stay missing.
 // No HTML/script from an upload is executed, and existing decisions are preserved.
 export async function seedSncfPending(store) {
+  // Keep the known, genuinely dated stage even when this importer is run alone.
+  await seedEditorialCatalogue(store, sncfReferences);
   const report = { created: 0, updated: 0, existing: 0, invalid: 0 };
-  for (const record of uploaded.offers) {
+  for (const { record, savedAt } of [uploaded, stages].flatMap((batch) => batch.offers.map((record) => ({ record, savedAt: batch.savedAt })))) {
+    const confirmation = SNCF_OWNER_CONFIRMATIONS.find((batch) => batch.sourceSha256 === record.sourceDocument.sha256 && batch.recordIds.includes(record.externalId));
+    if (!confirmation) { report.invalid++; continue; }
     const id = `sncf-${record.externalId}`;
     const previous = store.db.prepare("SELECT payload FROM offers WHERE id=? OR canonical_url=?").get(id, record.sourceUrl);
     const previousOffer = previous ? JSON.parse(previous.payload) : null;
-    if (previousOffer && (["withdrawn", "rejected"].includes(previousOffer.moderationStatus) || previousOffer.sourceClosedAt)) {
+    if (previousOffer && (["withdrawn", "rejected"].includes(previousOffer.moderationStatus) || previousOffer.sourceClosedAt || previousOffer.publishedAt || previousOffer.sourcePublishedAt)) {
       report.existing++;
       continue;
     }
@@ -19,18 +26,21 @@ export async function seedSncfPending(store) {
       const offer = normalizeSubmission({
         ...record, education: "", publishedAt: "", consent: true, origin: "editorial",
         // Internal queue retention only, never an employer closing date.
-        expiresAt: new Date(Date.parse(SNCF_OWNER_CONFIRMATION.confirmedAt) + 30 * 86400000).toISOString().slice(0, 10),
+        expiresAt: new Date(Date.parse(confirmation.confirmedAt) + 30 * 86400000).toISOString().slice(0, 10),
       });
       const knownCompany = store.db.prepare("SELECT id,payload FROM companies WHERE name_key=?").all(searchText(record.companyName))
-        .find((row) => JSON.parse(row.payload).website === record.companyWebsite);
+        .find((row) => {
+          const website = JSON.parse(row.payload).website;
+          return website && new URL(website).origin === new URL(record.companyWebsite).origin;
+        });
       offer.company.id = knownCompany?.id || "employer-company:" + createHash("sha256").update(record.companyName + "|" + record.companyWebsite).digest("hex").slice(0, 20);
       Object.assign(offer, {
         id, sourceId: "sncf-upload", sourceName: "SNCF — fichier employeur",
         source: "Annonce SNCF", externalId: record.externalId,
         sourcePolicyApproved: true,
-        editorialConfirmation: { kind: "owner-confirmation", confirmedAt: SNCF_OWNER_CONFIRMATION.confirmedAt },
-        firstRetrievedAt: previousOffer?.firstRetrievedAt || uploaded.savedAt,
-        lastFetchedAt: uploaded.savedAt,
+        editorialConfirmation: { kind: "owner-confirmation", confirmedAt: confirmation.confirmedAt },
+        firstRetrievedAt: previousOffer?.firstRetrievedAt || savedAt,
+        lastFetchedAt: savedAt,
         sourcePublishedAt: null, sourceDocument: record.sourceDocument,
         sourceDateMissing: true, lastVerifiedAt: null,
         sourceEducationLabel: record.education,

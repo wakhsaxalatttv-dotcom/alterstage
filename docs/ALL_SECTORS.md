@@ -63,3 +63,10 @@ nombre d’offres visibles après rétablissement.
 ## Ajout SNCF issu des fichiers fournis
 
 Un stage SNCF Réseau publié le 2 novembre est ajouté aux 24 annonces précédentes, soit 25 offres publiques sur la base locale à cette date. Après confirmation explicite du responsable, les vingt alternances du MHTML sont également publiques, soit 45 offres au total localement. Leur date de publication n’est pas fournie : une exception éditoriale de 30 jours, limitée à ces identifiants et sans rajeunissement automatique, conserve cette information manquante. Aucune date d’enregistrement n’est utilisée à la place. Voir [le bilan des deux fichiers](SNCF_UPLOAD.md).
+
+Le fichier SNCF R.mhtml fournit ensuite 20 stages, dont le stage daté déjà présent :
+19 nouveaux stages sont intégrés sans doublon. Le catalogue local passe à 64 offres,
+dont 40 SNCF (20 stages et 20 alternances). Le second lot de confirmation n’allonge
+pas le délai du premier. Les logos des entités SNCF présents dans les captures sont
+servis localement ; les autres entreprises conservent leur logo fourni ou les
+icônes officielles avec repli.

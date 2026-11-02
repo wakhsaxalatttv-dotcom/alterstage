@@ -40,3 +40,33 @@ contrats de professionnalisation explicitement titrés sont conservés.
 Le catalogue local contient désormais 45 offres publiques : les 24 précédentes,
 un stage SNCF daté et les 20 alternances confirmées par le responsable. Aucune
 vérification en direct par l’application ni description détaillée n’est inventée.
+
+## Fichier « Nos Offres _ Emploi SNCF R.mhtml »
+
+La capture du 2 novembre à 14:03:32 UTC (`f[187]=2231`) contient les 20 stages
+annoncés et leurs 20 cartes. Le stage `886156` était déjà présent avec sa véritable
+date de publication : celle-ci est préservée. Les 19 autres sont ajoutés sans
+inventer leur date ni leurs missions détaillées, conformément à la demande
+explicite de publication du responsable. Les identifiants et l’empreinte du nouveau
+fichier sont inscrits dans un second lot de confirmation, sans renouveler la
+confirmation du précédent lot d’alternances.
+
+Le résultat local est de 64 offres, dont 40 issues de SNCF : 20 stages et
+20 alternances. La reprise est idempotente et conserve les refus/retraits et les
+dates connues. Les alias SNCF Réseau/RÉSEAU sont rattachés à leur entreprise avec
+comparaison de l’origine du site, sans confondre les autres entités du groupe.
+
+Les logos SNCF Voyageurs et SNCF Gares & Connexions sont extraits des ressources
+AVIF de la capture, en complément des logos SNCF et SNCF Réseau déjà présents.
+Aucun pixel de suivi, ressource publicitaire ou script de l’archive n’est repris.
+Les logos locaux sont prioritaires, avec le logo SNCF vectoriel en repli si
+l’AVIF n’est pas pris en charge.
+
+Pour les autres entreprises, `CompanyLogo` privilégie leur logo fourni puis
+l’icône du site officiel, avec deux services de repli et enfin des initiales.
+Axians, Omexom et Sysoco utilisent leur domaine de marque pour éviter l’icône du
+site parent VINCI. Une icône est identifiée comme telle dans son nom accessible,
+sans être présentée comme un logo vérifié. Les téléchargements Safran et VINCI
+ont été refusés pendant cette session (403/418), les autres services d’icônes
+également par le proxy (403). Leur affichage distant n’a donc pas pu être confirmé
+ici ; aucun logo fictif ne remplace un téléchargement refusé.
