@@ -106,7 +106,18 @@ export interface Offer {
   reuse?: { licenseUrl: string; authorizationRef: string | null };
   detailsComplete?: boolean;
   editorialSummary?: boolean;
+  sourceDocument?: {
+    kind: "uploaded-html" | "uploaded-mhtml";
+    fileName: string;
+    sha256: string;
+    recordId: string;
+    analyzedAt: string;
+    descriptionAvailable: boolean;
+    onlineAvailabilityChecked: boolean;
+  } | null;
   sourceConsultedAt?: string;
+  sourceDateMissing?: boolean;
+  sourceEducationLabel?: string;
 }
 export interface SourceDefinition {
   id: string;

@@ -59,3 +59,7 @@ Les tests locaux ne prouvent ni le déploiement Render ni la disponibilité des 
 employeurs bloquées par le réseau. Le [bilan initial de l’audit](OFFERS_AUDIT_2026-11-02.md)
 conserve les observations avant ce changement de règle ; il ne décrit plus le
 nombre d’offres visibles après rétablissement.
+
+## Ajout SNCF issu des fichiers fournis
+
+Un stage SNCF Réseau publié le 2 novembre est ajouté aux 24 annonces précédentes, soit 25 offres publiques sur la base locale à cette date. Vingt alternances supplémentaires sont préparées en modération privée : le fichier MHTML ne fournit aucune date de publication. Aucune date d’enregistrement n’est utilisée à la place. Voir [le bilan des deux fichiers](SNCF_UPLOAD.md).

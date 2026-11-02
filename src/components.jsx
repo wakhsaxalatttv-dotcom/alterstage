@@ -122,8 +122,9 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
       )}
       {o.editorialSummary && (
         <p className="muted">
-          Synthèse employeur consultée le {date(o.sourceConsultedAt)} ;
-          disponibilité non revérifiée.
+          {o.sourceDocument?.kind === "uploaded-html"
+            ? `Informations extraites d’un fichier employeur le ${date(o.sourceDocument.analyzedAt)} ; disponibilité non revérifiée en ligne.`
+            : `Synthèse employeur consultée le ${date(o.sourceConsultedAt)} ; disponibilité non revérifiée.`}
         </p>
       )}
       <div className="offer-meta">

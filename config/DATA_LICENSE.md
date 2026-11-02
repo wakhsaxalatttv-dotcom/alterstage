@@ -17,3 +17,7 @@ Les fichiers de références contiennent 30 annonces et leurs synthèses éditor
 `france-travail-rome.json` contient les 1 584 codes, parents et libellés du référentiel ROME v4.60. La provenance est le CSV du dépôt officiel La Bonne Alternance, fixé au commit cité dans le fichier. Ce sont des métadonnées de classement, pas des annonces supplémentaires.
 
 France Travail est un connecteur distinct, conditionné à ses habilitations : [configuration et conditions](../docs/FRANCE_TRAVAIL.md). Google Jobs via SerpApi dispose de son propre accès fournisseur et de quotas : [fonctionnement et limites](../docs/SERPAPI.md). RapidAPI reste un test privé sans import automatique. Aucun de ces accès ne constitue à lui seul une autorisation commerciale de redistribution des sources originales.
+
+## Fichiers SNCF fournis
+
+Un stage daté est repris avec une synthèse originale limitée au titre et aux métadonnées présentes, sans reproduire une description absente. Les 20 alternances du fichier MHTML restent privées faute de date de publication. Les documents complets et leurs ressources ne sont pas déployés ; voir [la provenance détaillée](../docs/SNCF_UPLOAD.md).

@@ -1,3 +1,4 @@
+import { seedSncfPending } from "./ingestion/sncf-upload.js";
 import { auditAvailability } from "./ingestion/availability.js";
 import { seedEditorialCatalogue } from "./ingestion/editorial-catalogue.js";
 import { franceTravailConfiguration } from "./ingestion/france-travail.js";
@@ -17,6 +18,8 @@ const editorial = await seedEditorialCatalogue(app.locals.store);
 console.info(
   `[Catalogue employeurs] ${editorial.created} annonces sourcées ajoutées, ${editorial.excluded} non admissibles. Aucun nouveau contrôle de disponibilité supposé.`,
 );
+const sncfPending = await seedSncfPending(app.locals.store);
+console.info(`[SNCF] ${sncfPending.created} fiches sans date préparées en privé, aucune publication automatique.`);
 const server = app.listen(port, "0.0.0.0", () =>
   console.log(`Offres Fraîches : serveur prêt sur le port ${port}`),
 );

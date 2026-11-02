@@ -103,7 +103,9 @@ export async function seedEditorialCatalogue(
       source: `Annonce employeur · ${ref.sourceName}`,
       externalId: ref.id,
       sourcePolicyApproved: true,
-      sourcePublishedAt: ref.publishedAt,
+      sourcePublishedAt: ref.sourcePublishedAt || ref.publishedAt,
+      sourceUpdatedAt: ref.sourceUpdatedAt || null,
+      sourceDocument: ref.sourceDocument || null,
       sourceConsultedAt: observedAt,
       lastFetchedAt: observedAt,
       lastVerifiedAt: null,
@@ -119,6 +121,7 @@ export async function seedEditorialCatalogue(
           publishedAt: offer.publishedAt,
           sourceUrl: offer.sourceUrl,
           expiresAt: offer.expiresAt,
+          ...(offer.sourceDocument ? { sourceDocument: offer.sourceDocument } : {}),
         }),
       )
       .digest("hex");

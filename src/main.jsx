@@ -924,9 +924,9 @@ function App() {
               <VerifiedBadge offer={modal.offer} />
               {modal.offer.editorialSummary && (
                 <p className="local-note">
-                  Synthèse éditoriale d’une annonce employeur consultée le{" "}
-                  {date(modal.offer.sourceConsultedAt)}. La disponibilité
-                  actuelle n’a pas été revérifiée.
+                  {modal.offer.sourceDocument?.kind === "uploaded-html"
+                    ? `Informations extraites d’un fichier employeur le ${date(modal.offer.sourceDocument.analyzedAt)}. La fiche en ligne et sa disponibilité n’ont pas été revérifiées.`
+                    : `Synthèse éditoriale d’une annonce employeur consultée le ${date(modal.offer.sourceConsultedAt)}. La disponibilité actuelle n’a pas été revérifiée.`}
                 </p>
               )}
               <h3>Description du poste</h3>

@@ -1,3 +1,4 @@
+import { sncfReferences } from "./sncf-references.js";
 import { chemistryReferences } from "./chemistry-references.js";
 import { employerReferences } from "./employer-references.js";
 // Synthèses éditoriales originales : les annonces complètes restent chez l'employeur.
@@ -173,6 +174,7 @@ const safranReferences = entries.map(
 );
 
 export const externalOffers = [
+  ...sncfReferences,
   ...safranReferences,
   ...employerReferences,
   ...chemistryReferences,

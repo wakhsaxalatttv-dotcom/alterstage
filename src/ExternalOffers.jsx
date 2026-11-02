@@ -244,7 +244,9 @@ export function ExternalOffers() {
             · {selected.location.region}
           </p>
           <p className="local-note">
-            {selected.sourceKind === "market"
+            {selected.sourceDocument?.kind === "uploaded-html"
+              ? "Informations extraites d’un fichier employeur fourni ; description détaillée et disponibilité en ligne non vérifiées."
+              : selected.sourceKind === "market"
               ? "Description transmise par la source ; consultez le lien original pour candidater."
               : "Synthèse éditoriale d’après l’annonce employeur, sans nouveau contrôle de disponibilité."}
           </p>
