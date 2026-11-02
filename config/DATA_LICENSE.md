@@ -20,4 +20,4 @@ France Travail est un connecteur distinct, conditionné à ses habilitations : [
 
 ## Fichiers SNCF fournis
 
-Un stage daté est repris avec une synthèse originale limitée au titre et aux métadonnées présentes, sans reproduire une description absente. Les 20 alternances du fichier MHTML restent privées faute de date de publication. Les documents complets et leurs ressources ne sont pas déployés ; voir [la provenance détaillée](../docs/SNCF_UPLOAD.md).
+Un stage daté est repris avec une synthèse originale limitée au titre et aux métadonnées présentes, sans reproduire une description absente. Les 20 alternances du fichier MHTML sont publiées après confirmation explicite du responsable, sans inventer leurs dates de publication ni reproduire une description détaillée absente. Les documents complets et leurs ressources ne sont pas déployés ; voir [la provenance détaillée](../docs/SNCF_UPLOAD.md).

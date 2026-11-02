@@ -1,3 +1,4 @@
+import { hasOwnerConfirmedSncfListing } from "../shared/sncf-owner-confirmation.js";
 import { isBlockedSource } from "../shared/source-policy.js";
 import { isTrainingEmployer } from "../shared/employer-policy.js";
 import { publicationIndex, hasRecentPublication } from "../shared/freshness.js";
@@ -55,7 +56,7 @@ export function selectOffers(offers, filters, now = Date.now()) {
     .filter((o) => !filters.companyId || o.company.id === filters.companyId)
     .filter((o) => contracts.includes(o.contract))
     .filter((o) => !isTrainingEmployer(o.company?.name, o.company?.sector))
-    .filter((offer) => hasRecentPublication(offer, now))
+    .filter((offer) => hasRecentPublication(offer, now) || hasOwnerConfirmedSncfListing(offer, now))
     .filter((o) => !["expired", "withdrawn"].includes(o.status))
     .filter((o) => !o.expiresAt || Date.parse(o.expiresAt) + 86400000 > now)
     .filter((o) => !o.sourceExpiresAt || Date.parse(o.sourceExpiresAt) > now)

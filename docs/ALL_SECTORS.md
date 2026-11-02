@@ -62,4 +62,4 @@ nombre d’offres visibles après rétablissement.
 
 ## Ajout SNCF issu des fichiers fournis
 
-Un stage SNCF Réseau publié le 2 novembre est ajouté aux 24 annonces précédentes, soit 25 offres publiques sur la base locale à cette date. Vingt alternances supplémentaires sont préparées en modération privée : le fichier MHTML ne fournit aucune date de publication. Aucune date d’enregistrement n’est utilisée à la place. Voir [le bilan des deux fichiers](SNCF_UPLOAD.md).
+Un stage SNCF Réseau publié le 2 novembre est ajouté aux 24 annonces précédentes, soit 25 offres publiques sur la base locale à cette date. Après confirmation explicite du responsable, les vingt alternances du MHTML sont également publiques, soit 45 offres au total localement. Leur date de publication n’est pas fournie : une exception éditoriale de 30 jours, limitée à ces identifiants et sans rajeunissement automatique, conserve cette information manquante. Aucune date d’enregistrement n’est utilisée à la place. Voir [le bilan des deux fichiers](SNCF_UPLOAD.md).

@@ -1,3 +1,4 @@
+import { hasOwnerConfirmedSncfListing } from "../shared/sncf-owner-confirmation.js";
 import { isNonProductionOffer } from "../shared/production-policy.js";
 import { isBlockedSource } from "../shared/source-policy.js";
 import { isTrainingEmployer } from "../shared/employer-policy.js";
@@ -303,7 +304,7 @@ export function nonComplianceReasons(offer, now = Date.now()) {
   if (offer.sourceClosedAt) reasons.push("source_closed");
   if (isNonProductionOffer(offer)) reasons.push("non_production_source");
   if (isBlockedSource(offer)) reasons.push("blocked_source_meteojob");
-  if (!hasRecentPublication(offer, now))
+  if (!hasRecentPublication(offer, now) && !hasOwnerConfirmedSncfListing(offer, now))
     reasons.push("publication_outside_45_days");
   if (!domains.includes(offer.domain)) reasons.push("non_technical_domain");
   if (!contracts.includes(offer.contract)) reasons.push("ineligible_contract");

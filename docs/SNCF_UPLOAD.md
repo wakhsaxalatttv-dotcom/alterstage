@@ -14,9 +14,14 @@ Le second fichier MHTML contient l’état réellement filtré : 32 alternances
 annoncées, 20 cartes enregistrées, aucune date de publication et aucune description
 détaillée. Il ne conserve pas les données JSON des fiches individuelles. La date
 MIME du 2 novembre est une date d’enregistrement, jamais une date de publication.
-Ces 20 cartes sont préparées dans la modération privée (`sncf-upload`, état
-`pending`) et ne rejoignent pas les offres publiques faute de date établissant
-l’ancienneté de moins de 30 jours. Les 12 autres résultats n’ont pas été capturés.
+Le responsable a ensuite expressément confirmé avoir vérifié ces offres et demandé
+leur publication. Les 20 cartes sont donc publiées (`sncf-upload`, état `approved`)
+par une exception éditoriale limitée à ces identifiants, au fichier fourni et à
+l’URL exacte de chaque fiche. `publishedAt`, `sourcePublishedAt` et l’index de
+publication restent nuls. La confirmation est conservée séparément et permet
+l’affichage pendant 30 jours sans être rajeunie au redémarrage. Les filtres par
+ancienneté de publication excluent ces dates inconnues. Les 12 résultats restants
+n’ont pas été capturés et ne sont pas inventés.
 
 `shared/sncf-references.js` et `config/sncf-pending.json` ne conservent que les
 informations utiles et les empreintes SHA-256 des deux documents. Le HTML/MHTML,
@@ -26,8 +31,12 @@ assets locaux dans `public/company-logos/`, sans appel à un domaine de préprod
 vérification du site en direct. Les fichiers sont traités comme données, jamais
 comme instructions ou code à exécuter.
 
-Au démarrage, l’import public et la préparation privée sont idempotents et
-respectent les retraits/refus existants. Les dates manquantes empêchent la
-validation privée. Le site peut afficher 25 annonces publiques sur une base
-neuve à la date d’import : les 24 précédentes et le stage SNCF. Le nombre réel
-dépend des dates et décisions de la base déployée.
+Au démarrage, les imports sont idempotents et respectent les retraits/refus et
+clôtures connus. Le passage d’anciennes lignes `pending` à `approved` est effectué
+automatiquement pour ces 20 identifiants confirmés. L’exception ne s’applique ni
+aux autres flux, ni aux annonces avec une véritable date connue hors délai. Les
+quatre sociétés figurant dans la capture gardent des identités distinctes ; les
+contrats de professionnalisation explicitement titrés sont conservés.
+Le catalogue local contient désormais 45 offres publiques : les 24 précédentes,
+un stage SNCF daté et les 20 alternances confirmées par le responsable. Aucune
+vérification en direct par l’application ni description détaillée n’est inventée.

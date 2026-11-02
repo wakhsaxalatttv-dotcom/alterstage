@@ -117,6 +117,7 @@ export interface Offer {
   } | null;
   sourceConsultedAt?: string;
   sourceDateMissing?: boolean;
+  editorialConfirmation?: { kind: "owner-confirmation"; confirmedAt: string };
   sourceEducationLabel?: string;
 }
 export interface SourceDefinition {

@@ -162,8 +162,8 @@ export function ExternalOffers() {
         Effacer les filtres
       </button>
       <p className="external-date">
-        Tri : publication la plus récente. Seules les offres de 30 jours maximum
-        sont affichées.
+        Tri : date de publication décroissante. Les dates absentes ne sont pas
+        remplacées par une date d’import.
       </p>
       {data.loading && <p role="status">Chargement des offres repérées…</p>}
       {data.error && (
@@ -244,7 +244,7 @@ export function ExternalOffers() {
             · {selected.location.region}
           </p>
           <p className="local-note">
-            {selected.sourceDocument?.kind === "uploaded-html"
+            {selected.sourceDocument?.kind?.startsWith("uploaded-")
               ? "Informations extraites d’un fichier employeur fourni ; description détaillée et disponibilité en ligne non vérifiées."
               : selected.sourceKind === "market"
               ? "Description transmise par la source ; consultez le lien original pour candidater."

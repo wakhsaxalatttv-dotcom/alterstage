@@ -19,7 +19,7 @@ console.info(
   `[Catalogue employeurs] ${editorial.created} annonces sourcées ajoutées, ${editorial.excluded} non admissibles. Aucun nouveau contrôle de disponibilité supposé.`,
 );
 const sncfPending = await seedSncfPending(app.locals.store);
-console.info(`[SNCF] ${sncfPending.created} fiches sans date préparées en privé, aucune publication automatique.`);
+console.info(`[SNCF] ${sncfPending.created} offres ajoutées, ${sncfPending.updated} mises à jour après confirmation du responsable. Dates source non fournies conservées comme telles.`);
 const server = app.listen(port, "0.0.0.0", () =>
   console.log(`Offres Fraîches : serveur prêt sur le port ${port}`),
 );

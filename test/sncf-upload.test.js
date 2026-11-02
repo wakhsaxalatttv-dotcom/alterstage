@@ -34,7 +34,7 @@ test('SNCF saved HTML imports only its dated stage, preserving actual metadata a
     assert.equal(await store.getPublic(offer.id), null);
   } finally { store.close(); await rm(folder,{recursive:true,force:true}); }
 });
-test('SNCF MHTML keeps its 20 alternances private without replacing missing publication dates with snapshot dates', async () => {
+test('explicit owner confirmation publishes all 20 captured alternances without inventing publication dates or human review badges', async () => {
   const folder = await mkdtemp('/tmp/sncf-pending-test-'), store = new OfferStore(folder);
   try {
     assert.equal(pending.totalDisplayed, 32);
@@ -44,15 +44,19 @@ test('SNCF MHTML keeps its 20 alternances private without replacing missing publ
     assert.equal((await seedSncfPending(store)).existing, 20);
     const rows = await store.read();
     assert.equal(rows.length, 20);
-    assert.equal((await store.query()).total, 0);
+    assert.equal((await store.query()).total, 20);
     for (const o of rows) {
-      assert.equal(o.moderationStatus, 'pending');
+      assert.equal(o.moderationStatus, 'approved');
+      assert.equal(o.editorialConfirmation.kind, 'owner-confirmation');
       assert.equal(o.publishedAt, null);
       assert.equal(o.sourcePublishedAt, null);
       assert.equal(o.lastVerifiedAt, null);
       assert.match(o.sourceUrl,/^https:\/\/emploi\.sncf\.com\/nos-offres\/\d+$/);
       assert.equal(o.sourceDocument.kind,'uploaded-mhtml');
     }
+    assert.equal(new Set(rows.map(o=>o.company.id)).size, 4);
+    assert.equal((await store.query({age:"7"})).total, 0);
+    assert.equal(new Reports(store).references().filter(o=>o.sourceId==='sncf-upload').length,20);
     const contracts = new Set(rows.map(o=>o.contract));
     assert.ok(contracts.has('Alternance — type non précisé'));
     assert.ok(contracts.has('Contrat de professionnalisation'));
@@ -60,5 +64,31 @@ test('SNCF MHTML keeps its 20 alternances private without replacing missing publ
     await store.review(rows[0].id,{action:'withdraw'});
     await seedSncfPending(store);
     assert.equal((await store.read()).find(o=>o.id===rows[0].id).moderationStatus,'withdrawn');
+  } finally {store.close();await rm(folder,{recursive:true,force:true});}
+});
+
+test('owner exception is bounded to the supplied SNCF records, expires without refreshing on restart, and never overrides known closure or known publication age', async () => {
+  const folder = await mkdtemp('/tmp/sncf-owner-scope-'), store = new OfferStore(folder);
+  try {
+    await seedSncfPending(store);
+    const offer=(await store.read())[0];
+    const { publicOffer } = await import('../server/domain.js');
+    const { selectOffers, defaultFilters } = await import('../src/domain.js');
+    const { hasOwnerConfirmedSncfListing, SNCF_OWNER_CONFIRMATION } = await import('../shared/sncf-owner-confirmation.js');
+    const { publicationIndex, hasRecentPublication } = await import('../shared/freshness.js');
+    const time=Date.parse(SNCF_OWNER_CONFIRMATION.confirmedAt);
+    assert.equal(publicationIndex(offer),null);
+    assert.equal(hasRecentPublication(offer,time),false);
+    assert.equal(hasOwnerConfirmedSncfListing(offer,time),true);
+    assert.equal(hasOwnerConfirmedSncfListing(offer,time-1),false);
+    assert.equal(hasOwnerConfirmedSncfListing(offer,time+30*86400000),false);
+    assert.ok(publicOffer(offer,time));
+    assert.equal(publicOffer(offer,time+30*86400000),null);
+    assert.equal(selectOffers([offer],defaultFilters,time).length,1);
+    assert.equal(publicOffer({...offer,sourceClosedAt:new Date(time).toISOString()},time),null);
+    assert.equal(publicOffer({...offer,publishedAt:'2020-01-01',sourcePublishedAt:'2020-01-01'},time),null);
+    for(const change of [{sourceId:'random-feed'},{id:'sncf-unknown',externalId:'unknown'},{sourceUrl:'https://example.org/job'},{sourceDocument:{...offer.sourceDocument,sha256:'different'}}])
+      assert.equal(hasOwnerConfirmedSncfListing({...offer,...change},time),false);
+    assert.equal(publicOffer({...offer,moderationStatus:'withdrawn',status:'withdrawn'},time),null);
   } finally {store.close();await rm(folder,{recursive:true,force:true});}
 });

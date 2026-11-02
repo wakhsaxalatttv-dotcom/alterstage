@@ -811,8 +811,8 @@ function App() {
                   officielles.
                 </li>
                 <li>
-                  <Check /> Seules les offres de 30 jours maximum sont
-                  affichées.
+                  <Check /> Offres récentes ou confirmées par l’éditeur, hors
+                  clôtures connues.
                 </li>
                 <li>
                   <Check /> Aucun contact personnel collecté sur le web.
@@ -924,7 +924,7 @@ function App() {
               <VerifiedBadge offer={modal.offer} />
               {modal.offer.editorialSummary && (
                 <p className="local-note">
-                  {modal.offer.sourceDocument?.kind === "uploaded-html"
+                  {modal.offer.sourceDocument?.kind?.startsWith("uploaded-")
                     ? `Informations extraites d’un fichier employeur le ${date(modal.offer.sourceDocument.analyzedAt)}. La fiche en ligne et sa disponibilité n’ont pas été revérifiées.`
                     : `Synthèse éditoriale d’une annonce employeur consultée le ${date(modal.offer.sourceConsultedAt)}. La disponibilité actuelle n’a pas été revérifiée.`}
                 </p>
