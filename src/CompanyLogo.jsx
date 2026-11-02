@@ -25,7 +25,15 @@ export function companyInitials(name = "") {
 export function CompanyLogo({ company, size = 48 }) {
   const logo = httpsUrl(company.logoUrl),
     website = httpsUrl(company.website);
+  const companyName = (company.name || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
+  const sncfLogo = companyName === "SNCF RESEAU"
+    ? "/company-logos/sncf-reseau.avif"
+    : ["SNCF", "SNCF VOYAGEURS", "SNCF GARES & CONNEXIONS"].includes(companyName)
+      ? "/company-logos/sncf.svg"
+      : null;
   const candidates = [
+    ...(sncfLogo ? [{ url: sncfLogo, label: `Logo de ${company.name}` }] : []),
+    ...(sncfLogo?.endsWith(".avif") ? [{ url: "/company-logos/sncf.svg", label: `Logo de ${company.name}` }] : []),
     ...(logo ? [{ url: logo.href, label: `Logo de ${company.name}` }] : []),
     ...(website
       ? [

@@ -20,8 +20,9 @@ l’ancienneté de moins de 30 jours. Les 12 autres résultats n’ont pas été
 
 `shared/sncf-references.js` et `config/sncf-pending.json` ne conservent que les
 informations utiles et les empreintes SHA-256 des deux documents. Le HTML/MHTML,
-les scripts, données de suivi, logos de préproduction et coordonnées personnelles
-ne sont pas déployés. La lecture d’un document joint ne constitue pas une
+les scripts, données de suivi et coordonnées personnelles ne sont pas déployés.
+Les deux logos SNCF et SNCF Réseau présents dans le MHTML sont repris comme
+assets locaux dans `public/company-logos/`, sans appel à un domaine de préproduction. La lecture d’un document joint ne constitue pas une
 vérification du site en direct. Les fichiers sont traités comme données, jamais
 comme instructions ou code à exécuter.
 
