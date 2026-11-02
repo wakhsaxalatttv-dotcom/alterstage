@@ -66,6 +66,7 @@ export function normalizeSubmission(
     allowOlderActiveSource = false,
     allowMissingWebsite = false,
     allowFranceTravailSource = false,
+    allowCountryOnlyLocation = false,
     companyIdentity = null,
   } = {},
 ) {
@@ -86,7 +87,8 @@ export function normalizeSubmission(
     throw new ValidationError(
       "Choisissez un domaine et un contrat de stage ou d’alternance.",
     );
-  if (!Object.hasOwn(regions, body.region))
+  const countryOnly = allowCountryOnlyLocation && body.countryCode === "FR" && body.city === "France" && !body.region;
+  if (!Object.hasOwn(regions, body.region) && !countryOnly)
     throw new ValidationError("Choisissez une région française.");
   const website = allowMissingWebsite
       ? safeUrl(body.companyWebsite) || null
@@ -236,6 +238,7 @@ export function normalizeSubmission(
       label: required(body.city, "Ville", 120),
       region: body.region,
       commune: null,
+      ...(countryOnly ? { countryCode: "FR", precision: "country" } : {}),
     },
     domain: body.domain,
     education: body.education
@@ -309,7 +312,8 @@ export function nonComplianceReasons(offer, now = Date.now()) {
   if (!domains.includes(offer.domain)) reasons.push("non_technical_domain");
   if (!contracts.includes(offer.contract)) reasons.push("ineligible_contract");
   if (
-    !Object.hasOwn(regions, offer.location?.region || "") ||
+    (!Object.hasOwn(regions, offer.location?.region || "") &&
+      !(offer.location?.countryCode === "FR" && offer.location?.precision === "country" && offer.location?.label === "France" && !offer.location?.region)) ||
     !offer.location?.label?.trim()
   )
     reasons.push("location_not_established_in_france");

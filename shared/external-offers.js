@@ -1,3 +1,4 @@
+import { totalEnergiesReferences } from "./totalenergies-references.js";
 import { sncfReferences } from "./sncf-references.js";
 import { chemistryReferences } from "./chemistry-references.js";
 import { employerReferences } from "./employer-references.js";
@@ -174,6 +175,7 @@ const safranReferences = entries.map(
 );
 
 export const externalOffers = [
+  ...totalEnergiesReferences,
   ...sncfReferences,
   ...safranReferences,
   ...employerReferences,

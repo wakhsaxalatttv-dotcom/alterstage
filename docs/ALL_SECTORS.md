@@ -70,3 +70,8 @@ dont 40 SNCF (20 stages et 20 alternances). Le second lot de confirmation n’al
 pas le délai du premier. Les logos des entités SNCF présents dans les captures sont
 servis localement ; les autres entreprises conservent leur logo fourni ou les
 icônes officielles avec repli.
+
+L’import de la première page TotalEnergies ajoute ensuite 20 stages réellement
+datés, dans plusieurs domaines, soit 84 offres locales. Leur pays est explicitement
+France, mais aucune ville ou région n’est inventée. Les 16 annonces de la page 2
+n’ont pas été capturées. Voir [la provenance TotalEnergies](TOTALENERGIES_UPLOAD.md).

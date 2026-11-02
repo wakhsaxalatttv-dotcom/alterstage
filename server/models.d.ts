@@ -39,7 +39,7 @@ export interface Offer {
     | "Apprentissage"
     | "Contrat de professionnalisation"
     | "Alternance — type non précisé";
-  location: { label: string; commune: string | null; region: string };
+  location: { label: string; commune: string | null; region: string; countryCode?: "FR"; precision?: "country" };
   domain: string;
   education: string[];
   sourceUrl: string;

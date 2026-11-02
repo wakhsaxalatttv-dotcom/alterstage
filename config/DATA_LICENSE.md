@@ -21,3 +21,11 @@ France Travail est un connecteur distinct, conditionné à ses habilitations : [
 ## Fichiers SNCF fournis
 
 Un stage daté est repris avec une synthèse originale limitée au titre et aux métadonnées présentes, sans reproduire une description absente. Les 20 alternances du fichier MHTML sont publiées après confirmation explicite du responsable, sans inventer leurs dates de publication ni reproduire une description détaillée absente. Les documents complets et leurs ressources ne sont pas déployés ; voir [la provenance détaillée](../docs/SNCF_UPLOAD.md).
+
+## Fichier TotalEnergies fourni
+
+Vingt stages datés et leurs liens officiels sont repris avec des synthèses
+originales des seules informations de la liste. Le document complet et ses scripts
+ne sont pas déployés. L’URL du logo fournie par le portail est référencée pour les
+entités TotalEnergies sans revendiquer de partenariat. Voir [la provenance et les
+limites de vérification](../docs/TOTALENERGIES_UPLOAD.md).

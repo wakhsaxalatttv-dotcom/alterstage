@@ -188,7 +188,7 @@ export function ExternalOffers() {
           <AnimatedCard className="external-card" key={offer.id}>
             <div className="external-company-heading">
               <CompanyLogo
-                company={{ ...offer.company, website: offer.companyWebsite }}
+                company={{ ...offer.company, website: offer.companyWebsite, logoUrl: offer.companyLogoUrl || offer.company.logoUrl }}
                 size={40}
               />
               <p className="external-company">{offer.company.name}</p>
@@ -197,8 +197,8 @@ export function ExternalOffers() {
               <button onClick={() => open(offer)}>{offer.title}</button>
             </h3>
             <p>
-              <MapPin size={15} aria-hidden="true" /> {offer.location.label} ·{" "}
-              {offer.location.region}
+              <MapPin size={15} aria-hidden="true" /> {offer.location.label}
+              {offer.location.region && ` · ${offer.location.region}`}
             </p>
             <div className="tags">
               <span>{offer.contract}</span>
@@ -240,8 +240,8 @@ export function ExternalOffers() {
       {selected && (
         <Dialog title={selected.title} close={() => setSelected(null)}>
           <p>
-            <strong>{selected.company.name}</strong> · {selected.location.label}{" "}
-            · {selected.location.region}
+            <strong>{selected.company.name}</strong> · {selected.location.label}
+            {selected.location.region && ` · ${selected.location.region}`}
           </p>
           <p className="local-note">
             {selected.sourceDocument?.kind?.startsWith("uploaded-")

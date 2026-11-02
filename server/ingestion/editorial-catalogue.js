@@ -56,9 +56,12 @@ export async function seedEditorialCatalogue(
           companyName: ref.company.name,
           companyWebsite: ref.companyWebsite,
           companyDescription: ref.companySummary || "",
+          companyLogoUrl: ref.companyLogoUrl || "",
+          logoConsent: Boolean(ref.companyLogoUrl),
           profileSourceUrl: ref.sourceUrl,
           city: ref.location.label,
           region: ref.location.region,
+          countryCode: ref.location.countryCode,
           domain: ref.domain,
           contract: ref.contract,
           description: ref.summary,
@@ -74,7 +77,7 @@ export async function seedEditorialCatalogue(
           consent: true,
           origin: "editorial",
         },
-        { allowOlderActiveSource: true },
+        { allowOlderActiveSource: true, allowCountryOnlyLocation: ref.location?.precision === "country" && ref.location?.countryCode === "FR" },
       );
     } catch {
       report.excluded++;
@@ -122,6 +125,7 @@ export async function seedEditorialCatalogue(
           sourceUrl: offer.sourceUrl,
           expiresAt: offer.expiresAt,
           ...(offer.sourceDocument ? { sourceDocument: offer.sourceDocument } : {}),
+          ...(offer.company.logoUrl ? { companyLogoUrl: offer.company.logoUrl } : {}),
         }),
       )
       .digest("hex");
