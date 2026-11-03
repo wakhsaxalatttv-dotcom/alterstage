@@ -36,3 +36,7 @@ les vérifications sont dans [l’import Airbus](AIRBUS_UPLOAD.md).
 avec ses variantes responsives natives, et ne contient aucun script ou lien externe.
 Pour Orange Cyberdefense, il est identifié comme logo du groupe, sans prétendre
 être une variante spécifique à la filiale. Voir [l’import Orange](ORANGE_UPLOAD.md).
+
+`toyota.svg` reprend le symbole Toyota de Simple Icons sans modification visuelle.
+Il est servi localement et identifié comme « Logo du groupe Toyota » pour Toyota
+Motor Manufacturing France. Voir [l'analyse Toyota](TOYOTA_UPLOAD.md).

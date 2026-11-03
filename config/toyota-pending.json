@@ -1,0 +1,130 @@
+{
+  "sourceUrl": "https://nousrecrutons.toyotafr.com/jobs?query=&employment_type=internship",
+  "sourceDocument": {
+    "kind": "uploaded-html",
+    "fileName": "Offres d'emploi disponibles - Toyota Motor Manufacturing France.html",
+    "sha256": "29cab6ef54d7cf77bde4580047f4329f36f72edf9f08d03adae39cb26293c916",
+    "analyzedAt": "2026-11-03"
+  },
+  "capturedCount": 9,
+  "publicationDatesAvailable": false,
+  "offers": [
+    {
+      "sourceUrl": "https://nousrecrutons.toyotafr.com/jobs/8639004-stage-ingenieur-excellence-operationnelle-maintenance-f-h",
+      "title": "STAGE - Ingénieur Excellence Opérationnelle Maintenance - F/H",
+      "externalId": "8639004",
+      "companyName": "Toyota Motor Manufacturing France",
+      "city": "Onnaing",
+      "region": "Hauts-de-France",
+      "countryCode": "FR",
+      "contract": "Stage",
+      "publishedAt": null,
+      "onlineAvailabilityChecked": false,
+      "status": "pending-source-date"
+    },
+    {
+      "sourceUrl": "https://nousrecrutons.toyotafr.com/jobs/8636230-stage-ingenieur-digitalisation-des-processus-industriels-f-h",
+      "title": "STAGE - Ingénieur Digitalisation des Processus Industriels - F/H",
+      "externalId": "8636230",
+      "companyName": "Toyota Motor Manufacturing France",
+      "city": "Onnaing",
+      "region": "Hauts-de-France",
+      "countryCode": "FR",
+      "contract": "Stage",
+      "publishedAt": null,
+      "onlineAvailabilityChecked": false,
+      "status": "pending-source-date"
+    },
+    {
+      "sourceUrl": "https://nousrecrutons.toyotafr.com/jobs/8632799-stage-ingenieur-digitalisation-outils-informatiques-f-h",
+      "title": "STAGE - Ingénieur Digitalisation & Outils Informatiques - F/H",
+      "externalId": "8632799",
+      "companyName": "Toyota Motor Manufacturing France",
+      "city": "Onnaing",
+      "region": "Hauts-de-France",
+      "countryCode": "FR",
+      "contract": "Stage",
+      "publishedAt": null,
+      "onlineAvailabilityChecked": false,
+      "status": "pending-source-date"
+    },
+    {
+      "sourceUrl": "https://nousrecrutons.toyotafr.com/jobs/8626893-stage-ingenieur-projet-industriel-atelier-plastique-f-h",
+      "title": "STAGE - Ingénieur Projet Industriel Atelier Plastique - F/H",
+      "externalId": "8626893",
+      "companyName": "Toyota Motor Manufacturing France",
+      "city": "Onnaing",
+      "region": "Hauts-de-France",
+      "countryCode": "FR",
+      "contract": "Stage",
+      "publishedAt": null,
+      "onlineAvailabilityChecked": false,
+      "status": "pending-source-date"
+    },
+    {
+      "sourceUrl": "https://nousrecrutons.toyotafr.com/jobs/8625120-stage-ingenieur-amelioration-continue-atelier-plastique-f-h",
+      "title": "STAGE - Ingénieur Amélioration Continue Atelier Plastique - F/H",
+      "externalId": "8625120",
+      "companyName": "Toyota Motor Manufacturing France",
+      "city": "Onnaing",
+      "region": "Hauts-de-France",
+      "countryCode": "FR",
+      "contract": "Stage",
+      "publishedAt": null,
+      "onlineAvailabilityChecked": false,
+      "status": "pending-source-date"
+    },
+    {
+      "sourceUrl": "https://nousrecrutons.toyotafr.com/jobs/8580379-stage-ingenieur-methodes-et-industrialisation-f-h",
+      "title": "STAGE - Ingénieur Méthodes et Industrialisation - F/H",
+      "externalId": "8580379",
+      "companyName": "Toyota Motor Manufacturing France",
+      "city": "Onnaing",
+      "region": "Hauts-de-France",
+      "countryCode": "FR",
+      "contract": "Stage",
+      "publishedAt": null,
+      "onlineAvailabilityChecked": false,
+      "status": "pending-source-date"
+    },
+    {
+      "sourceUrl": "https://nousrecrutons.toyotafr.com/jobs/8580375-stage-ingenieur-excellence-operationnelle-tps-f-h",
+      "title": "STAGE - Ingénieur Excellence Opérationnelle (TPS) - F/H",
+      "externalId": "8580375",
+      "companyName": "Toyota Motor Manufacturing France",
+      "city": "Onnaing",
+      "region": "Hauts-de-France",
+      "countryCode": "FR",
+      "contract": "Stage",
+      "publishedAt": null,
+      "onlineAvailabilityChecked": false,
+      "status": "pending-source-date"
+    },
+    {
+      "sourceUrl": "https://nousrecrutons.toyotafr.com/jobs/8580367-stage-ingenieur-automatisme-et-supervision-des-equipements-f-h",
+      "title": "STAGE - Ingénieur Automatisme, et Supervision des Équipements - F/H",
+      "externalId": "8580367",
+      "companyName": "Toyota Motor Manufacturing France",
+      "city": "Onnaing",
+      "region": "Hauts-de-France",
+      "countryCode": "FR",
+      "contract": "Stage",
+      "publishedAt": null,
+      "onlineAvailabilityChecked": false,
+      "status": "pending-source-date"
+    },
+    {
+      "sourceUrl": "https://nousrecrutons.toyotafr.com/jobs/8580365-stage-ingenieur-projet-metrologie-et-qualite-industrielle-f-h",
+      "title": "STAGE - Ingénieur Projet - métrologie et qualité industrielle - F/H",
+      "externalId": "8580365",
+      "companyName": "Toyota Motor Manufacturing France",
+      "city": "Onnaing",
+      "region": "Hauts-de-France",
+      "countryCode": "FR",
+      "contract": "Stage",
+      "publishedAt": null,
+      "onlineAvailabilityChecked": false,
+      "status": "pending-source-date"
+    }
+  ]
+}

@@ -28,6 +28,8 @@ export function CompanyLogo({ company, size = 48 }) {
   const companyName = (company.name || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
   // SNCF assets are the genuine images embedded in the supplied employer archives.
   const localLogos = {
+    TOYOTA: "/company-logos/toyota.svg",
+    "TOYOTA MOTOR MANUFACTURING FRANCE": "/company-logos/toyota.svg",
     AIRBUS: "/company-logos/airbus.svg",
     ORANGE: "/company-logos/orange.svg",
     "ORANGE SA": "/company-logos/orange.svg",
@@ -45,7 +47,7 @@ export function CompanyLogo({ company, size = 48 }) {
     : /^SYSOCO(?:\s|$)/.test(companyName) ? "https://www.sysoco.fr"
     : website?.origin;
   const candidates = [
-    ...(localLogo ? [{ url: localLogo, label: companyName === "ORANGE CYBERDEFENSE" ? "Logo du groupe Orange" : `Logo de ${company.name}` }] : []),
+    ...(localLogo ? [{ url: localLogo, label: companyName === "ORANGE CYBERDEFENSE" ? "Logo du groupe Orange" : companyName === "TOYOTA MOTOR MANUFACTURING FRANCE" ? "Logo du groupe Toyota" : `Logo de ${company.name}` }] : []),
     ...(localLogo?.endsWith(".avif") ? [{ url: "/company-logos/sncf.svg", label: "Logo du groupe SNCF" }] : []),
     ...(logo ? [{ url: logo.href, label: `Logo de ${company.name}` }] : []),
     ...(brandWebsite
