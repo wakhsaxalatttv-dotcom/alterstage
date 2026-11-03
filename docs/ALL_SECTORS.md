@@ -87,3 +87,8 @@ avec leurs dates initiales et les résumés réellement fournis. Neuf autres fic
 sont exclues (huit hors France et un contrat stage/alternance non établi).
 Le catalogue local atteint 115 offres ; le logo Orange est servi localement.
 Voir [la provenance Orange](ORANGE_UPLOAD.md).
+
+Le document Thales du 3 novembre apporte un stage français récent, publié le
+14 octobre à Élancourt. Les neuf autres fiches sont hors France ou anciennes et
+sans contrat admissible établi. Le catalogue local passe à 116 offres.
+Voir [la provenance Thales](THALES_UPLOAD.md).

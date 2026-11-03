@@ -1,0 +1,39 @@
+# Import Thales du 3 novembre 2026
+
+Fichier fourni : « Parcourez les offres d'emplois avec Thales.html ».
+SHA-256 : `f583b01793e52cb7e209e07123ffe330654e569e1a5010245b39ed04b594ca12`.
+
+La page visible est en grande partie un squelette non chargé. Ses objets JSON
+Phenom conservent dix fiches distinctes. Ces objets sont lus comme données, sans
+exécuter le JavaScript, ses outils de suivi ou ses expressions de gabarit.
+
+Une fiche respecte les critères du catalogue : `R0343494`, « STAGE - Ingénieur
+sûreté de fonctionnement / MBSDA - F/H », à Élancourt, Yvelines, en France.
+Le portail donne `postedDate` le 14 octobre 2026 à 00:00 UTC et `dateCreated` le
+même jour à 14:54:45.045 UTC. La date affichée reste donc le 14 octobre ; les deux
+timestamps sont conservés séparément et normalisés en ISO sans changer l’instant.
+Le titre établit explicitement le stage ; « Full time » décrit le temps de travail
+et ne permet pas de requalifier ce stage en CDI.
+
+Sept autres fiches sont en Italie, Inde ou Allemagne. Les deux autres françaises
+ne sont pas des stages/alternances établis et ont des dates initiales en juin
+2024 et juillet 2025. Aucune n’est ajoutée. La date de rafraîchissement du portail
+n’est pas utilisée pour rajeunir une ancienne annonce.
+
+Le résumé `descriptionTeaser`, la ville, le lien Workday original se terminant
+par `R0343494-1/apply` et l’identité de groupe Thales sont conservés. Aucune filiale,
+mission détaillée, formation, durée, adresse complète ou rémunération absente du
+document n’est inventée. L’annonce reste sans badge de contrôle humain. Un retrait
+ultérieur reste prioritaire et les redémarrages ne créent pas de doublon.
+
+Le fichier fournit l’adresse du logo :
+`https://cdn.phenompeople.com/CareerConnectResources/TGPTGWGLOBAL/images/Thales_LOGO_Pantone-1682075372118.png`.
+Elle est référencée dans la fiche. L’image n’est pas embarquée dans le HTML et sa
+récupération a été refusée par le proxy (CONNECT HTTP 403) : son affichage distant
+n’est pas certifié ici et aucun faux logo n’est généré pour le remplacer.
+
+Le catalogue local passe de 115 à 116 offres. Les tests vérifient la date, le
+contrat, la localisation, le résumé fourni, le lien, le retrait et l’idempotence.
+Le navigateur local contrôle la fiche, le lien de candidature, les formats
+mobile/ordinateur et l’absence de faux badge. Ces contrôles ne constituent ni une
+vérification de la candidature en direct ni une validation du déploiement Render.

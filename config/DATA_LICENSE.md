@@ -47,3 +47,10 @@ fournis ; aucun script, suivi, cookie ou document intégral n’est déployé.
 Le logo est issu du dépôt officiel Orange Open Source, conservé comme marque
 d’identification du recruteur ou du groupe sans partenariat revendiqué.
 Voir [la provenance et la distinction des dates](../docs/ORANGE_UPLOAD.md).
+
+## Fichier Thales fourni
+
+Un stage français daté est repris avec le résumé et le lien de candidature
+fournis. Le HTML complet, ses outils de suivi et ses scripts ne sont pas déployés.
+Le logo est référencé depuis l’adresse publiée dans le document, sans prétendre
+l’avoir récupéré ou généré. Voir [le bilan Thales](../docs/THALES_UPLOAD.md).
