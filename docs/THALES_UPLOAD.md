@@ -48,3 +48,15 @@ R0340027 ne présente pas de contrat de stage/alternance établi.
 Les résumés fournis et les liens Workday sont conservés sans inventer de missions.
 Le logo officiel distant est associé aux trois fiches ; son téléchargement reste
 bloqué par le proxy et son chargement réel n'est pas certifié ici.
+
+## Nouveau fichier complémentaire « Thal »
+
+Fichier « Parcourez les offres d'emplois avec Thal.html », SHA-256 `999e7bb103993de71e0d4e58e0f2a283e909d1be88a88dffc0bc3c470d1451f6`.
+Huit stages français ajoutés : R0345380, R0345373, R0344084, R0343685,
+R0344711, R0344687, R0343507 et R0345096. Dates initiales du 20 octobre au
+2 novembre 2026 ; résumés fournis, localisations et liens Workday inchangés.
+Le poste Product Support Manager R0345757 n'est pas identifié comme stage ou
+alternance. R0339361 a été créé le 4 septembre : sa mise à jour du 23 octobre
+ne rajeunit pas sa publication. Ces deux fiches sont exclues.
+Les onze stages Thales référencent le logo officiel distant, avec fallback.
+Aucune disponibilité en direct ou vérification du logo sur Render n'est affirmée.
