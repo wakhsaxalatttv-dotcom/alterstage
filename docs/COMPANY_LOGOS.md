@@ -40,3 +40,6 @@ Pour Orange Cyberdefense, il est identifié comme logo du groupe, sans prétendr
 `toyota.svg` reprend le symbole Toyota de Simple Icons sans modification visuelle.
 Il est servi localement et identifié comme « Logo du groupe Toyota » pour Toyota
 Motor Manufacturing France. Voir [l'analyse Toyota](TOYOTA_UPLOAD.md).
+
+`rte.svg` est extrait du HTML RTE fourni, sans modification visuelle. Aucun
+script ou lien externe ; le logo est servi localement. Voir [RTE](RTE_UPLOAD.md).
