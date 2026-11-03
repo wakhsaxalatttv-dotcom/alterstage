@@ -9,6 +9,7 @@ import express from "express";
 import compression from "compression";
 import path from "node:path";
 import { timingSafeEqual } from "node:crypto";
+import {browserSecurity, sameOriginJsonWrites, fixedWindowLimiter} from "./security.js";
 import { OfferStore } from "./store.js";
 import { normalizeSubmission, ValidationError } from "./domain.js";
 import { IngestionPipeline } from "./ingestion/pipeline.js";
@@ -21,13 +22,14 @@ export function createApp({
   serpAutomationOptions = {},
 } = {}) {
   const app = express(),
-    store = new OfferStore(folder),
-    limits = new Map();
+    store = new OfferStore(folder);
+  const submissionLimit = fixedWindowLimiter({limit: 5, windowMs: 3600000});
+  const reportLimit = fixedWindowLimiter({limit: 10, windowMs: 3600000});
+  const loginLimit = fixedWindowLimiter({limit: 10, windowMs: 15 * 60000});
   app.locals.store = store;
   const adminConfiguration = administrationConfiguration(adminToken);
   app.locals.adminConfiguration = adminConfiguration;
-  const reports = new Reports(store),
-    reportLimits = new Map();
+  const reports = new Reports(store);
   app.locals.reports = reports;
   app.locals.pipeline = new IngestionPipeline(store, pipelineOptions);
   const rapidApiProbe = createRapidApiProbe(rapidApiOptions);
@@ -47,31 +49,32 @@ export function createApp({
   app.disable("x-powered-by");
   if (process.env.RENDER === "true") app.set("trust proxy", 1);
   app.use(compression({ threshold: 1024 }));
-  app.use((_req, res, next) => {
-    res.set({
-      "X-Content-Type-Options": "nosniff",
-      "Referrer-Policy": "strict-origin-when-cross-origin",
-    });
-    next();
-  });
+  app.use(browserSecurity);
   app.use("/api", (_req, res, next) => {
     res.set("Cache-Control", "no-store");
     next();
   });
+  app.use('/api', sameOriginJsonWrites);
   app.use(express.json({ limit: "40kb" }));
   const admin = (req, res, next) => {
     if (!adminConfiguration.configured)
       return res.status(503).json({
         message: "L’espace privé est temporairement indisponible.",
       });
+    const retryAfter = loginLimit.blocked(req.ip);
+    if (retryAfter) return res.set('Retry-After', String(retryAfter)).status(429).json({message: 'Trop de tentatives de connexion. Réessayez dans quinze minutes.'});
     const token = Buffer.from(
       req.get("Authorization")?.replace(/^Bearer /, "") || "",
     );
     const expected = Buffer.from(adminToken);
-    if (token.length !== expected.length || !timingSafeEqual(token, expected))
+    if (token.length !== expected.length || !timingSafeEqual(token, expected)) {
+      const retry = loginLimit.consume(req.ip);
+      if (retry) return res.set('Retry-After', String(retry)).status(429).json({message: 'Trop de tentatives de connexion. Réessayez dans quinze minutes.'});
       return res
         .status(401)
         .json({ message: "Accès réservé à la modération." });
+    }
+    loginLimit.reset(req.ip);
     next();
   };
   app.get("/api/health", (_req, res) => {
@@ -128,17 +131,12 @@ export function createApp({
         message:
           "Les dépôts sont temporairement indisponibles. Réessayez plus tard.",
       });
-    const now = Date.now();
-    for (const [key, val] of limits) if (val.until < now) limits.delete(key);
-    const key = req.ip,
-      entry = limits.get(key) || { count: 0, until: now + 3600000 };
-    if (entry.count >= 5)
-      return res.status(429).json({
+    const retry = submissionLimit.consume(req.ip);
+    if (retry)
+      return res.set('Retry-After', String(retry)).status(429).json({
         message:
           "Limite de cinq dépôts par heure atteinte. Réessayez plus tard.",
       });
-    entry.count++;
-    limits.set(key, entry);
     const offer = normalizeSubmission({ ...req.body, origin: "employer" });
     res.status(201).json(await store.submit(offer));
   });
@@ -151,18 +149,12 @@ export function createApp({
         message:
           "L’envoi de signalements est temporairement indisponible. Réessayez plus tard.",
       });
-    const now = Date.now();
-    for (const [key, entry] of reportLimits)
-      if (entry.until < now) reportLimits.delete(key);
-    const key = req.ip,
-      entry = reportLimits.get(key) || { count: 0, until: now + 3600000 };
-    if (entry.count >= 10)
-      return res.status(429).json({
+    const retry = reportLimit.consume(req.ip);
+    if (retry)
+      return res.set('Retry-After', String(retry)).status(429).json({
         message:
           "Limite de dix signalements par heure atteinte. Réessayez plus tard.",
       });
-    entry.count++;
-    reportLimits.set(key, entry);
     res.status(201).json(await reports.create(req.body || {}));
   });
   app.get("/api/admin/reports", admin, (req, res) =>
