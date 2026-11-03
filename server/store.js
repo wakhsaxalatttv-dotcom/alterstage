@@ -1,4 +1,4 @@
-import { hasOwnerConfirmedSncfListing } from "../shared/sncf-owner-confirmation.js";
+import { hasOwnerConfirmedListing } from "../shared/owner-confirmation.js";
 import { isSuspendedImport } from "./suspended-catalogue.js";
 import { isBlockedSource } from "../shared/source-policy.js";
 import { CompanyCatalogue } from "./company-catalogue.js";
@@ -40,8 +40,8 @@ export class OfferStore {
     mkdirSync(folder, { recursive: true });
     this.db = new DatabaseSync(path.join(folder, "catalogue.sqlite"));
     chmodSync(path.join(folder, "catalogue.sqlite"), 0o600);
-    this.db.function("owner_confirmed_sncf", (payload) => {
-      try { return hasOwnerConfirmedSncfListing(JSON.parse(payload)) ? 1 : 0; } catch { return 0; }
+    this.db.function("owner_confirmed_listing", (payload) => {
+      try { return hasOwnerConfirmedListing(JSON.parse(payload)) ? 1 : 0; } catch { return 0; }
     });
     this.db.exec(
       readFileSync(new URL("./schema.sql", import.meta.url), "utf8"),
@@ -465,7 +465,7 @@ export class OfferStore {
   }
   publicConditions() {
     return {
-      sql: `moderation='approved' AND status NOT IN ('expired','withdrawn') AND expires_at>? AND ((published_at>=? AND published_at<=?) OR (published_at IS NULL AND owner_confirmed_sncf(payload)=1)) AND domain IN (${placeholders(domains)}) AND contract IN (${placeholders(contracts)})`,
+      sql: `moderation='approved' AND status NOT IN ('expired','withdrawn') AND expires_at>? AND ((published_at>=? AND published_at<=?) OR (published_at IS NULL AND owner_confirmed_listing(payload)=1)) AND domain IN (${placeholders(domains)}) AND contract IN (${placeholders(contracts)})`,
       params: [
         Date.now(),
         publicationCutoff(),
