@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /administration
+
+Sitemap: https://alterstage.onrender.com/sitemap.xml
