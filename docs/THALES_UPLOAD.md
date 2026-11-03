@@ -37,3 +37,14 @@ contrat, la localisation, le résumé fourni, le lien, le retrait et l’idempot
 Le navigateur local contrôle la fiche, le lien de candidature, les formats
 mobile/ordinateur et l’absence de faux badge. Ces contrôles ne constituent ni une
 vérification de la candidature en direct ni une validation du déploiement Render.
+
+## Fichier complémentaire du 3 novembre
+
+« Parcourez les offres d'emplois avec Thale.html », SHA-256 `a7315acad134226ec348f66dd4b9ed6c6231ecc6540f403dd5a34abcfb6d774d` : dix fiches françaises.
+Deux stages ajoutés : R0342095 (Limours, création le 12 octobre) et R0341959
+(Toulouse, création le 13 octobre). Sept stages dépassent 30 jours d'après leur
+date initiale, y compris les deux dont postedDate a été rafraîchie en octobre.
+R0340027 ne présente pas de contrat de stage/alternance établi.
+Les résumés fournis et les liens Workday sont conservés sans inventer de missions.
+Le logo officiel distant est associé aux trois fiches ; son téléchargement reste
+bloqué par le proxy et son chargement réel n'est pas certifié ici.
