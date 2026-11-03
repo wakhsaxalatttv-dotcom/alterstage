@@ -43,3 +43,7 @@ Motor Manufacturing France. Voir [l'analyse Toyota](TOYOTA_UPLOAD.md).
 
 `rte.svg` est extrait du HTML RTE fourni, sans modification visuelle. Aucun
 script ou lien externe ; le logo est servi localement. Voir [RTE](RTE_UPLOAD.md).
+
+`edf.png` est le PNG fourni par le site officiel EDF (voir
+[l'import EDF](EDF_UPLOAD.md)), conservé sans modification et réservé à EDF.
+Les logos des filiales ne sont pas remplacés par celui du groupe.

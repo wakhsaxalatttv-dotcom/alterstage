@@ -28,6 +28,7 @@ export function CompanyLogo({ company, size = 48 }) {
   const companyName = (company.name || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
   // SNCF assets are the genuine images embedded in the supplied employer archives.
   const localLogos = {
+    EDF: "/company-logos/edf.png",
     RTE: "/company-logos/rte.svg",
     TOYOTA: "/company-logos/toyota.svg",
     "TOYOTA MOTOR MANUFACTURING FRANCE": "/company-logos/toyota.svg",

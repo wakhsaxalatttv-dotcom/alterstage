@@ -1,3 +1,4 @@
+import { seedRteUpload } from "./ingestion/rte-upload.js";
 import { seedToyotaUpload } from "./ingestion/toyota-upload.js";
 import { seedSncfPending } from "./ingestion/sncf-upload.js";
 import { auditAvailability } from "./ingestion/availability.js";
@@ -23,6 +24,8 @@ const sncfPending = await seedSncfPending(app.locals.store);
 console.info(`[SNCF] ${sncfPending.created} offres ajoutées, ${sncfPending.updated} mises à jour après confirmation du responsable. Dates source non fournies conservées comme telles.`);
 const toyota = await seedToyotaUpload(app.locals.store);
 console.info(`[Toyota] ${toyota.created} stages ajoutés après confirmation du responsable ; dates source non fournies.`);
+const rte = await seedRteUpload(app.locals.store);
+console.info(`[RTE] ${rte.created} stages ajoutés après confirmation du responsable ; dates source absentes conservées.`);
 const server = app.listen(port, "0.0.0.0", () =>
   console.log(`Offres Fraîches : serveur prêt sur le port ${port}`),
 );

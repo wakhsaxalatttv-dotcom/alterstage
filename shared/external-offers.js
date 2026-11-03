@@ -1,3 +1,4 @@
+import { edfReferences } from "./edf-references.js";
 import { sephoraReferences } from "./sephora-references.js";
 import { thalesReferences } from "./thales-references.js";
 import { orangeReferences } from "./orange-references.js";
@@ -179,6 +180,7 @@ const safranReferences = entries.map(
 );
 
 export const externalOffers = [
+  ...edfReferences,
   ...sephoraReferences,
   ...thalesReferences,
   ...orangeReferences,
