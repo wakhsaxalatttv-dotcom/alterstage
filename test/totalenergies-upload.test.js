@@ -7,7 +7,9 @@ import {totalEnergiesReferences} from '../shared/totalenergies-references.js';
 import {normalizeSubmission,nonComplianceReasons} from '../server/domain.js';
 import {Reports} from '../server/reports.js';
 import {selectOffers,defaultFilters} from '../src/domain.js';
-test('TotalEnergies HTML adds its 20 dated French stages, preserves exact application URLs and company identities without inventing a city or missions',async()=>{
+test('TotalEnergies HTML adds its 20 dated French stages, preserves exact application URLs and company identities without inventing a city or missions',async(t)=>{
+ // Historical upload expectations are evaluated on their actual import day.
+ t.mock.timers.enable({apis: ['Date'], now: new Date('2026-11-03T18:00:00Z')});
  const folder=await mkdtemp('/tmp/total-upload-test-'),store=new OfferStore(folder);
  try{
   assert.equal(totalEnergiesReferences.length,20);

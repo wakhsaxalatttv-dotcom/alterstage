@@ -5,7 +5,9 @@ import {OfferStore} from '../server/store.js';
 import {seedEditorialCatalogue} from '../server/ingestion/editorial-catalogue.js';
 import {thalesReferences} from '../shared/thales-references.js';
 import {Reports} from '../server/reports.js';
-test('Thales upload adds only the dated French stages, preserves exact Workday application and supplied teaser, and respects withdrawals',async()=>{
+test('Thales upload adds only the dated French stages, preserves exact Workday application and supplied teaser, and respects withdrawals',async(t)=>{
+ // Historical upload expectations are evaluated on their actual import day.
+ t.mock.timers.enable({apis: ['Date'], now: new Date('2026-11-03T18:00:00Z')});
  const folder=await mkdtemp('/tmp/thales-upload-test-'),store=new OfferStore(folder);
  try{
   assert.equal(thalesReferences.length,11);

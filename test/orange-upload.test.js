@@ -6,7 +6,9 @@ import {seedEditorialCatalogue} from '../server/ingestion/editorial-catalogue.js
 import {orangeReferences} from '../shared/orange-references.js';
 import {Reports} from '../server/reports.js';
 import {selectOffers,defaultFilters} from '../src/domain.js';
-test('Orange files add 10 French stages and one explicit alternance with original creation dates, exact source/apply links and supplied summaries',async()=>{
+test('Orange files add 10 French stages and one explicit alternance with original creation dates, exact source/apply links and supplied summaries',async(t)=>{
+ // Historical upload expectations are evaluated on their actual import day.
+ t.mock.timers.enable({apis: ['Date'], now: new Date('2026-11-03T18:00:00Z')});
  const folder=await mkdtemp('/tmp/orange-upload-test-'),store=new OfferStore(folder);
  try{
   assert.equal(orangeReferences.length,11);

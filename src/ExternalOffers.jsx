@@ -246,6 +246,8 @@ export function ExternalOffers() {
           <p className="local-note">
             {selected.sourceDocument?.kind?.startsWith("uploaded-")
               ? "Informations extraites d’un fichier employeur fourni ; description détaillée et disponibilité en ligne non vérifiées."
+              : selected.sourceDocument?.kind === "employer-page"
+              ? `Fiche employeur consultée le ${date(selected.sourceConsultedAt)}. Consultez l’annonce d’origine pour les conditions et la candidature.`
               : selected.sourceKind === "market"
               ? "Description transmise par la source ; consultez le lien original pour candidater."
               : "Synthèse éditoriale d’après l’annonce employeur, sans nouveau contrôle de disponibilité."}

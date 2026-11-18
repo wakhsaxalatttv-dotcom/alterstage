@@ -6,7 +6,9 @@ import {seedEditorialCatalogue} from '../server/ingestion/editorial-catalogue.js
 import {sephoraReferences} from '../shared/sephora-references.js';
 import {externalOffers} from '../shared/external-offers.js';
 
-test('Sephora listing imports recent French stages across sectors, preserves provenance, and respects withdrawals', async () => {
+test('Sephora listing imports recent French stages across sectors, preserves provenance, and respects withdrawals', async(t)=>{
+ // Historical upload expectations are evaluated on their actual import day.
+ t.mock.timers.enable({apis: ['Date'], now: new Date('2026-11-03T18:00:00Z')});
   const folder = await mkdtemp('/tmp/sephora-upload-');
   const store = new OfferStore(folder);
   try {

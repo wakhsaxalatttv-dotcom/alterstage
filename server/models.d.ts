@@ -109,13 +109,25 @@ export interface Offer {
   detailsComplete?: boolean;
   editorialSummary?: boolean;
   sourceDocument?: {
-    kind: "uploaded-html" | "uploaded-mhtml";
-    fileName: string;
+    kind: "uploaded-html" | "uploaded-mhtml" | "employer-page";
+    fileName?: string;
     sha256: string;
     recordId: string;
     analyzedAt: string;
     descriptionAvailable: boolean;
     onlineAvailabilityChecked: boolean;
+    pageUrl?: string;
+    sourceTitle?: string;
+    sourceLocation?: string;
+    sourceCountry?: string;
+    applicationEntry?: {
+      checkedAt: string;
+      httpStatus: number;
+      jobIdentityMatched: boolean;
+      applicationActionFound: boolean;
+      jobPageId: string;
+      href: string;
+    };
   } | null;
   sourceConsultedAt?: string;
   sourceDateMissing?: boolean;

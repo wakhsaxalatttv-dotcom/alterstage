@@ -34,7 +34,9 @@ test('SNCF saved HTML imports only its dated stage, preserving actual metadata a
     assert.equal(await store.getPublic(offer.id), null);
   } finally { store.close(); await rm(folder,{recursive:true,force:true}); }
 });
-test('explicit owner confirmations publish all captured alternances and stages without inventing dates or duplicating the known stage', async () => {
+test('explicit owner confirmations publish all captured alternances and stages without inventing dates or duplicating the known stage', async (t) => {
+  // Fixed historical observation date; publication expiry remains tested separately.
+  t.mock.timers.enable({apis: ['Date'], now: new Date('2026-11-03T18:00:00Z')});
   const folder = await mkdtemp('/tmp/sncf-pending-test-'), store = new OfferStore(folder);
   try {
     assert.equal(pending.totalDisplayed, 32);

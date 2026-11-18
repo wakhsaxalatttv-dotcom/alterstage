@@ -926,6 +926,8 @@ function App() {
                 <p className="local-note">
                   {modal.offer.sourceDocument?.kind?.startsWith("uploaded-")
                     ? `Informations extraites d’un fichier employeur le ${date(modal.offer.sourceDocument.analyzedAt)}. La fiche en ligne et sa disponibilité n’ont pas été revérifiées.`
+                    : modal.offer.sourceDocument?.kind === "employer-page"
+                    ? `Fiche employeur consultée le ${date(modal.offer.sourceConsultedAt)}. Consultez l’annonce d’origine pour les conditions et la candidature.`
                     : `Synthèse éditoriale d’une annonce employeur consultée le ${date(modal.offer.sourceConsultedAt)}. La disponibilité actuelle n’a pas été revérifiée.`}
                 </p>
               )}

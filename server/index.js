@@ -1,3 +1,4 @@
+import { seedCollectedEmployers } from "./ingestion/collected-employers.js";
 import { seedCreditAgricoleUpload } from "./ingestion/credit-agricole-upload.js";
 import { seedRteUpload } from "./ingestion/rte-upload.js";
 import { seedToyotaUpload } from "./ingestion/toyota-upload.js";
@@ -29,6 +30,8 @@ const rte = await seedRteUpload(app.locals.store);
 console.info(`[RTE] ${rte.created} stages ajoutés après confirmation du responsable ; dates source absentes conservées.`);
 const creditAgricole = await seedCreditAgricoleUpload(app.locals.store);
 console.info(`[Crédit Agricole] ${creditAgricole.created} annonces ajoutées après confirmation du responsable ; dates de publication non fournies.`);
+const collectedEmployers = await seedCollectedEmployers(app.locals.store);
+console.info(`[Collecte employeurs] ${collectedEmployers.created} ajoutées, ${collectedEmployers.updated} mises à jour, ${collectedEmployers.withdrawn} fiches retirées après réponse de clôture. Contrôle de candidature daté, sans badge humain.`);
 const server = app.listen(port, "0.0.0.0", () =>
   console.log(`Offres Fraîches : serveur prêt sur le port ${port}`),
 );
