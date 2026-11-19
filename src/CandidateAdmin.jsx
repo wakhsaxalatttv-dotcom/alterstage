@@ -1,6 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { request } from "./api";
 import "./candidate.css";
+const diagnosticLabels = {
+  email_delivery:
+    "Supabase n’a pas pu envoyer l’e-mail. Vérifiez l’expéditeur validé dans Brevo, le serveur, le port, l’identifiant et la clé SMTP dans Supabase.",
+  network:
+    "Le serveur n’a pas pu joindre Supabase. Vérifiez la disponibilité du projet et la connexion réseau.",
+  credentials:
+    "L’accès au projet Supabase a été refusé. Vérifiez l’URL et la clé publique configurées sur le serveur.",
+  schema:
+    "Le contrôle de migration Supabase a échoué. Vérifiez l’exécution complète du fichier SQL.",
+  registration_disabled:
+    "Supabase refuse les inscriptions. Vérifiez les réglages Email et les inscriptions autorisées.",
+  rate_limit:
+    "La limite de demandes du fournisseur a été atteinte. Attendez avant de refaire un essai.",
+  service:
+    "Supabase a renvoyé une erreur serveur. Consultez les logs Auth à la même heure.",
+  request:
+    "Une demande a été refusée. Consultez les logs Auth si l’erreur persiste.",
+};
+
 export function CandidateAdmin({ token }) {
   const [data, setData] = useState(null),
     [error, setError] = useState(""),
@@ -44,6 +63,39 @@ export function CandidateAdmin({ token }) {
               ? "configurées"
               : "non configurées"}
           </p>
+          <section
+            className="candidate-box"
+            aria-label="Diagnostic des comptes"
+          >
+            <h3>Derniers échecs de connexion et d’envoi</h3>
+            <p>
+              Diagnostic privé limité aux 20 derniers échecs depuis le démarrage
+              du serveur. Aucun contenu de message, adresse e-mail ni clé n’est
+              enregistré ici.
+            </p>
+            {data.diagnostics?.length ? (
+              <ul>
+                {data.diagnostics.map((d, i) => (
+                  <li key={d.at + ":" + i}>
+                    <strong>
+                      {new Date(d.at).toLocaleString("fr-FR")} · {d.operation}
+                    </strong>
+                    <p>
+                      {diagnosticLabels[d.category] || diagnosticLabels.request}
+                    </p>
+                    <small>
+                      {d.status ? "HTTP " + d.status : "Réseau"} · {d.code}
+                    </small>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>
+                Aucun échec enregistré sur cette instance. Cela ne confirme pas
+                la réception des e-mails.
+              </p>
+            )}
+          </section>
           {!data.stats ? (
             <p>
               Les statistiques privées nécessitent la migration Supabase,
@@ -98,7 +150,8 @@ export function CandidateAdmin({ token }) {
               <p>
                 Compteurs indicatifs : les pages vues peuvent inclure des robots
                 et des visites répétées. Les comptes actifs sont dédupliqués par
-                jour ; les visiteurs anonymes ne le sont pas. Les clics et confirmations concernent les comptes connectés. Aucune adresse
+                jour ; les visiteurs anonymes ne le sont pas. Les clics et
+                confirmations concernent les comptes connectés. Aucune adresse
                 e-mail ni note personnelle n’est affichée ici.
               </p>
             </>

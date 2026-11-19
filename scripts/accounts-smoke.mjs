@@ -7,6 +7,7 @@ import {
   candidateProvider,
   fixturePassword,
 } from "../test/helpers/candidate-provider.js";
+let failSignup = false;
 const provider = await candidateProvider(),
   folder = await mkdtemp("/tmp/of-accounts-ui-"),
   app = createApp({
@@ -16,7 +17,22 @@ const provider = await candidateProvider(),
     candidateOptions: {
       enabled: true,
       secureCookies: false,
-      fetcher: provider.fetcher,
+      fetcher: (url, options) =>
+        failSignup && new URL(url).pathname === "/auth/v1/signup"
+          ? Promise.resolve(
+              new Response(
+                JSON.stringify({
+                  code: "unexpected_failure",
+                  msg: "Error sending confirmation email: private-detail-do-not-expose",
+                }),
+                {
+                  status: 500,
+                  headers: { "Content-Type": "application/json" },
+                },
+              ),
+            )
+          : provider.fetcher(url, options),
+      onFailure: () => {},
       env: {},
     },
   }),
@@ -239,9 +255,55 @@ try {
     .fill("New-fixture-password-only-2026");
   await page.getByRole("button", { name: "Se connecter", exact: true }).click();
   await page.getByText("Bonjour Camille2", { exact: true }).waitFor();
+  // A provider-side mail failure must not appear as a successful registration.
+  await page
+    .getByRole("button", { name: "Se déconnecter", exact: true })
+    .click();
+  await page.getByRole("tab", { name: "Créer un compte", exact: true }).click();
+  await page.getByLabel("Prénom", { exact: true }).fill("Alex");
+  await page.getByLabel("Nom", { exact: true }).fill("Test");
+  await page
+    .getByLabel("Adresse e-mail", { exact: true })
+    .fill("alex@example.org");
+  await page
+    .getByLabel("Mot de passe — 12 caractères minimum", { exact: true })
+    .fill(fixturePassword);
+  await page.getByRole("checkbox").check();
+  failSignup = true;
+  await page
+    .getByRole("button", { name: "Créer mon compte", exact: true })
+    .click();
+  await page
+    .getByRole("alert")
+    .filter({ hasText: "n’a pas pu être envoyé" })
+    .waitFor();
+  assert.doesNotMatch(
+    await page.locator(".candidate-panel").innerText(),
+    /Si cette adresse|private-detail/,
+  );
+  await page.goto(base + "/administration/");
+  await page
+    .getByLabel("Code d’accès", { exact: true })
+    .fill("fixture-browser-admin-token-only".repeat(2));
+  await page.getByRole("button", { name: "Se connecter", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Audience & comptes", exact: true })
+    .click();
+  const diagnostic = page.getByRole("region", {
+    name: "Diagnostic des comptes",
+  });
+  await diagnostic.getByText(/Supabase n’a pas pu envoyer l’e-mail/).waitFor();
+  assert.doesNotMatch(
+    await diagnostic.innerText(),
+    /private-detail|alex@example/,
+  );
+  await page.screenshot({
+    path: "/tmp/offres-account-diagnostic.png",
+    fullPage: true,
+  });
   assert.deepEqual(errors, []);
   console.log(
-    "Comptes : inscription, confirmation simulée, cookies HttpOnly, suivi persistant, alertes, profil, récupération du mot de passe, reconnexion et affichage 360/390/768/1440 px vérifiés en local.",
+    "Comptes : inscription, confirmation simulée, cookies HttpOnly, suivi persistant, alertes, profil, récupération du mot de passe, reconnexion, échec SMTP simulé et diagnostic privé, affichage 360/390/768/1440 px vérifiés en local.",
   );
 } finally {
   await browser.close();

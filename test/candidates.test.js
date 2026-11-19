@@ -401,3 +401,82 @@ test("new-offer alerts exclude old and withdrawn offers, deduplicate, send opt-i
     await f.close();
   }
 });
+test("a failed registration email is not reported as sent and diagnostics stay private without a service key", async () => {
+  const logs = [],
+    f = await accountFixture({
+      env: {},
+      onFailure: (e) => logs.push(e),
+      fetcher: async (input) => {
+        const path = new URL(input).pathname;
+        const data =
+          path === "/auth/v1/settings"
+            ? { mailer_autoconfirm: false }
+            : path === "/rest/v1/rpc/of_setup_status"
+              ? { version: 1 }
+              : {
+                  code: "unexpected_failure",
+                  msg: "Error sending confirmation email: private@example.org do-not-expose-key",
+                };
+        return new Response(JSON.stringify(data), {
+          status: path === "/auth/v1/signup" ? 500 : 200,
+          headers: { "Content-Type": "application/json" },
+        });
+      },
+    });
+  try {
+    const result = await f.client().call("/register", {
+      method: "POST",
+      body: {
+        email: "candidate@example.org",
+        password: fixturePassword,
+        firstName: "Test",
+        lastName: "Local",
+        acceptPrivacy: true,
+      },
+    });
+    assert.equal(result.response.status, 503);
+    assert.match(result.data.message, /n’a pas pu être envoyé/);
+    assert.doesNotMatch(
+      JSON.stringify(result.data),
+      /private@example|do-not-expose|unexpected_failure/,
+    );
+    assert.equal((await fetch(f.base + "/api/admin/candidates")).status, 401);
+    const admin = await fetch(f.base + "/api/admin/candidates", {
+      headers: { Authorization: "Bearer " + adminToken },
+    });
+    assert.equal(admin.status, 200);
+    const d = await admin.json();
+    assert.equal(d.stats, null);
+    assert.equal(d.diagnostics[0].category, "email_delivery");
+    assert.equal(d.diagnostics[0].operation, "signup");
+    assert.doesNotMatch(JSON.stringify(d), /private@example|do-not-expose/);
+    const pub = await (await fetch(f.base + "/api/account/config")).json();
+    assert.equal(pub.diagnostics, undefined);
+    assert.equal(logs.length, 1);
+  } finally {
+    await f.close();
+  }
+});
+test("private diagnostics remain available when the optional statistics service key is rejected", async () => {
+  const f = await accountFixture({
+    env: { SUPABASE_SERVICE_ROLE_KEY: "wrong-fixture-service-key" },
+    onFailure: () => {},
+  });
+  try {
+    const response = await fetch(f.base + "/api/admin/candidates", {
+      headers: { Authorization: "Bearer " + adminToken },
+    });
+    assert.equal(response.status, 200);
+    const data = await response.json();
+    assert.equal(data.configuration.enabled, true);
+    assert.equal(data.stats, null);
+    assert.equal(data.diagnostics.length, 1);
+    assert.equal(data.diagnostics[0].status, 400);
+    assert.doesNotMatch(
+      JSON.stringify(data),
+      /wrong-fixture-service-key|permission denied/,
+    );
+  } finally {
+    await f.close();
+  }
+});

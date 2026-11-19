@@ -960,12 +960,18 @@ export function mountCandidateAccounts(
     admin,
     result(async (_req, res) => {
       const config = await status();
+      let stats = null;
+      if (config.enabled && client.hasServiceKey) {
+        try {
+          stats = await client.rpc("of_admin_stats", {}, { admin: true });
+        } catch {
+          /* Diagnostics remain available if the statistics key is invalid. */
+        }
+      }
       res.json({
         configuration: config,
-        stats:
-          config.enabled && client.hasServiceKey
-            ? await client.rpc("of_admin_stats", {}, { admin: true })
-            : null,
+        stats,
+        diagnostics: client.diagnostics(),
       });
     }),
   );

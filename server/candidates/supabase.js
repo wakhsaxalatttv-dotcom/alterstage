@@ -1,3 +1,4 @@
+import { failureJournal } from "./diagnostics.js";
 import defaults from "../../config/candidate-service.json" with { type: "json" };
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { dispatcher } from "../ingestion/http.js";
@@ -32,6 +33,7 @@ export function candidateClient(options = {}) {
   )
     throw new Error("Invalid public site URL");
   const fetcher = options.fetcher || fetch;
+  const failures = failureJournal(options.onFailure);
   async function call(
     path,
     { method = "GET", body, token, admin = false, headers = {} } = {},
@@ -58,6 +60,7 @@ export function candidateClient(options = {}) {
         ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
       });
     } catch {
+      failures.record(path, null, null);
       throw new CandidateError(
         "Le service des comptes est momentanément inaccessible.",
         503,
@@ -72,6 +75,20 @@ export function candidateClient(options = {}) {
     if (!response.ok) {
       // Never expose provider error bodies, tokens, recipient addresses or DB details.
       const status = response.status;
+      const failure = failures.record(path, status, data);
+      if (failure.category === "email_delivery")
+        throw new CandidateError(
+          "L’e-mail de confirmation ou de récupération n’a pas pu être envoyé. Réessayez plus tard.",
+          503,
+        );
+      if (
+        failure.category === "credentials" ||
+        failure.category === "registration_disabled"
+      )
+        throw new CandidateError(
+          "Les inscriptions sont momentanément indisponibles.",
+          503,
+        );
       if (status === 429)
         throw new CandidateError("Trop de demandes. Réessayez plus tard.", 429);
       if ([401, 403].includes(status))
@@ -135,5 +152,6 @@ export function candidateClient(options = {}) {
     unsubscribeToken,
     validUnsubscribe,
     hasServiceKey: Boolean(serviceKey),
+    diagnostics: failures.read,
   };
 }

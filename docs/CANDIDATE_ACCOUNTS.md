@@ -29,6 +29,16 @@ Chaque profil, alerte, candidature et notification est protégé par les politiq
 
 7. Pour les résumés de nouveautés par e-mail, ajouter dans Render `BREVO_API_KEY`, `MAIL_FROM_EMAIL` et éventuellement `MAIL_FROM_NAME`, avec un expéditeur validé chez Brevo. Ces réglages sont distincts du SMTP de Supabase Auth. Sans eux, les alertes dans le compte fonctionnent ; l’option d’e-mail reste désactivée. L’opt-in est individuel, désactivé par défaut. Un lien signé permet le désabonnement sans connexion, après confirmation à l’écran.
 
+## Si une inscription échoue
+
+Un formulaire affiché ne prouve pas que l’e-mail peut partir : le contrôle initial vérifie le schéma et les réglages Auth, sans envoyer de message. Un échec SMTP identifié dans la réponse Supabase affiche une erreur d’envoi, jamais une confirmation d’envoi réussie.
+
+Dans **Administration → Audience & comptes**, le diagnostic privé présente les 20 derniers échecs depuis le démarrage de l’instance. Il reste consultable sans clé serveur et si la récupération des statistiques échoue. Les catégories distinguent l’envoi d’e-mail, le réseau, les identifiants, la migration et les erreurs serveur non expliquées. Une catégorie d’envoi confirme seulement que Supabase n’a pas pu envoyer le message : elle ne désigne pas à elle seule un champ SMTP incorrect.
+
+Les logs Render comportent aussi des lignes `[Comptes] Échec fournisseur` avec l’heure, l’opération, le statut HTTP et un code de fournisseur reconnu. Aucun corps de réponse, adresse de destinataire, identifiant utilisateur, URL complète, mot de passe ou clé n’y est conservé. Pour une cause détaillée, consulter les **logs Auth dans Supabase** à la même heure. Ne pas copier de clé ou de donnée personnelle dans le chat.
+
+Pour un échec d’envoi, contrôler dans Supabase le serveur `smtp-relay.brevo.com`, le port `587`, l’identifiant SMTP affiché par Brevo, la **clé SMTP** et l’adresse d’expéditeur validée. Le code SMTP `535 5.7.8 Authentication failed` indique un refus d’authentification SMTP : recopier le couple identifiant SMTP / clé SMTP de Brevo, distinct du mot de passe du compte et des clés API. Vérifier également les restrictions d’envoi du compte Brevo. L’envoi d’un message à une adresse que l’exploitant contrôle reste nécessaire pour vérifier la réception réelle.
+
 ## Parcours à vérifier après déploiement
 
 - Créer un compte de test avec une adresse que vous contrôlez ; vérifier la réception du message, la confirmation puis la connexion. Ne pas utiliser une adresse d’un tiers.
