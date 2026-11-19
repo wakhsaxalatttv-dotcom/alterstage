@@ -39,6 +39,10 @@ Les logs Render comportent aussi des lignes `[Comptes] Échec fournisseur` avec 
 
 Pour un échec d’envoi, contrôler dans Supabase le serveur `smtp-relay.brevo.com`, le port `587`, l’identifiant SMTP affiché par Brevo, la **clé SMTP** et l’adresse d’expéditeur validée. Le code SMTP `535 5.7.8 Authentication failed` indique un refus d’authentification SMTP : recopier le couple identifiant SMTP / clé SMTP de Brevo, distinct du mot de passe du compte et des clés API. Vérifier également les restrictions d’envoi du compte Brevo. L’envoi d’un message à une adresse que l’exploitant contrôle reste nécessaire pour vérifier la réception réelle.
 
+## E-mails classés comme indésirables
+
+Le [guide de réception des e-mails](EMAIL_DELIVERY.md) distingue le contrôle SPF/DKIM/DMARC du classement en spam et fournit deux modèles transactionnels français à installer dans Supabase. Leur préparation dans le dépôt ne modifie pas les e-mails du projet distant.
+
 ## Parcours à vérifier après déploiement
 
 - Créer un compte de test avec une adresse que vous contrôlez ; vérifier la réception du message, la confirmation puis la connexion. Ne pas utiliser une adresse d’un tiers.
