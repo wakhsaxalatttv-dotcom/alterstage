@@ -17,32 +17,52 @@ console.info(
   `[Catalogue] Contrôle de conformité : ${audit.checked} annonce(s) contrôlée(s), ${audit.withdrawn} retirée(s), ${audit.expired} expirée(s).`,
 );
 await seedBundledCatalogue(app.locals.store);
-await seedBundledCatalogue(app.locals.store, new URL("../config/recent-market-offers.json", import.meta.url));
+await seedBundledCatalogue(
+  app.locals.store,
+  new URL("../config/recent-market-offers.json", import.meta.url),
+);
 const editorial = await seedEditorialCatalogue(app.locals.store);
 console.info(
   `[Catalogue employeurs] ${editorial.created} annonces sourcées ajoutées, ${editorial.excluded} non admissibles. Aucun nouveau contrôle de disponibilité supposé.`,
 );
 const sncfPending = await seedSncfPending(app.locals.store);
-console.info(`[SNCF] ${sncfPending.created} offres ajoutées, ${sncfPending.updated} mises à jour après confirmation du responsable. Dates source non fournies conservées comme telles.`);
+console.info(
+  `[SNCF] ${sncfPending.created} offres ajoutées, ${sncfPending.updated} mises à jour après confirmation du responsable. Dates source non fournies conservées comme telles.`,
+);
 const toyota = await seedToyotaUpload(app.locals.store);
-console.info(`[Toyota] ${toyota.created} stages ajoutés après confirmation du responsable ; dates source non fournies.`);
+console.info(
+  `[Toyota] ${toyota.created} stages ajoutés après confirmation du responsable ; dates source non fournies.`,
+);
 const rte = await seedRteUpload(app.locals.store);
-console.info(`[RTE] ${rte.created} stages ajoutés après confirmation du responsable ; dates source absentes conservées.`);
+console.info(
+  `[RTE] ${rte.created} stages ajoutés après confirmation du responsable ; dates source absentes conservées.`,
+);
 const creditAgricole = await seedCreditAgricoleUpload(app.locals.store);
-console.info(`[Crédit Agricole] ${creditAgricole.created} annonces ajoutées après confirmation du responsable ; dates de publication non fournies.`);
+console.info(
+  `[Crédit Agricole] ${creditAgricole.created} annonces ajoutées après confirmation du responsable ; dates de publication non fournies.`,
+);
 const collectedEmployers = await seedCollectedEmployers(app.locals.store);
-console.info(`[Collecte employeurs] ${collectedEmployers.created} ajoutées, ${collectedEmployers.updated} mises à jour, ${collectedEmployers.withdrawn} fiches retirées après réponse de clôture. Contrôle de candidature daté, sans badge humain.`);
+console.info(
+  `[Collecte employeurs] ${collectedEmployers.created} ajoutées, ${collectedEmployers.updated} mises à jour, ${collectedEmployers.withdrawn} fiches retirées après réponse de clôture. Contrôle de candidature daté, sans badge humain.`,
+);
 const server = app.listen(port, "0.0.0.0", () =>
   console.log(`Offres Fraîches : serveur prêt sur le port ${port}`),
 );
 app.locals.serpApiAutomation.start();
+app.locals.candidateAccounts.start();
 let availabilityRun;
 const checkAvailability = () => {
   if (availabilityRun) return availabilityRun;
   availabilityRun = auditAvailability(app.locals.store)
-    .then((r) => console.info(`[Disponibilité] ${r.checked} pages contrôlées, ${r.opened} candidatures ouvertes confirmées, ${r.closed} offres clôturées retirées, ${r.inconclusive} contrôles sans preuve concluante.`))
+    .then((r) =>
+      console.info(
+        `[Disponibilité] ${r.checked} pages contrôlées, ${r.opened} candidatures ouvertes confirmées, ${r.closed} offres clôturées retirées, ${r.inconclusive} contrôles sans preuve concluante.`,
+      ),
+    )
     .catch(() => console.error("Contrôle de disponibilité indisponible."))
-    .finally(() => { availabilityRun = null; });
+    .finally(() => {
+      availabilityRun = null;
+    });
   return availabilityRun;
 };
 checkAvailability();
@@ -86,6 +106,7 @@ async function shutdown() {
     if (app.locals.pipeline.running)
       await app.locals.pipeline.running.catch(() => {});
     await app.locals.serpApiAutomation.stop();
+    await app.locals.candidateAccounts.stop();
     await availabilityRun;
     await closeFeedConnections();
     app.locals.store.close();

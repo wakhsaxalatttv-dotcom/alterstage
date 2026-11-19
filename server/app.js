@@ -9,10 +9,15 @@ import express from "express";
 import compression from "compression";
 import path from "node:path";
 import { timingSafeEqual } from "node:crypto";
-import {browserSecurity, sameOriginJsonWrites, fixedWindowLimiter} from "./security.js";
+import {
+  browserSecurity,
+  sameOriginJsonWrites,
+  fixedWindowLimiter,
+} from "./security.js";
 import { OfferStore } from "./store.js";
 import { normalizeSubmission, ValidationError } from "./domain.js";
 import { IngestionPipeline } from "./ingestion/pipeline.js";
+import { mountCandidateAccounts } from "./candidates/accounts.js";
 export function createApp({
   folder = process.env.DATA_DIR || path.resolve(".local"),
   adminToken = process.env.ADMIN_TOKEN || "",
@@ -20,12 +25,13 @@ export function createApp({
   rapidApiOptions = {},
   serpApiOptions = {},
   serpAutomationOptions = {},
+  candidateOptions = {},
 } = {}) {
   const app = express(),
     store = new OfferStore(folder);
-  const submissionLimit = fixedWindowLimiter({limit: 5, windowMs: 3600000});
-  const reportLimit = fixedWindowLimiter({limit: 10, windowMs: 3600000});
-  const loginLimit = fixedWindowLimiter({limit: 10, windowMs: 15 * 60000});
+  const submissionLimit = fixedWindowLimiter({ limit: 5, windowMs: 3600000 });
+  const reportLimit = fixedWindowLimiter({ limit: 10, windowMs: 3600000 });
+  const loginLimit = fixedWindowLimiter({ limit: 10, windowMs: 15 * 60000 });
   app.locals.store = store;
   const adminConfiguration = administrationConfiguration(adminToken);
   app.locals.adminConfiguration = adminConfiguration;
@@ -54,7 +60,7 @@ export function createApp({
     res.set("Cache-Control", "no-store");
     next();
   });
-  app.use('/api', sameOriginJsonWrites);
+  app.use("/api", sameOriginJsonWrites);
   app.use(express.json({ limit: "40kb" }));
   const admin = (req, res, next) => {
     if (!adminConfiguration.configured)
@@ -62,14 +68,28 @@ export function createApp({
         message: "L’espace privé est temporairement indisponible.",
       });
     const retryAfter = loginLimit.blocked(req.ip);
-    if (retryAfter) return res.set('Retry-After', String(retryAfter)).status(429).json({message: 'Trop de tentatives de connexion. Réessayez dans quinze minutes.'});
+    if (retryAfter)
+      return res
+        .set("Retry-After", String(retryAfter))
+        .status(429)
+        .json({
+          message:
+            "Trop de tentatives de connexion. Réessayez dans quinze minutes.",
+        });
     const token = Buffer.from(
       req.get("Authorization")?.replace(/^Bearer /, "") || "",
     );
     const expected = Buffer.from(adminToken);
     if (token.length !== expected.length || !timingSafeEqual(token, expected)) {
       const retry = loginLimit.consume(req.ip);
-      if (retry) return res.set('Retry-After', String(retry)).status(429).json({message: 'Trop de tentatives de connexion. Réessayez dans quinze minutes.'});
+      if (retry)
+        return res
+          .set("Retry-After", String(retry))
+          .status(429)
+          .json({
+            message:
+              "Trop de tentatives de connexion. Réessayez dans quinze minutes.",
+          });
       return res
         .status(401)
         .json({ message: "Accès réservé à la modération." });
@@ -77,6 +97,12 @@ export function createApp({
     loginLimit.reset(req.ip);
     next();
   };
+  app.locals.candidateAccounts = mountCandidateAccounts(app, {
+    store,
+    reports,
+    admin,
+    ...candidateOptions,
+  });
   app.get("/api/health", (_req, res) => {
     store.db.prepare("SELECT 1").get();
     res.json({ status: "ok", storage: "sqlite" });
@@ -133,7 +159,7 @@ export function createApp({
       });
     const retry = submissionLimit.consume(req.ip);
     if (retry)
-      return res.set('Retry-After', String(retry)).status(429).json({
+      return res.set("Retry-After", String(retry)).status(429).json({
         message:
           "Limite de cinq dépôts par heure atteinte. Réessayez plus tard.",
       });
@@ -151,7 +177,7 @@ export function createApp({
       });
     const retry = reportLimit.consume(req.ip);
     if (retry)
-      return res.set('Retry-After', String(retry)).status(429).json({
+      return res.set("Retry-After", String(retry)).status(429).json({
         message:
           "Limite de dix signalements par heure atteinte. Réessayez plus tard.",
       });
@@ -315,7 +341,7 @@ export function createApp({
       maxAge: "1y",
     }),
   );
-  app.use("/administration", (_req, res, next) => {
+  app.use(["/administration", "/compte"], (_req, res, next) => {
     res.set({
       "X-Robots-Tag": "noindex, nofollow, noarchive",
       "Cache-Control": "no-store",

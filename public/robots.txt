@@ -1,4 +1,5 @@
 User-agent: *
 Disallow: /administration
+Disallow: /compte
 
 Sitemap: https://alterstage.onrender.com/sitemap.xml

@@ -1,3 +1,4 @@
+import { useCandidate } from "./CandidateContext";
 import { AnimatedCard } from "./AnimatedCard";
 import { CompanyLogo } from "./CompanyLogo";
 import React, { useState, useEffect } from "react";
@@ -15,6 +16,7 @@ import { ReportForm } from "./ReportForm";
 const date = (value) =>
   value ? new Date(value).toLocaleDateString("fr-FR") : "Non fournie";
 export function ExternalOffers() {
+  const candidate = useCandidate();
   const [selected, setSelected] = useState(null);
   const [page, setPage] = useState(1);
   const [data, setData] = useState({ offers: [], loading: true, error: "" });
@@ -188,7 +190,11 @@ export function ExternalOffers() {
           <AnimatedCard className="external-card" key={offer.id}>
             <div className="external-company-heading">
               <CompanyLogo
-                company={{ ...offer.company, website: offer.companyWebsite, logoUrl: offer.companyLogoUrl || offer.company.logoUrl }}
+                company={{
+                  ...offer.company,
+                  website: offer.companyWebsite,
+                  logoUrl: offer.companyLogoUrl || offer.company.logoUrl,
+                }}
                 size={40}
               />
               <p className="external-company">{offer.company.name}</p>
@@ -221,6 +227,10 @@ export function ExternalOffers() {
                 Description détaillée
               </button>
               <a
+                onClick={() => candidate?.trackClick(offer)}
+                onAuxClick={(e) => {
+                  if (e.button === 1) candidate?.trackClick(offer);
+                }}
                 href={offer.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -247,10 +257,10 @@ export function ExternalOffers() {
             {selected.sourceDocument?.kind?.startsWith("uploaded-")
               ? "Informations extraites d’un fichier employeur fourni ; description détaillée et disponibilité en ligne non vérifiées."
               : selected.sourceDocument?.kind === "employer-page"
-              ? `Fiche employeur consultée le ${date(selected.sourceConsultedAt)}. Consultez l’annonce d’origine pour les conditions et la candidature.`
-              : selected.sourceKind === "market"
-              ? "Description transmise par la source ; consultez le lien original pour candidater."
-              : "Synthèse éditoriale d’après l’annonce employeur, sans nouveau contrôle de disponibilité."}
+                ? `Fiche employeur consultée le ${date(selected.sourceConsultedAt)}. Consultez l’annonce d’origine pour les conditions et la candidature.`
+                : selected.sourceKind === "market"
+                  ? "Description transmise par la source ; consultez le lien original pour candidater."
+                  : "Synthèse éditoriale d’après l’annonce employeur, sans nouveau contrôle de disponibilité."}
           </p>
           <h3>Description du poste</h3>
           <p>{selected.summary}</p>
@@ -317,6 +327,10 @@ export function ExternalOffers() {
           </dl>
           <a
             className="primary external-apply"
+            onClick={() => candidate?.trackClick(selected)}
+            onAuxClick={(e) => {
+              if (e.button === 1) candidate?.trackClick(selected);
+            }}
             href={selected.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"

@@ -8,7 +8,8 @@ import {edfReferences} from '../shared/edf-references.js';
 
 const snapshot = JSON.parse(await readFile(new URL('../config/collected-employers.json', import.meta.url), 'utf8'));
 
-test('current employer collection imports 368 dated French roles, keeps provenance and human withdrawals, and does not renew observation times', async () => {
+test('current employer collection imports 368 dated French roles, keeps provenance and human withdrawals, and does not renew observation times', async (t) => {
+  t.mock.timers.enable({apis: ['Date'], now: new Date(snapshot.collectedAt)});
   const folder = await mkdtemp('/tmp/current-employers-'), store = new OfferStore(folder);
   try {
     const result = await seedCollectedEmployers(store);
@@ -33,7 +34,8 @@ test('current employer collection imports 368 dated French roles, keeps provenan
   } finally { store.close(); await rm(folder, {recursive: true, force: true}); }
 });
 
-test('collection rejects missing, future, wrong-identity and blocked-source application observations', () => {
+test('collection rejects missing, future, wrong-identity and blocked-source application observations', (t) => {
+  t.mock.timers.enable({apis: ['Date'], now: new Date(snapshot.collectedAt)});
   const ref = snapshot.references[0];
   assert.equal(hasEmployerApplicationObservation(ref, Date.parse(ref.sourceConsultedAt) + 31 * 86400000), false);
   for (const patch of [
@@ -45,7 +47,8 @@ test('collection rejects missing, future, wrong-identity and blocked-source appl
   assert.equal(hasEmployerApplicationObservation({...ref, sourceUrl: 'https://example.org/job'}), false);
 });
 
-test('known initial dates are preserved and observed HTTP 404 withdrawals remain durable', async () => {
+test('known initial dates are preserved and observed HTTP 404 withdrawals remain durable', async (t) => {
+  t.mock.timers.enable({apis: ['Date'], now: new Date(snapshot.collectedAt)});
   const folder = await mkdtemp('/tmp/current-employer-history-'), store = new OfferStore(folder);
   try {
     const ref = snapshot.references[0];

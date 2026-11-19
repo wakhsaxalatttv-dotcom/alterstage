@@ -1,3 +1,4 @@
+import { useCandidate } from "./CandidateContext";
 import { AnimatedCard } from "./AnimatedCard";
 import { CompanyLogo } from "./CompanyLogo";
 import React, { useEffect, useRef } from "react";
@@ -72,6 +73,7 @@ export function Empty({ icon: Icon, title, text, action, label, secondary }) {
   );
 }
 export function Offer({ offer: o, favorite, toggle, details, company }) {
+  const candidate = useCandidate();
   return (
     <AnimatedCard className="offer-card">
       <div className="offer-top">
@@ -131,17 +133,35 @@ export function Offer({ offer: o, favorite, toggle, details, company }) {
         <span>
           {o.publicationEvidence?.kind === "relative"
             ? `Publication ${o.sourceId === "airbus-upload" ? "Airbus" : "Google Jobs"} : « ${o.publicationEvidence.text} » (relevé le ${date(o.publicationEvidence.observedAt)})`
-            : o.publishedAt ? `Publiée le ${date(o.publishedAt)}` : "Publication : date non fournie"}
+            : o.publishedAt
+              ? `Publiée le ${date(o.publishedAt)}`
+              : "Publication : date non fournie"}
         </span>
       </div>
       <div className="offer-bottom">
-        <a href={o.sourceUrl} target="_blank" rel="noreferrer">
+        <a
+          onClick={() => candidate?.trackClick(o)}
+          onAuxClick={(e) => {
+            if (e.button === 1) candidate?.trackClick(o);
+          }}
+          href={o.sourceUrl}
+          target="_blank"
+          rel="noreferrer"
+        >
           Candidater <ExternalLink size={13} />
         </a>
         <button onClick={details}>
           Voir l’offre <ArrowRight size={16} />
         </button>
-        <a href={o.applicationUrl} target="_blank" rel="noreferrer">
+        <a
+          onClick={() => candidate?.trackClick(o)}
+          onAuxClick={(e) => {
+            if (e.button === 1) candidate?.trackClick(o);
+          }}
+          href={o.applicationUrl}
+          target="_blank"
+          rel="noreferrer"
+        >
           Candidater <ArrowUpRight size={15} />
         </a>
       </div>

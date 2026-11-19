@@ -1,3 +1,4 @@
+import { CandidateAdmin } from "./CandidateAdmin";
 import { CompanyReviewPanel } from "./CompanyReviewPanel";
 import { ReportsPanel } from "./ReportsPanel";
 import React, { useState, useEffect } from "react";
@@ -20,7 +21,9 @@ export function Moderation({ onChanged }) {
   useEffect(() => {
     if (
       authenticated &&
-      !["reports", "sources", "import", "companies"].includes(view)
+      !["reports", "sources", "import", "companies", "candidates"].includes(
+        view,
+      )
     )
       load();
   }, [view, adminPage]);
@@ -89,7 +92,7 @@ export function Moderation({ onChanged }) {
             <button
               className="secondary"
               onClick={
-                view === "companies"
+                ["companies", "candidates"].includes(view)
                   ? () => setCompanyRevision((v) => v + 1)
                   : load
               }
@@ -122,6 +125,7 @@ export function Moderation({ onChanged }) {
               ["sources", "Sources & collecte"],
               ["companies", "Entreprises"],
               ["reports", "Signalements"],
+              ["candidates", "Audience & comptes"],
             ].map(([id, label]) => (
               <button
                 className={view === id ? "active" : ""}
@@ -132,12 +136,19 @@ export function Moderation({ onChanged }) {
                 }}
               >
                 {label}
-                {!["import", "sources", "reports", "companies"].includes(id) &&
-                  ` (${counts[id] || 0})`}
+                {![
+                  "import",
+                  "sources",
+                  "reports",
+                  "companies",
+                  "candidates",
+                ].includes(id) && ` (${counts[id] || 0})`}
               </button>
             ))}
           </div>
-          {view === "companies" ? (
+          {view === "candidates" ? (
+            <CandidateAdmin key={companyRevision} token={token} />
+          ) : view === "companies" ? (
             <CompanyReviewPanel
               key={companyRevision}
               token={token}

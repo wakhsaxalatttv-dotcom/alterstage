@@ -1,3 +1,7 @@
+import { CandidateProvider, useCandidate } from "./CandidateContext";
+const AccountPanel = lazy(() =>
+  import("./AccountPanel").then((m) => ({ default: m.AccountPanel })),
+);
 import { publicationIndex } from "../shared/freshness.js";
 import { AppLogo } from "./AppLogo";
 import { ReportForm } from "./ReportForm";
@@ -53,7 +57,10 @@ const date = (value) =>
       })
     : "Non fournie";
 function App() {
-  const [page, setPage] = useState("search"),
+  const candidate = useCandidate();
+  const [page, setPage] = useState(
+      location.pathname === "/compte" ? "account" : "search",
+    ),
     [filters, setFilters] = useState(defaultFilters),
     [filtersOpen, openFilters] = useState(false);
   const [data, setData] = useState({ status: "loading", offers: [] }),
@@ -120,7 +127,26 @@ function App() {
         ? old.filter((x) => x.id !== o.id)
         : [...old, o],
     );
-  function createAlert() {
+  async function createAlert() {
+    if (candidate.user) {
+      try {
+        await candidate.api("/alerts", {
+          method: "POST",
+          body: {
+            name: filters.query || "Stages et alternances",
+            filters,
+            emailEnabled: false,
+          },
+        });
+        setModal(null);
+        setNotice(
+          "Recherche enregistrée dans votre compte. Retrouvez les correspondances dans Mon compte → Nouveautés.",
+        );
+      } catch (e) {
+        setNotice(e.message);
+      }
+      return;
+    }
     setAlerts((old) => [
       ...old,
       {
@@ -152,13 +178,28 @@ function App() {
       );
   }
   function navigate(next) {
+    if (next === "account") history.pushState(null, "", "/compte");
+    else if (location.pathname === "/compte") history.pushState(null, "", "/");
     setPage(next);
     setNotice("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
+  useEffect(() => {
+    const pop = () =>
+      setPage(location.pathname === "/compte" ? "account" : "search");
+    window.addEventListener("popstate", pop);
+    return () => window.removeEventListener("popstate", pop);
+  }, []);
+  useEffect(() => {
+    if (candidate.ready && candidate.config.enabled)
+      candidate
+        .api("/view", { method: "POST", body: { page } })
+        .catch(() => {});
+  }, [page, candidate.ready, candidate.user?.id, candidate.config.enabled]);
   const scopedFavorites = selectOffers(favorites, defaultFilters);
   const visible = page === "favorites" ? scopedFavorites : results;
   const titles = {
+    account: "Mon espace candidat",
     spotted: "Offres repérées récentes",
     favorites: "Mes favoris",
     alerts: "Mes alertes",
@@ -166,6 +207,7 @@ function App() {
     companies: "Les entreprises, à la source",
   };
   const subtitles = {
+    account: "Vos candidatures, vos recherches et leur suivi, au même endroit.",
     spotted:
       "Des liens employeurs et des synthèses détaillées pour élargir vos recherches.",
     favorites:
@@ -236,6 +278,14 @@ function App() {
             >
               <Bell size={17} />
               <span>Mes alertes</span>
+            </button>
+            <button
+              aria-current={page === "account" ? "page" : undefined}
+              className={page === "account" ? "selected" : ""}
+              onClick={() => navigate("account")}
+            >
+              <ShieldCheck size={17} />
+              <span>Mon compte</span>
             </button>
           </nav>
           <button
@@ -328,8 +378,10 @@ function App() {
           <div className="page-title">
             <div className="eyebrow">
               {["favorites", "alerts"].includes(page)
-                ? "VOTRE ESPACE LOCAL"
-                : "TECHNIQUE & INFORMATIQUE"}
+                ? "VOS RECHERCHES"
+                : page === "account"
+                  ? "VOTRE ESPACE PERSONNEL"
+                  : "STAGES & ALTERNANCES"}
             </div>
             <h1>{titles[page]}</h1>
             <p>{subtitles[page]}</p>
@@ -346,7 +398,13 @@ function App() {
             </button>
           </div>
         )}
-        {page === "employers" ? (
+        {page === "account" || (page === "alerts" && candidate.user) ? (
+          <Suspense fallback={<Skeletons />}>
+            <AccountPanel
+              initialTab={page === "alerts" ? "alerts" : "applications"}
+            />
+          </Suspense>
+        ) : page === "employers" ? (
           <Suspense fallback={<Skeletons />}>
             <EmployerForm />
           </Suspense>
@@ -730,7 +788,7 @@ function App() {
           <button onClick={() => setModal({ type: "sources" })}>
             Sources & fiabilité
           </button>
-          <span>Gratuit, et sans compte candidat.</span>
+          <span>Consultation gratuite, sans inscription.</span>
         </div>
       </footer>
       {modal && (
@@ -841,7 +899,11 @@ function App() {
           )}
           {modal.type === "alert" && (
             <>
-              <p>Vos critères actuels seront conservés dans ce navigateur.</p>
+              <p>
+                {candidate.user
+                  ? "Vos critères seront enregistrés dans votre compte."
+                  : "Vos critères actuels seront conservés dans ce navigateur."}
+              </p>
               <div className="criteria">
                 {Object.values(filters).filter(Boolean).join(" · ") ||
                   "Tous les stages et alternances de tous les secteurs, partout en France"}
@@ -849,9 +911,9 @@ function App() {
               <div className="local-note">
                 <Bell size={22} />
                 <p>
-                  Cette alerte locale ne peut pas envoyer de notifications
-                  lorsque le navigateur est fermé. Retrouvez ses correspondances
-                  dans « Mes alertes ».
+                  {candidate.user
+                    ? "Retrouvez les nouveautés dans votre compte. Les e-mails s’activent séparément dans Mes alertes."
+                    : "Cette alerte est locale. Connectez-vous à Mon compte pour enregistrer une recherche sur tous vos appareils."}
                 </p>
               </div>
               <button className="primary" onClick={createAlert}>
@@ -927,8 +989,8 @@ function App() {
                   {modal.offer.sourceDocument?.kind?.startsWith("uploaded-")
                     ? `Informations extraites d’un fichier employeur le ${date(modal.offer.sourceDocument.analyzedAt)}. La fiche en ligne et sa disponibilité n’ont pas été revérifiées.`
                     : modal.offer.sourceDocument?.kind === "employer-page"
-                    ? `Fiche employeur consultée le ${date(modal.offer.sourceConsultedAt)}. Consultez l’annonce d’origine pour les conditions et la candidature.`
-                    : `Synthèse éditoriale d’une annonce employeur consultée le ${date(modal.offer.sourceConsultedAt)}. La disponibilité actuelle n’a pas été revérifiée.`}
+                      ? `Fiche employeur consultée le ${date(modal.offer.sourceConsultedAt)}. Consultez l’annonce d’origine pour les conditions et la candidature.`
+                      : `Synthèse éditoriale d’une annonce employeur consultée le ${date(modal.offer.sourceConsultedAt)}. La disponibilité actuelle n’a pas été revérifiée.`}
                 </p>
               )}
               <h3>Description du poste</h3>
@@ -975,6 +1037,10 @@ function App() {
               <div className="dialog-actions">
                 <a
                   className="primary"
+                  onClick={() => candidate.trackClick(modal.offer)}
+                  onAuxClick={(e) => {
+                    if (e.button === 1) candidate.trackClick(modal.offer);
+                  }}
                   href={modal.offer.applicationUrl}
                   target="_blank"
                   rel="noreferrer"
@@ -1045,4 +1111,8 @@ function PublicContacts({ contacts = [] }) {
     </section>
   ) : null;
 }
-createRoot(document.getElementById("root")).render(<App />);
+createRoot(document.getElementById("root")).render(
+  <CandidateProvider>
+    <App />
+  </CandidateProvider>,
+);

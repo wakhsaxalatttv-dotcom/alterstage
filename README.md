@@ -14,6 +14,10 @@ npm run dev
 
 Ouvrir le port **5173** dans l’onglet Ports. Vite relaie `/api` à Express sur 3001. La clé de modération aléatoire est créée dans `.env`, ignoré par Git et non affiché dans les logs. Ne pas la partager ; la saisir dans l’espace séparé **`/administration/`**, sans lien sur le site public depuis l’éditeur local. Une clé existante valide n’est pas remplacée. Sans clé, le catalogue démarre mais les dépôts publics sont fermés.
 
+## Comptes candidats
+
+L’espace `/compte` et le suivi des candidatures utilisent Supabase Auth et PostgreSQL avec isolation RLS. Les comptes restent désactivés jusqu’à l’exécution de la migration et la configuration des e-mails. Le [guide d’activation](docs/CANDIDATE_ACCOUNTS.md) décrit les étapes et distingue les tests locaux des vérifications à effectuer en production.
+
 ## Ce qui est disponible
 
 - Catalogue entreprises enrichi, alimenté par les entreprises des offres importées et 56 fiches initiales dont ESN et spécialistes réseaux/télécoms, cloud et cybersécurité. Aucune taille, agence, stack, contact ou offre en cours n’est devinée. Les profils sont enrichis lors d’un dépôt validé, avec provenance.
